@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
+/* @layer base {
   :root {
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
@@ -55,6 +55,21 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%
+  }
+} */
+
+.spinner {
+  width: 25px;
+  margin: auto;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 3px solid;
+  border-color: #eab308 #0000;
+  animation: s1 1s infinite;
+}
+@keyframes s1 {
+  to {
+    transform: rotate(0.5turn);
   }
 }
 
