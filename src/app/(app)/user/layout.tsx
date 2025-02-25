@@ -25,7 +25,7 @@ export default async function DashboardLayout({
   if (!store) redirect("/");
 
   return (
-    <div className="px-8">
+    <div>
       <Navbar store_name={store.name}/> 
       {children}
     </div>

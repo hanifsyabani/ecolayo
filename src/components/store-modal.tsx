@@ -36,11 +36,11 @@ export default function StoreModal() {
   const storedModal = useStoreModal();
   const pathname = usePathname();
 
-  useEffect(() => {
-    if (storedModal.isOpen && pathname.includes("/user/store/")) {
-      storedModal.onClose();
-    }
-  }, [pathname, storedModal]);
+  // useEffect(() => {
+  //   if (storedModal.isOpen && pathname.includes("/user/store/")) {
+  //     storedModal.onClose();
+  //   }
+  // }, [pathname, storedModal]);
 
   async function onSubmit(data: FormFields) {
     try {
@@ -50,6 +50,7 @@ export default function StoreModal() {
       reset();
       toast.success("Store created successfully");
 
+      storedModal.onClose();
       router.push(`/user/store/${response.data.id}`);
     } catch (error) {
       toast.error("Failed to submit");
@@ -70,7 +71,7 @@ export default function StoreModal() {
           <Label htmlFor="name">Name Store</Label>
           <Input
             {...register("name")}
-            id="name"
+            id="name" 
             className="border border-primary"
           />
           {errors.name && (
