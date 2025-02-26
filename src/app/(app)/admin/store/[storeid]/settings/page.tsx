@@ -25,7 +25,7 @@ export default async function page(props: SettingsPageProps) {
 
   return (
     <div className="px-8 mt-6">
-      <SettingForm data={store} />
+      <SettingForm datas={store} />
     </div>
   );
 }
