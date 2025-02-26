@@ -50,8 +50,9 @@ export default function StoreModal() {
       reset();
       toast.success("Store created successfully");
 
-      storedModal.onClose();
       router.push(`/user/store/${response.data.id}`);
+      router.refresh()
+      storedModal.onClose();
     } catch (error) {
       toast.error("Failed to submit");
     } finally {

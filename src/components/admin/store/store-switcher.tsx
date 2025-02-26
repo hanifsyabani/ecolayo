@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 import { Store } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
 import { useStoreModal } from "@/hooks/use-store-modal";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import { Check, Plus, Store as Storeicon } from "lucide-react";
 import {
   Command,
@@ -15,7 +15,7 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "../ui/command";
+} from "../../ui/command";
 import { cn } from "@/lib/utils";
 
 type PopOverTriggerProps = React.ComponentPropsWithoutRef<
@@ -44,17 +44,17 @@ export default function StoreSwicher({
 
   const onStoreSelect = (store: { id: string; name: string }) => {
     setOpen(false);
-    router.push(`/store/${store.id}`);
+    router.push(`/admin/store/${store.id}`);
   };
 
-  console.log(currentStore, "id: ", params.storeid)
+  // console.log(currentStore, "id: ", params.storeid)
 
 
   return (
     <>
       <Popover>
         <PopoverTrigger asChild>
-          <Button>
+          <Button className="text-white">
             <Storeicon color="white" />
             {currentStore?.name}
           </Button>
@@ -70,6 +70,7 @@ export default function StoreSwicher({
                   <CommandItem
                     key={store.id}
                     onSelect={() => onStoreSelect(store)}
+                    className="cursor-pointer hover:bg-gray-200" 
                   >
                     <Storeicon />
                     {store.name}

@@ -12,5 +12,5 @@ export default function page() {
       onOpen();
     }
   }, [isOpen, onOpen]);
-  return <></>;
+  return null;
 }

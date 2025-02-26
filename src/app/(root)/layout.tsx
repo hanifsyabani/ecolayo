@@ -19,7 +19,7 @@ export default async function SetupLayout({
     },
   });
 
-  if (store) redirect(`/user/store/${store.id}`);
+  if (store) redirect(`/admin/store/${store.id}`);
   // Jika tidak ada store, layout akan tetap merender children
 
   return (

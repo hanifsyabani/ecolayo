@@ -15,6 +15,8 @@ export default async function DashboardLayout({
 
   if (!userId) redirect("sign-in");
 
+  console.log("params id",params.storeid);
+
   const store = await db.store.findFirst({
     where: {
       id: params.storeid,
@@ -26,7 +28,7 @@ export default async function DashboardLayout({
 
   return (
     <div>
-      <Navbar store_name={store.name}/> 
+      <Navbar store_name={store.name} store_id={store.id}/> 
       {children}
     </div>
   );
