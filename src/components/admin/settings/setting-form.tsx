@@ -1,6 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import Heading from "@/components/ui/heading";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,6 +35,7 @@ type FormFields = z.infer<typeof schema>;
 
 export default function SettingForm(datas: SettingFormProps) {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const params = useParams();
   const router = useRouter();
 
@@ -56,11 +65,30 @@ export default function SettingForm(datas: SettingFormProps) {
     }
   }
 
+  async function onDeleteStore() {
+    try {
+      setIsLoadingForm(true);
+
+      await axios.delete(`/api/store/${params.storeid}`);
+      toast.success("Store deleted successfully");
+      router.refresh()
+      router.push("/");
+    } catch (error) {
+      toast.error("Error deleting");
+    } finally {
+      setIsLoadingForm(false);
+    }
+  }
+
   return (
     <>
       <div className="flex items-center justify-between">
         <Heading title="Settings" description="Manage store preferences" />
-        <Button variant="destructive" className="bg-red-500 text-white">
+        <Button
+          variant="destructive"
+          className="bg-red-500 text-white hover:bg-red-700"
+          onClick={() => setIsOpen(true)}
+        >
           <Trash />
         </Button>
       </div>
@@ -95,6 +123,38 @@ export default function SettingForm(datas: SettingFormProps) {
           )}
         </Button>
       </form>
+
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="bg-white">
+          <DialogHeader>
+            <DialogTitle>
+              Are you sure you want to delete the store?
+            </DialogTitle>
+            <DialogDescription>
+              This action cannot be undone. This will permanently delete your
+              account and remove your data from our servers.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter>
+            <Button variant={"outline"}>Cancel</Button>
+            <Button
+              className="bg-red-500 text-white hover:bg-red-700"
+              onClick={() => onDeleteStore()}
+              disabled={isLoadingForm}
+            >
+              {isLoadingForm ? (
+                <span className="spinner"></span>
+              ) : (
+                <>
+                  <Trash />
+                  Delete
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

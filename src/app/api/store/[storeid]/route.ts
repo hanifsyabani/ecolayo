@@ -15,8 +15,8 @@ export async function PATCH(
 
     const store = await db.store.update({
       where: {
-        id: params.storeid,
         userId,
+        id: params.storeid,
       },
       data: {
         name,
@@ -37,9 +37,6 @@ export async function DELETE(
   try {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthenticated");
-
-    const { name } = await req.json();
-    if (!name) throw new Error("Name must be provided");
 
     const store = await db.store.delete({
       where: {
