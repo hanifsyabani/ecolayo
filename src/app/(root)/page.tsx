@@ -3,14 +3,12 @@
 import { useStoreModal } from "@/hooks/use-store-modal";
 import { useEffect } from "react";
 
-export default function page() {
+export default function Page() {
   const onOpen = useStoreModal((state) => state.onOpen);
-  const isOpen = useStoreModal((state) => state.isOpen);
 
   useEffect(() => {
-    if (!isOpen) {
-      onOpen();
-    }
-  }, [isOpen, onOpen]);
+    onOpen();
+  }, []); // Modal hanya terbuka sekali saat pertama kali load halaman
+
   return null;
 }

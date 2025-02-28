@@ -1,5 +1,6 @@
 "use client";
 
+import ApiAlert from "@/components/ui/api-alert";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,11 +14,12 @@ import Heading from "@/components/ui/heading";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import useOrigin from "@/hooks/use-origin";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Store } from "@prisma/client";
 import axios from "axios";
-import { Save, Trash } from "lucide-react";
+import { MoveLeft, Save, Trash } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -38,6 +40,7 @@ export default function SettingForm(datas: SettingFormProps) {
   const [isOpen, setIsOpen] = useState(false);
   const params = useParams();
   const router = useRouter();
+  const origin = useOrigin()
 
   const {
     handleSubmit,
@@ -71,7 +74,7 @@ export default function SettingForm(datas: SettingFormProps) {
 
       await axios.delete(`/api/store/${params.storeid}`);
       toast.success("Store deleted successfully");
-      router.refresh()
+      router.refresh();
       router.push("/");
     } catch (error) {
       toast.error("Error deleting");
@@ -82,8 +85,12 @@ export default function SettingForm(datas: SettingFormProps) {
 
   return (
     <>
-      <div className="flex items-center justify-between">
+      <Button className="bg-secondary text-white" onClick={() => router.back()}>
+        <MoveLeft />
+      </Button>
+      <div className="flex items-center justify-between mt-4">
         <Heading title="Settings" description="Manage store preferences" />
+
         <Button
           variant="destructive"
           className="bg-red-500 text-white hover:bg-red-700"
@@ -123,6 +130,10 @@ export default function SettingForm(datas: SettingFormProps) {
           )}
         </Button>
       </form>
+
+      <div className="mt-10">
+        <ApiAlert title="PUBLIC_API_URL" description={`${origin}/api/${params.storeid}`} variant="public" />
+      </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="bg-white">

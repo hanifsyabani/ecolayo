@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import {  useState } from "react";
+import {  useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { usePathname, useRouter } from "next/navigation";
@@ -36,17 +36,24 @@ export default function StoreModal() {
   const storedModal = useStoreModal();
   const pathname = usePathname();
 
+
+  // useEffect(() => {
+  //   if (!storedModal.isOpen) {
+  //     reset();
+  //   }
+  // }, [storedModal.isOpen]);
+
   async function onSubmit(data: FormFields) {
     try {
       setIsLoading(true);
 
       const response = await axios.post("/api/store", data);
       reset();
+      
       toast.success("Store created successfully");
-
       router.refresh()
-      router.push(`/admin/store/${response.data.id}`);
       storedModal.onClose();
+      router.push(`/admin/store/${response.data.id}`);
     } catch (error) {
       toast.error("Failed to submit");
     } finally {
