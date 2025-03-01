@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import { ClerkProvider, SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { ClerkProvider, } from "@clerk/nextjs";
 import { ModalProvider } from "@/provider/modal-provider";
-import Provider from "@/components/providers";
 import { Toaster } from "react-hot-toast";
+import NextTopLoader from 'nextjs-toploader';
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -26,6 +26,7 @@ export default function RootLayout({
       <html lang="en">
         <link rel="icon" href="/logo.png" />
         <body className={`${poppins.className} antialiased`}>
+        <NextTopLoader color="#2C742F" />
           <ModalProvider />
           {children}
           <Toaster

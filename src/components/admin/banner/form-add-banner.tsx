@@ -17,30 +17,37 @@ import { Separator } from "@/components/ui/separator";
 import useOrigin from "@/hooks/use-origin";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Store } from "@prisma/client";
+import { Banner } from "@prisma/client";
 import axios from "axios";
-import { MoveLeft, Save, Trash } from "lucide-react";
+import { MoveLeft,  Trash } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 
-interface SettingFormProps {
-  datas: Store;
+interface BannerFormProps {
+  datas: Banner;
 }
 
 const schema = z.object({
-  name: z.string().min(5),
+  label: z.string().min(5),
+  imageUrl: z.string().min(5),
 });
 type FormFields = z.infer<typeof schema>;
 
-export default function SettingForm(datas: SettingFormProps) {
+export default function FormAddBanner(datas: BannerFormProps) {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const params = useParams();
   const router = useRouter();
-  const origin = useOrigin()
+  const origin = useOrigin();
+
+  const title = datas ? "Edit Banner" : "Add Banner";
+  const toastMessage = datas
+    ? "Banner updated successfully"
+    : "Banner created successfully";
+  const action = datas ? "Save changes" : "Create Banner";
 
   const {
     handleSubmit,
@@ -49,7 +56,7 @@ export default function SettingForm(datas: SettingFormProps) {
   } = useForm<FormFields>({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: datas.datas.name,
+      // name: datas.datas.name,
     },
   });
 
@@ -57,10 +64,10 @@ export default function SettingForm(datas: SettingFormProps) {
     try {
       setIsLoadingForm(true);
 
-      await axios.patch(`/api/store/${params.storeid}`, data);
+      await axios.patch(`/api/store/${params.bannerid}`, data);
 
       router.refresh();
-      toast.success("Store updated successfully");
+      toast.success(toastMessage);
     } catch (error) {
       toast.error("Error updating");
     } finally {
@@ -72,7 +79,7 @@ export default function SettingForm(datas: SettingFormProps) {
     try {
       setIsLoadingForm(true);
 
-      await axios.delete(`/api/store/${params.storeid}`);
+      await axios.delete(`/api/store/${params.bannerid}`);
       toast.success("Store deleted successfully");
       router.refresh();
       router.push("/");
@@ -89,27 +96,39 @@ export default function SettingForm(datas: SettingFormProps) {
         <MoveLeft />
       </Button>
       <div className="flex items-center justify-between mt-4">
-        <Heading title="Settings" description="Manage store preferences" />
-
-        <Button
-          variant="destructive"
-          className="bg-red-500 text-white hover:bg-red-700"
-          onClick={() => setIsOpen(true)}
-        >
-          <Trash />
-        </Button>
+        <Heading title={title} description="Manage Banner for your store" />
+        {datas && (
+          <Button
+            variant="destructive"
+            className="bg-red-500 text-white hover:bg-red-700"
+            onClick={() => setIsOpen(true)}
+          >
+            <Trash />
+          </Button>
+        )}
       </div>
       <Separator />
-      <form className="mt-10" onSubmit={handleSubmit(onSubmit)}>
+      <form className="mt-10 space-y-4" onSubmit={handleSubmit(onSubmit)}>
         <div>
-          <Label htmlFor="name">Name Store</Label>
+          <Label htmlFor="label">Label Banner</Label>
           <Input
-            id="name"
-            {...register("name")}
+            id="label"
+            {...register("label")}
             className="border border-gray-800"
           />
-          {errors.name && (
-            <p className="text-red-500 text-sm">{errors.name.message}</p>
+          {errors.label && (
+            <p className="text-red-500 text-sm">{errors.label.message}</p>
+          )}
+        </div>
+        <div>
+          <Label htmlFor="imageUrl">Image URL</Label>
+          <Input
+            id="imageUrl"
+            {...register("imageUrl")}
+            className="border border-gray-800"
+          />
+          {errors.imageUrl && (
+            <p className="text-red-500 text-sm">{errors.imageUrl.message}</p>
           )}
         </div>
 
@@ -120,24 +139,9 @@ export default function SettingForm(datas: SettingFormProps) {
           )}
           disabled={isLoadingForm}
         >
-          {isLoadingForm ? (
-            <span className="spinner"></span>
-          ) : (
-            <>
-              <Save />
-              Save
-            </>
-          )}
+          {isLoadingForm ? <span className="spinner"></span> : action}
         </Button>
       </form>
-
-      <div className="mt-10">
-        <ApiAlert
-          title="PUBLIC_API_URL"
-          description={`${origin}/api/${params.storeid}`}
-          variant="public"
-        />
-      </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="bg-white">
