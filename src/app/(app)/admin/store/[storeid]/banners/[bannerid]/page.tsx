@@ -1,5 +1,6 @@
 import FormAddBanner from "@/components/admin/banner/form-add-banner";
 import db from "@/lib/db";
+import toast from "react-hot-toast";
 
 interface BannerPageProps {
   params: {
@@ -13,9 +14,8 @@ export default async function page(props: BannerPageProps) {
     },
   });
 
-
   return (
-    <div className="px-8 mt-6">
+    <div className="px-8 mt-6 ">
       <FormAddBanner datas={banner} />
     </div>
   );

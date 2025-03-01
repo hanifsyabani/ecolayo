@@ -19,15 +19,16 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Banner } from "@prisma/client";
 import axios from "axios";
-import { MoveLeft,  Trash } from "lucide-react";
+import { MoveLeft, Trash } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
+import UploadImage from "./upload-image";
 
 interface BannerFormProps {
-  datas: Banner;
+  datas: Banner | null;
 }
 
 const schema = z.object({
@@ -41,46 +42,57 @@ export default function FormAddBanner(datas: BannerFormProps) {
   const [isOpen, setIsOpen] = useState(false);
   const params = useParams();
   const router = useRouter();
-  const origin = useOrigin();
 
-  const title = datas ? "Edit Banner" : "Add Banner";
-  const toastMessage = datas
+  const isEditing = Boolean(datas.datas);
+  // console.log(isEditing);
+
+  const title = isEditing ? "Edit Banner" : "Add Banner";
+  const toastMessage = isEditing
     ? "Banner updated successfully"
     : "Banner created successfully";
-  const action = datas ? "Save changes" : "Create Banner";
+  const action = isEditing ? "Save changes" : "Create Banner";
 
   const {
     handleSubmit,
     register,
+    setValue,
+    getValues,
     formState: { errors },
   } = useForm<FormFields>({
     resolver: zodResolver(schema),
     defaultValues: {
-      // name: datas.datas.name,
+      label: datas.datas?.label || "",
+      imageUrl: datas.datas?.imageUrl || "",
     },
   });
 
   async function onSubmit(data: FormFields) {
     try {
       setIsLoadingForm(true);
-
-      await axios.patch(`/api/store/${params.bannerid}`, data);
+      if (isEditing) {
+        await axios.patch(
+          `/api/${params.storeid}/banner/${params.bannerid}`,
+          data
+        );
+      } else {
+        await axios.post(`/api/${params.storeid}/banner`, data);
+      }
 
       router.refresh();
       toast.success(toastMessage);
     } catch (error) {
-      toast.error("Error updating");
+      toast.error("Please check your data");
     } finally {
       setIsLoadingForm(false);
     }
   }
 
-  async function onDeleteStore() {
+  async function onDeleteBanner() {
     try {
       setIsLoadingForm(true);
 
-      await axios.delete(`/api/store/${params.bannerid}`);
-      toast.success("Store deleted successfully");
+      await axios.delete(`/api//${params.storeid}/banner/${params.bannerid}`);
+      toast.success("Banner deleted successfully");
       router.refresh();
       router.push("/");
     } catch (error) {
@@ -97,7 +109,7 @@ export default function FormAddBanner(datas: BannerFormProps) {
       </Button>
       <div className="flex items-center justify-between mt-4">
         <Heading title={title} description="Manage Banner for your store" />
-        {datas && (
+        {isEditing && (
           <Button
             variant="destructive"
             className="bg-red-500 text-white hover:bg-red-700"
@@ -108,39 +120,42 @@ export default function FormAddBanner(datas: BannerFormProps) {
         )}
       </div>
       <Separator />
-      <form className="mt-10 space-y-4" onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <Label htmlFor="label">Label Banner</Label>
-          <Input
-            id="label"
-            {...register("label")}
-            className="border border-gray-800"
-          />
-          {errors.label && (
-            <p className="text-red-500 text-sm">{errors.label.message}</p>
-          )}
+      <form className="mt-10 space-y-4 " onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex  gap-10">
+          <div className="w-1/2">
+            <Label htmlFor="label">Label Banner</Label>
+            <Input
+              id="label"
+              {...register("label")}
+              className="border border-gray-800"
+            />
+            {errors.label && (
+              <p className="text-red-500 text-sm">{errors.label.message}</p>
+            )}
+          </div>
+          <div>
+            <Label htmlFor="imageUrl">Image URL</Label>
+            <UploadImage
+              value={getValues("imageUrl") ? [getValues("imageUrl")] : []}
+              onChange={(urls) => setValue("imageUrl", urls)}
+              onRemove={() => setValue("imageUrl", "")}
+            />
+            {errors.imageUrl && (
+              <p className="text-red-500 text-sm">{errors.imageUrl.message}</p>
+            )}
+          </div>
         </div>
-        <div>
-          <Label htmlFor="imageUrl">Image URL</Label>
-          <Input
-            id="imageUrl"
-            {...register("imageUrl")}
-            className="border border-gray-800"
-          />
-          {errors.imageUrl && (
-            <p className="text-red-500 text-sm">{errors.imageUrl.message}</p>
-          )}
+        <div className="">
+          <Button
+            className={cn(
+              "bg-secondary text-white mt-4 ",
+              isLoadingForm && "cursor-not-allowed opacity-50"
+            )}
+            disabled={isLoadingForm}
+          >
+            {isLoadingForm ? <span className="spinner"></span> : action}
+          </Button>
         </div>
-
-        <Button
-          className={cn(
-            "bg-secondary text-white mt-4",
-            isLoadingForm && "cursor-not-allowed opacity-50"
-          )}
-          disabled={isLoadingForm}
-        >
-          {isLoadingForm ? <span className="spinner"></span> : action}
-        </Button>
       </form>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -159,7 +174,7 @@ export default function FormAddBanner(datas: BannerFormProps) {
             <Button variant={"outline"}>Cancel</Button>
             <Button
               className="bg-red-500 text-white hover:bg-red-700"
-              onClick={() => onDeleteStore()}
+              onClick={() => onDeleteBanner()}
               disabled={isLoadingForm}
             >
               {isLoadingForm ? (
