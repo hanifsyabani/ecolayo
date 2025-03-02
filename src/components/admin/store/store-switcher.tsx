@@ -60,7 +60,7 @@ export default function StoreSwicher({
           </Button>
         </PopoverTrigger>
 
-        <PopoverContent>
+        <PopoverContent className="bg-white">
           <Command>
             <CommandInput placeholder="Search store" />
             <CommandEmpty>No store found</CommandEmpty>

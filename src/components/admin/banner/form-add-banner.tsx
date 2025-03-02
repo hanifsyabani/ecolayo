@@ -1,6 +1,5 @@
 "use client";
 
-import ApiAlert from "@/components/ui/api-alert";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,7 +13,6 @@ import Heading from "@/components/ui/heading";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import useOrigin from "@/hooks/use-origin";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Banner } from "@prisma/client";
@@ -77,8 +75,8 @@ export default function FormAddBanner(datas: BannerFormProps) {
       } else {
         await axios.post(`/api/${params.storeid}/banner`, data);
       }
-
       router.refresh();
+      router.push(`/admin/store/${params.storeid}/banners`);
       toast.success(toastMessage);
     } catch (error) {
       toast.error("Please check your data");
