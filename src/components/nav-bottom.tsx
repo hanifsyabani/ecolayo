@@ -24,9 +24,12 @@ export default function NavBottom({ items }: { items: Store[] }) {
         <Link
           href={route.href}
           key={route.label}
-          className={cn(route.active ? "font-bold" : "", "px-4 py-2")}
+          className={cn(
+            route.active ? "font-bold" : "font-light",
+            "px-4 py-2 text-white hover:text-secondary"
+          )}
         >
-          <p className="text-sm text-white">{route.label}</p>
+          <p className="text-sm ">{route.label}</p>
         </Link>
       ))}
     </nav>

@@ -72,7 +72,9 @@ export async function DELETE(
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthenticated");
 
-    if(!params.bannerid) throw new Error("Banner ID must be provided");
+    console.log(params.storeid, " ",params.bannerid)
+
+    // if(!params.bannerid) throw new Error("Banner ID must be provided");
 
     const storeByUserId = await db.store.findFirst({
       where: {

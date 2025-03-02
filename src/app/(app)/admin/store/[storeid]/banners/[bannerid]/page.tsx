@@ -1,16 +1,14 @@
 import FormAddBanner from "@/components/admin/banner/form-add-banner";
 import db from "@/lib/db";
-import toast from "react-hot-toast";
 
-interface BannerPageProps {
-  params: {
-    bannerid: string;
-  };
-}
-export default async function page(props: BannerPageProps) {
+export default async function page({
+  params,
+}: {
+  params: { bannerid: string };
+}) {
   const banner = await db.banner.findUnique({
     where: {
-      id: props.params.bannerid,
+      id: params.bannerid,
     },
   });
 

@@ -152,7 +152,7 @@ export default function SettingForm(datas: SettingFormProps) {
           </DialogHeader>
 
           <DialogFooter>
-            <Button variant={"outline"}>Cancel</Button>
+            <Button variant={"outline"} onClick={() => setIsOpen(false)}>Cancel</Button>
             <Button
               className="bg-red-500 text-white hover:bg-red-700"
               onClick={() => onDeleteStore()}

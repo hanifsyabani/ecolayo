@@ -6,7 +6,7 @@ import React from "react";
 
 export default async function DashboardLayout({
   children,
-  params,
+  params
 }: {
   children: React.ReactNode;
   params: { storeid: string };
@@ -15,7 +15,8 @@ export default async function DashboardLayout({
 
   if (!userId) redirect("sign-in");
 
-  // console.log("params id",params.storeid);
+  // console.log("params id",params.storeid)
+  
 
   const store = await db.store.findFirst({
     where: {

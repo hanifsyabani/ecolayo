@@ -89,7 +89,7 @@ export default function FormAddBanner(datas: BannerFormProps) {
     try {
       setIsLoadingForm(true);
 
-      await axios.delete(`/api//${params.storeid}/banner/${params.bannerid}`);
+      await axios.delete(`/api/${params.storeid}/banner/${params.bannerid}`);
       toast.success("Banner deleted successfully");
       router.refresh();
       router.push("/");
@@ -132,7 +132,7 @@ export default function FormAddBanner(datas: BannerFormProps) {
             )}
           </div>
           <div>
-            <Label htmlFor="imageUrl">Image URL</Label>
+            <Label htmlFor="imageUrl">Image</Label>
             <UploadImage
               value={getValues("imageUrl") ? [getValues("imageUrl")] : []}
               onChange={(urls) => setValue("imageUrl", urls)}
@@ -160,7 +160,7 @@ export default function FormAddBanner(datas: BannerFormProps) {
         <DialogContent className="bg-white">
           <DialogHeader>
             <DialogTitle>
-              Are you sure you want to delete the store?
+              Are you sure you want to delete the banner?
             </DialogTitle>
             <DialogDescription>
               This action cannot be undone. This will permanently delete your
@@ -169,7 +169,7 @@ export default function FormAddBanner(datas: BannerFormProps) {
           </DialogHeader>
 
           <DialogFooter>
-            <Button variant={"outline"}>Cancel</Button>
+            <Button variant={"outline"} onClick={() => setIsOpen(false)}>Cancel</Button>
             <Button
               className="bg-red-500 text-white hover:bg-red-700"
               onClick={() => onDeleteBanner()}
