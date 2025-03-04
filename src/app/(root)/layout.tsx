@@ -11,6 +11,7 @@ export default async function SetupLayout({
 }) {
   const { userId } = await auth();
 
+  console.log(userId)
   if (!userId) redirect("/sign-in");
 
   const store = await db.store.findFirst({

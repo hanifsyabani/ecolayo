@@ -1,7 +1,7 @@
 "use client";
 
 import toast from "react-hot-toast";
-import { BannerColumn } from "./columns-banner";
+import {  CategoryColumn } from "./columns-category";
 import { Copy, Edit, Trash } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -18,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 interface CellActionProps {
-  data: BannerColumn;
+  data: CategoryColumn;
 }
 
 export default function CellAction(data: CellActionProps) {
@@ -32,7 +32,7 @@ export default function CellAction(data: CellActionProps) {
     toast.success("Banner Successfully copied");
   }
 
-  async function onDeleteBanner(id: string) {
+  async function onDeleteCategory(id: string) {
     try {
       setIsLoadingForm(true);
 
@@ -88,7 +88,7 @@ export default function CellAction(data: CellActionProps) {
             </Button>
             <Button
               className="bg-red-500 text-white hover:bg-red-700"
-              onClick={() => onDeleteBanner(data.data.id)}
+              onClick={() => onDeleteCategory(data.data.id)}
               disabled={isLoadingForm}
             >
               {isLoadingForm ? (

@@ -14,22 +14,39 @@ datasource db {
 }
 
 model Store {
-  id        String   @id @default(uuid())
-  name      String
-  userId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  banners   Banner[] @relation("StoreToBanner")
+  id         String     @id @default(uuid())
+  name       String
+  userId     String
+  banners    Banner[]   @relation("StoreToBanner")
+  categories Category[] @relation("StoreToCategory")
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
 
 model Banner {
-  id        String   @id @default(uuid())
-  storeid   String
-  store     Store    @relation("StoreToBanner", fields: [storeid], references: [id])
-  label     String
-  imageUrl  String
+  id         String     @id @default(uuid())
+  storeid    String
+  store      Store      @relation("StoreToBanner", fields: [storeid], references: [id])
+  label      String
+  imageUrl   String
+  categories Category[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@index([storeid])
+}
+
+model Category {
+  id       String @id @default(uuid())
+  storeid  String
+  store    Store  @relation("StoreToCategory", fields: [storeid], references: [id])
+  bannerid String
+  banner   Banner @relation(fields: [bannerid], references: [id])
+  name     String
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([storeid])
+  @@index([bannerid])
 }

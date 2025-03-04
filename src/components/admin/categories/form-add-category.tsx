@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Banner, Category } from "@prisma/client";
+import { Banner } from "@prisma/client";
 import axios from "axios";
 import { MoveLeft, Trash } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
@@ -25,17 +25,17 @@ import toast from "react-hot-toast";
 import { z } from "zod";
 import UploadImage from "./upload-image";
 
-interface CategoryFormProps {
-  datas: Category | null;
+interface BannerFormProps {
+  datas: Banner | null;
 }
 
 const schema = z.object({
-  name: z.string().min(5),
-  bannerid: z.string().min(5),
+  label: z.string().min(5),
+  imageUrl: z.string().min(5),
 });
 type FormFields = z.infer<typeof schema>;
 
-export default function FormAddBanner(datas: CategoryFormProps) {
+export default function FormAddCategory(datas: BannerFormProps) {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const params = useParams();
@@ -44,11 +44,11 @@ export default function FormAddBanner(datas: CategoryFormProps) {
   const isEditing = Boolean(datas.datas);
   // console.log(isEditing);
 
-  const title = isEditing ? "Edit Category" : "Add Category";
+  const title = isEditing ? "Edit Banner" : "Add Banner";
   const toastMessage = isEditing
-    ? "Category updated successfully"
-    : "Category created successfully";
-  const action = isEditing ? "Save changes" : "Create Category";
+    ? "Banner updated successfully"
+    : "Banner created successfully";
+  const action = isEditing ? "Save changes" : "Create Banner";
 
   const {
     handleSubmit,
@@ -59,8 +59,8 @@ export default function FormAddBanner(datas: CategoryFormProps) {
   } = useForm<FormFields>({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: datas.datas?.name || "",
-      bannerid: datas.datas?.bannerid || "",
+      label: datas.datas?.label || "",
+      imageUrl: datas.datas?.imageUrl || "",
     },
   });
 
@@ -69,14 +69,14 @@ export default function FormAddBanner(datas: CategoryFormProps) {
       setIsLoadingForm(true);
       if (isEditing) {
         await axios.patch(
-          `/api/${params.storeid}/category/${params.categoryid}`,
+          `/api/${params.storeid}/banner/${params.bannerid}`,
           data
         );
       } else {
-        await axios.post(`/api/${params.storeid}/category`, data);
+        await axios.post(`/api/${params.storeid}/banner`, data);
       }
       router.refresh();
-      router.push(`/admin/store/${params.storeid}/categories`);
+      router.push(`/admin/store/${params.storeid}/banners`);
       toast.success(toastMessage);
     } catch (error) {
       toast.error("Please check your data");
@@ -89,8 +89,8 @@ export default function FormAddBanner(datas: CategoryFormProps) {
     try {
       setIsLoadingForm(true);
 
-      await axios.delete(`/api/${params.storeid}/category/${params.categoryid}`);
-      toast.success("Category deleted successfully");
+      await axios.delete(`/api/${params.storeid}/banner/${params.bannerid}`);
+      toast.success("Banner deleted successfully");
       router.refresh();
       router.push("/");
     } catch (error) {
@@ -104,7 +104,7 @@ export default function FormAddBanner(datas: CategoryFormProps) {
     <>
       <Button
         className="bg-secondary text-white"
-        onClick={() => router.push(`/admin/store/${params.storeid}/categories`)}
+        onClick={() => router.push(`/admin/store/${params.storeid}/banners`)}
       >
         <MoveLeft />
       </Button>
@@ -126,25 +126,24 @@ export default function FormAddBanner(datas: CategoryFormProps) {
           <div className="w-1/2">
             <Label htmlFor="label">Label Banner</Label>
             <Input
-              id="name"
-              {...register("name")}
+              id="label"
+              {...register("label")}
               className="border border-gray-800"
               placeholder="Add label banner"
             />
-            {errors.name && (
-              <p className="text-red-500 text-sm">{errors.name.message}</p>
+            {errors.label && (
+              <p className="text-red-500 text-sm">{errors.label.message}</p>
             )}
           </div>
           <div>
             <Label htmlFor="imageUrl">Image</Label>
-            <Input
-              id="bannerid"
-              {...register("bannerid")}
-              className="border border-gray-800"
-              placeholder="Add banner id"
+            <UploadImage
+              value={getValues("imageUrl") ? [getValues("imageUrl")] : []}
+              onChange={(urls) => setValue("imageUrl", urls)}
+              onRemove={() => setValue("imageUrl", "")}
             />
-            {errors.name && (
-              <p className="text-red-500 text-sm">{errors.name.message}</p>
+            {errors.imageUrl && (
+              <p className="text-red-500 text-sm">{errors.imageUrl.message}</p>
             )}
           </div>
         </div>

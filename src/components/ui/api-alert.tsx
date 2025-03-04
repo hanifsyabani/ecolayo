@@ -38,7 +38,7 @@ export default function ApiAlert({
         <Server size={20} />
         <AlertTitle className="flex gap-2 items-center">
           {title}
-          <Badge variant={variantMap[variant]} className="text-white bg-gray-600">{textMap[variant]}</Badge>
+          <Badge variant={variantMap[variant]} className="text-white">{textMap[variant]}</Badge>
         </AlertTitle>
         <AlertDescription className="flex justify-between items-center">
           <code>{description}</code>

@@ -1,5 +1,5 @@
 import db from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser, getAuth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 export async function POST(
@@ -44,7 +44,9 @@ export async function GET(
 ) {
   try {
     const { userId } = await auth();
+    // const user = await currentUser()
 
+    console.log("user id", userId);
     if (!userId) throw new Error("Unauthenticated");
 
     const storeByUserId = await db.store.findFirst({
@@ -64,6 +66,7 @@ export async function GET(
 
     return NextResponse.json(banner);
   } catch (error: any) {
+    console.log(error);
     throw new Error(error);
   }
 }
