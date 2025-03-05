@@ -12,10 +12,17 @@ import {
 import Heading from "@/components/ui/heading";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Banner } from "@prisma/client";
+import { Banner, Category } from "@prisma/client";
 import axios from "axios";
 import { MoveLeft, Trash } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
@@ -23,19 +30,19 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
-import UploadImage from "./upload-image";
 
-interface BannerFormProps {
-  datas: Banner | null;
+interface CategoryFormProps {
+  datas: Category | null;
+  banners: Banner[] | null;
 }
 
 const schema = z.object({
-  label: z.string().min(5),
-  imageUrl: z.string().min(5),
+  name: z.string().min(5),
+  bannerid: z.string().min(5),
 });
 type FormFields = z.infer<typeof schema>;
 
-export default function FormAddCategory(datas: BannerFormProps) {
+export default function FormAddCategory(datas: CategoryFormProps) {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const params = useParams();
@@ -44,23 +51,22 @@ export default function FormAddCategory(datas: BannerFormProps) {
   const isEditing = Boolean(datas.datas);
   // console.log(isEditing);
 
-  const title = isEditing ? "Edit Banner" : "Add Banner";
+  const title = isEditing ? "Edit Category" : "Add Category";
   const toastMessage = isEditing
-    ? "Banner updated successfully"
-    : "Banner created successfully";
-  const action = isEditing ? "Save changes" : "Create Banner";
+    ? "Category updated successfully"
+    : "Category created successfully";
+  const action = isEditing ? "Save changes" : "Create Category";
 
   const {
     handleSubmit,
     register,
     setValue,
-    getValues,
     formState: { errors },
   } = useForm<FormFields>({
     resolver: zodResolver(schema),
     defaultValues: {
-      label: datas.datas?.label || "",
-      imageUrl: datas.datas?.imageUrl || "",
+      name: datas.datas?.name || "",
+      bannerid: datas.datas?.bannerid || "",
     },
   });
 
@@ -69,14 +75,14 @@ export default function FormAddCategory(datas: BannerFormProps) {
       setIsLoadingForm(true);
       if (isEditing) {
         await axios.patch(
-          `/api/${params.storeid}/banner/${params.bannerid}`,
+          `/api/${params.storeid}/category/${params.categoryid}`,
           data
         );
       } else {
-        await axios.post(`/api/${params.storeid}/banner`, data);
+        await axios.post(`/api/${params.storeid}/categories`, data);
       }
       router.refresh();
-      router.push(`/admin/store/${params.storeid}/banners`);
+      router.push(`/admin/store/${params.storeid}/categories`);
       toast.success(toastMessage);
     } catch (error) {
       toast.error("Please check your data");
@@ -89,8 +95,10 @@ export default function FormAddCategory(datas: BannerFormProps) {
     try {
       setIsLoadingForm(true);
 
-      await axios.delete(`/api/${params.storeid}/banner/${params.bannerid}`);
-      toast.success("Banner deleted successfully");
+      await axios.delete(
+        `/api/${params.storeid}/category/${params.categoryid}`
+      );
+      toast.success("Category deleted successfully");
       router.refresh();
       router.push("/");
     } catch (error) {
@@ -104,12 +112,12 @@ export default function FormAddCategory(datas: BannerFormProps) {
     <>
       <Button
         className="bg-secondary text-white"
-        onClick={() => router.push(`/admin/store/${params.storeid}/banners`)}
+        onClick={() => router.push(`/admin/store/${params.storeid}/categories`)}
       >
         <MoveLeft />
       </Button>
       <div className="flex items-center justify-between mt-4">
-        <Heading title={title} description="Manage Banner for your store" />
+        <Heading title={title} description="Manage Categories for your store" />
         {isEditing && (
           <Button
             variant="destructive"
@@ -124,26 +132,33 @@ export default function FormAddCategory(datas: BannerFormProps) {
       <form className="mt-10 space-y-4 " onSubmit={handleSubmit(onSubmit)}>
         <div className="flex  gap-10">
           <div className="w-1/2">
-            <Label htmlFor="label">Label Banner</Label>
+            <Label htmlFor="name">Name Category</Label>
             <Input
-              id="label"
-              {...register("label")}
+              id="name"
+              {...register("name")}
               className="border border-gray-800"
-              placeholder="Add label banner"
+              placeholder="Add name category"
             />
-            {errors.label && (
-              <p className="text-red-500 text-sm">{errors.label.message}</p>
+            {errors.name && (
+              <p className="text-red-500 text-sm">{errors.name.message}</p>
             )}
           </div>
           <div>
-            <Label htmlFor="imageUrl">Image</Label>
-            <UploadImage
-              value={getValues("imageUrl") ? [getValues("imageUrl")] : []}
-              onChange={(urls) => setValue("imageUrl", urls)}
-              onRemove={() => setValue("imageUrl", "")}
-            />
-            {errors.imageUrl && (
-              <p className="text-red-500 text-sm">{errors.imageUrl.message}</p>
+            <Label htmlFor="bannerid">Banner</Label>
+            <Select onValueChange={(value) => setValue("bannerid", value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a banner" />
+              </SelectTrigger>
+              <SelectContent className="bg-white">
+                {datas.banners?.map((banner) => (
+                  <SelectItem key={banner.id} value={banner.id} className="hover:bg-gray-200 cursor-pointer">
+                    {banner.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {errors.bannerid && (
+              <p className="text-red-500 text-sm">{errors.bannerid.message}</p>
             )}
           </div>
         </div>
@@ -164,7 +179,7 @@ export default function FormAddCategory(datas: BannerFormProps) {
         <DialogContent className="bg-white">
           <DialogHeader>
             <DialogTitle>
-              Are you sure you want to delete the banner?
+              Are you sure you want to delete the category?
             </DialogTitle>
             <DialogDescription>
               This action cannot be undone. This will permanently delete your
