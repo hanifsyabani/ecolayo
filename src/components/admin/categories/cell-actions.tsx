@@ -21,7 +21,7 @@ interface CellActionProps {
   data: CategoryColumn;
 }
 
-export default function CellAction(data: CellActionProps) {
+export default function CellActionCategory(data: CellActionProps) {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const params = useParams();
@@ -29,17 +29,17 @@ export default function CellAction(data: CellActionProps) {
 
   function onCopy(id: string) {
     navigator.clipboard.writeText(id);
-    toast.success("Banner Successfully copied");
+    toast.success("Category Successfully copied");
   }
 
   async function onDeleteCategory(id: string) {
     try {
       setIsLoadingForm(true);
 
-      await axios.delete(`/api/${params.storeid}/banner/${id}`);
-      toast.success("Banner deleted successfully");
+      await axios.delete(`/api/${params.storeid}/categories/${id}`);
+      toast.success("Category deleted successfully");
       router.refresh();
-      router.push(`/admin/store/${params.storeid}/banners`);
+      router.push(`/admin/store/${params.storeid}/categories`);
     } catch (error) {
       toast.error("Error deleting");
     } finally {
@@ -57,7 +57,7 @@ export default function CellAction(data: CellActionProps) {
           <Copy size={15} />
         </div>
         <Link
-          href={`/admin/store/${params.storeid}/banners/${data.data.id}`}
+          href={`/admin/store/${params.storeid}/categories/${data.data.id}`}
           className="bg-secondary p-1 text-white rounded-md cursor-pointer"
         >
           <Edit size={15} />

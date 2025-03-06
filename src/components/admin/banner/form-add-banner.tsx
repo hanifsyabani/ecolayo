@@ -23,7 +23,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
-import UploadImage from "../categories/upload-image";
+import UploadImage from "./upload-image";
 
 interface BannerFormProps {
   datas: Banner | null;

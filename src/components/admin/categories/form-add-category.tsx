@@ -75,7 +75,7 @@ export default function FormAddCategory(datas: CategoryFormProps) {
       setIsLoadingForm(true);
       if (isEditing) {
         await axios.patch(
-          `/api/${params.storeid}/category/${params.categoryid}`,
+          `/api/${params.storeid}/categories/${params.categoryid}`,
           data
         );
       } else {
@@ -145,7 +145,7 @@ export default function FormAddCategory(datas: CategoryFormProps) {
           </div>
           <div>
             <Label htmlFor="bannerid">Banner</Label>
-            <Select onValueChange={(value) => setValue("bannerid", value)}>
+            <Select onValueChange={(value) => setValue("bannerid", value)} value={datas.datas?.bannerid}>
               <SelectTrigger>
                 <SelectValue placeholder="Select a banner" />
               </SelectTrigger>
