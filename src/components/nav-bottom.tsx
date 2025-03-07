@@ -21,6 +21,11 @@ export default function NavBottom({ items }: { items: Store[] }) {
       href: `/admin/store/${params.storeid}/categories`,
       active: pathname === `/admin/store/${params.storeid}/categories`,
     },
+    {
+      label: "Products",
+      href: `/admin/store/${params.storeid}/products`,
+      active: pathname === `/admin/store/${params.storeid}/products`,
+    },
   ];
   return (
     <nav className="bg-gray-800 w-full flex items-center gap-8">

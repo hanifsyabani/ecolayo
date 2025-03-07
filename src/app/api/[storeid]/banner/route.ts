@@ -26,9 +26,9 @@ export async function POST(
 
     const banner = await db.banner.create({
       data: {
+        storeid: params.storeid,
         label,
         imageUrl,
-        storeid: params.storeid,
       },
     });
 
