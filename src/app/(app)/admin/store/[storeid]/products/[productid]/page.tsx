@@ -20,10 +20,17 @@ export default async function page({
       storeid: params.storeid,
     },
   });
+
+  const safeProduct = product
+  ? {
+      ...product,
+      price: product.price.toNumber(), // ✅ Kirim sebagai number
+    }
+  : null;
   
   return (
-    <div className="px-8 mt-6 ">
-      <FormAddProduct datas={product} categories={categories} />
+    <div className="px-8 mt-6 pb-8 ">
+      <FormAddProduct datas={safeProduct} categories={categories} />
     </div>
   );
 }

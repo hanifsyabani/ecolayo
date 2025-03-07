@@ -24,7 +24,7 @@ export async function POST(
 
     if (!storeByUserId) throw new Error("Store not found");
 
-    const banner = await db.category.create({
+    const category = await db.category.create({
       data: {
         name,
         bannerid,
@@ -32,7 +32,7 @@ export async function POST(
       },
     });
 
-    return NextResponse.json(banner);
+    return NextResponse.json(category);
   } catch (error: any) {
     throw new Error(error);
   }

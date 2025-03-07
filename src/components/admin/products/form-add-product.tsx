@@ -35,7 +35,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 interface ProductFormProps {
   datas:
-    | (Product & {
+    | (Omit<Product, "price"> & {
+        price: number; // Ganti Decimal jadi number
         images: Images[];
       })
     | null;
@@ -43,10 +44,10 @@ interface ProductFormProps {
 }
 
 const schema = z.object({
-  name: z.string().min(5),
-  price: z.coerce.number().min(1),
-  images: z.object({ url: z.string() }).array(),
-  categoryid: z.string(),
+  name: z.string().min(5, { message: "Name must be at least 5 characters" }),
+  price: z.coerce.number().min(1, { message: "Price must be at least 1" }),
+  images: z.object({ url: z.string() }).array().min(1, {message: "At least one image is required"}),
+  categoryid: z.string().min(1, { message: "Category must be selected" }),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
 });
@@ -71,6 +72,7 @@ export default function FormAddProduct(datas: ProductFormProps) {
     handleSubmit,
     register,
     setValue,
+    watch,
     getValues,
     formState: { errors },
   } = useForm<FormFields>({
@@ -172,7 +174,7 @@ export default function FormAddProduct(datas: ProductFormProps) {
             </div>
             <div>
               <Label>Category</Label>
-              <Select>
+              <Select onValueChange={(value) => setValue("categoryid", value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
@@ -188,13 +190,18 @@ export default function FormAddProduct(datas: ProductFormProps) {
                   ))}
                 </SelectContent>
               </Select>
+              {errors.categoryid && (
+                <p className="text-red-500 text-sm">
+                  {errors.categoryid.message}
+                </p>
+              )}
             </div>
             <div className="flex items-center gap-10">
               <div>
                 <Label>Featured</Label>
                 <div className="flex  items-center gap-2">
                   <Checkbox
-                    checked={getValues("isFeatured")}
+                    checked={watch("isFeatured")}
                     onCheckedChange={(checked) =>
                       setValue("isFeatured", checked === true)
                     }
@@ -208,7 +215,7 @@ export default function FormAddProduct(datas: ProductFormProps) {
                 <Label>Archived</Label>
                 <div className="flex  items-center gap-2">
                   <Checkbox
-                    checked={getValues("isArchived")}
+                    checked={watch("isArchived")}
                     onCheckedChange={(checked) =>
                       setValue("isArchived", checked === true)
                     }
@@ -245,6 +252,9 @@ export default function FormAddProduct(datas: ProductFormProps) {
                 )
               }
             />
+             {errors.images && (
+                <p className="text-red-500 text-sm">{errors.images.message}</p>
+              )}
           </div>
         </div>
         <div className="">

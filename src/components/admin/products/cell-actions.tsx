@@ -1,7 +1,6 @@
 "use client";
 
 import toast from "react-hot-toast";
-import {  CategoryColumn } from "./columns-products";
 import { Copy, Edit, Trash } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -16,9 +15,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { ProductColumn } from "./columns-products";
 
 interface CellActionProps {
-  data: CategoryColumn;
+  data: ProductColumn;
 }
 
 export default function CellActionCategory(data: CellActionProps) {
@@ -29,17 +29,17 @@ export default function CellActionCategory(data: CellActionProps) {
 
   function onCopy(id: string) {
     navigator.clipboard.writeText(id);
-    toast.success("Category Successfully copied");
+    toast.success("Product Successfully copied");
   }
 
-  async function onDeleteCategory(id: string) {
+  async function onDeleteProduct(id: string) {
     try {
       setIsLoadingForm(true);
 
-      await axios.delete(`/api/${params.storeid}/categories/${id}`);
-      toast.success("Category deleted successfully");
+      await axios.delete(`/api/${params.storeid}/products/${id}`);
+      toast.success("Product deleted successfully");
       router.refresh();
-      router.push(`/admin/store/${params.storeid}/categories`);
+      router.push(`/admin/store/${params.storeid}/products`);
     } catch (error) {
       toast.error("Error deleting");
     } finally {
@@ -57,7 +57,7 @@ export default function CellActionCategory(data: CellActionProps) {
           <Copy size={15} />
         </div>
         <Link
-          href={`/admin/store/${params.storeid}/categories/${data.data.id}`}
+          href={`/admin/store/${params.storeid}/products/${data.data.id}`}
           className="bg-secondary p-1 text-white rounded-md cursor-pointer"
         >
           <Edit size={15} />
@@ -88,7 +88,7 @@ export default function CellActionCategory(data: CellActionProps) {
             </Button>
             <Button
               className="bg-red-500 text-white hover:bg-red-700"
-              onClick={() => onDeleteCategory(data.data.id)}
+              onClick={() => onDeleteProduct(data.data.id)}
               disabled={isLoadingForm}
             >
               {isLoadingForm ? (
