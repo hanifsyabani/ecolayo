@@ -47,7 +47,7 @@ export async function PATCH(
 
     if (!storeByUserId) throw new Error("Store not found");
 
-    const banner = await db.category.updateMany({
+    const category = await db.category.update({
       where: {
         id: params.categoryid,
       },
@@ -58,7 +58,7 @@ export async function PATCH(
       },
     });
 
-    return NextResponse.json(banner);
+    return NextResponse.json(category);
   } catch (error: any) {
     throw new Error(error);
   }
@@ -85,7 +85,7 @@ export async function DELETE(
 
     if (!storeByUserId) throw new Error("Store not found");
 
-    const banner = await db.category.deleteMany({
+    const banner = await db.category.delete({
       where: {
         id: params.categoryid,
       },

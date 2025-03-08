@@ -47,7 +47,7 @@ export async function PATCH(
 
     if (!storeByUserId) throw new Error("Store not found");
 
-    const banner = await db.banner.updateMany({
+    const banner = await db.banner.update({
       where: {
         id: params.bannerid,
       },
@@ -85,7 +85,7 @@ export async function DELETE(
 
     if (!storeByUserId) throw new Error("Store not found");
 
-    const banner = await db.banner.deleteMany({
+    const banner = await db.banner.delete({
       where: {
         id: params.bannerid,
       },

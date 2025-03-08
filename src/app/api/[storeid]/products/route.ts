@@ -13,8 +13,9 @@ export async function POST(
 
     if (!userId) throw new Error("Unauthenticated");
     if (!name) throw new Error("Name must be provided");
-    if (!categoryid) throw new Error("Image URL must be provided");
+    if (!categoryid) throw new Error("category must be provided");
     if(!price) throw new Error("Price must be provided");
+    if (!images || !images.length) throw new Error("Images must be provided");
 
 
     const storeByUserId = await db.store.findFirst({
@@ -54,7 +55,12 @@ export async function GET(
 ) {
   try {
     const { userId } = await auth();
-    // const user = await currentUser()
+
+    // untuk filter
+    const {searchParams} = new URL(req.url)
+    const categoryid = searchParams.get("categoryid") || undefined;
+    const isFeatured = searchParams.get("isFeatured");
+
 
     console.log("user id", userId);
     if (!userId) throw new Error("Unauthenticated");
@@ -71,7 +77,17 @@ export async function GET(
     const product = await db.product.findMany({
       where: {
         storeid: params.storeid,
+        categoryid,
+        isFeatured: isFeatured ? true : undefined,
+        isArchived: false,
       },
+      include:{
+        images: true,
+        category: true
+      },
+      orderBy:{
+        createdAt: 'desc'
+      }
     });
 
     return NextResponse.json(product);
