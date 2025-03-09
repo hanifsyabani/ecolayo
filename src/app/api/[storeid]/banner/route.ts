@@ -1,5 +1,6 @@
 import db from "@/lib/db";
 import { auth, currentUser, getAuth } from "@clerk/nextjs/server";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function POST(
@@ -7,7 +8,8 @@ export async function POST(
   { params }: { params: { storeid: string } }
 ) {
   try {
-    const { userId } = await auth();
+    const session = await getServerSession();
+    const userId = session?.user.id;
 
     const { label, imageUrl } = await req.json();
 

@@ -8,7 +8,7 @@ export default function Page() {
 
   useEffect(() => {
     onOpen();
-  }, []); // Modal hanya terbuka sekali saat pertama kali load halaman
+  }, []); 
 
   return null;
 }

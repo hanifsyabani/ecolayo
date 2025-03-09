@@ -1,5 +1,6 @@
 import db from "@/lib/db";
 import { auth} from "@clerk/nextjs/server";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function POST(
@@ -7,9 +8,10 @@ export async function POST(
   { params }: { params: { storeid: string } }
 ) {
   try {
-    const { userId } = await auth();
+    const session = await getServerSession();
+    const userId = session?.user.id;
 
-    const { name, bannerid} = await req.json();
+    const { name, bannerid } = await req.json();
 
     if (!userId) throw new Error("Unauthenticated");
     if (!name) throw new Error("Name must be provided");

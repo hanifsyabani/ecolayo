@@ -1,5 +1,6 @@
 import db from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -10,8 +11,7 @@ export async function GET(
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthenticated");
 
-    if(!params.categoryid) throw new Error("Category ID must be provided");
-
+    if (!params.categoryid) throw new Error("Category ID must be provided");
 
     const category = await db.category.findUnique({
       where: {
@@ -27,10 +27,11 @@ export async function GET(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { categoryid: string, storeid: string } }
+  { params }: { params: { categoryid: string; storeid: string } }
 ) {
   try {
-    const { userId } = await auth();
+    const session = await getServerSession();
+    const userId = session?.user.id;
     if (!userId) throw new Error("Unauthenticated");
 
     const { name, bannerid } = await req.json();

@@ -1,32 +1,26 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+import { withAuth } from "next-auth/middleware";
 
-const isPublicRoute = createRouteMatcher([
-  "/sign-in(.*)",
-  "/sign-up(.*)",
-  "/api/:path*",
-]);
+export default withAuth(
+  function middleware(req) {
+    const { pathname } = req.nextUrl;
+    const userRole = req.nextauth.token?.role;
 
-export default clerkMiddleware(async (auth, req) => {
-  const { userId, sessionClaims } = await auth();
-
-  if (!isPublicRoute(req)) {
-    if (!userId) {
-      return Response.redirect("/sign-in");
+    // Proteksi akses ke halaman admin (hanya role "admin" yang bisa)
+    if (pathname.startsWith("/admin") && userRole !== "admin") {
+      return NextResponse.redirect(new URL("/", req.url));
     }
 
-    // Cek apakah sesi masih berlaku berdasarkan waktu kedaluwarsa (exp)
-    const sessionExpiry = sessionClaims?.exp;
-    const currentTime = Math.floor(Date.now() / 1000); // Waktu sekarang dalam detik
-
-    if (sessionExpiry && sessionExpiry < currentTime) {
-      return Response.redirect("/sign-in");
-    }
+    return NextResponse.next();
+  },
+  {
+    callbacks: {
+      authorized: ({ token }) => !!token, // Hanya lanjut jika token ada (user login)
+    },
   }
-});
+);
 
+// Terapkan middleware pada path yang butuh proteksi
 export const config = {
-  matcher: [
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    "/(api|trpc)(.*)",
-  ],
+  matcher: ["/user/:path*", "/admin/:path*"],
 };

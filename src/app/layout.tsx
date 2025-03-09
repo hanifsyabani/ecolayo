@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import { ClerkProvider, } from "@clerk/nextjs";
 import { ModalProvider } from "@/provider/modal-provider";
 import { Toaster } from "react-hot-toast";
-import NextTopLoader from 'nextjs-toploader';
+import NextTopLoader from "nextjs-toploader";
+import { SessionProvider } from "next-auth/react";
+import SessionProviderWrapper from "@/components/SessionProvider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -22,11 +23,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
       <html lang="en">
         <link rel="icon" href="/logo.png" />
         <body className={`${poppins.className} antialiased`}>
-        <NextTopLoader color="#2C742F" />
+          <SessionProviderWrapper>
+
+          <NextTopLoader color="#2C742F" />
           <ModalProvider />
           {children}
           <Toaster
@@ -49,8 +51,9 @@ export default function RootLayout({
               },
             }}
           />
+          </SessionProviderWrapper>
+
         </body>
       </html>
-    </ClerkProvider>
   );
 }

@@ -1,5 +1,6 @@
 import db from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -16,10 +17,10 @@ export async function GET(
       where: {
         id: params.productid,
       },
-      include:{
-        images:true,
-        category:true
-      }
+      include: {
+        images: true,
+        category: true,
+      },
     });
 
     return NextResponse.json(product);
@@ -33,7 +34,8 @@ export async function PATCH(
   { params }: { params: { productid: string; storeid: string } }
 ) {
   try {
-    const { userId } = await auth();
+    const session = await getServerSession();
+    const userId = session?.user.id;
     if (!userId) throw new Error("Unauthenticated");
 
     const { name, price, images, categoryid, isFeatured, isArchived } =
@@ -43,7 +45,6 @@ export async function PATCH(
     if (!categoryid) throw new Error("Image URL must be provided");
     if (!price) throw new Error("Price must be provided");
     if (!images || !images.length) throw new Error("Images must be provided");
-    
 
     const storeByUserId = await db.store.findFirst({
       where: {
@@ -75,14 +76,14 @@ export async function PATCH(
       where: {
         id: params.productid,
       },
-      data:{
+      data: {
         images: {
           createMany: {
             data: [...images.map((image: { url: string }) => image)],
           },
-        }, 
-      }
-    })
+        },
+      },
+    });
 
     return NextResponse.json(product);
   } catch (error: any) {

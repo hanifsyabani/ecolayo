@@ -1,5 +1,6 @@
 import db from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -10,8 +11,7 @@ export async function GET(
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthenticated");
 
-    if(!params.bannerid) throw new Error("Banner ID must be provided");
-
+    if (!params.bannerid) throw new Error("Banner ID must be provided");
 
     const banner = await db.banner.findUnique({
       where: {
@@ -27,7 +27,7 @@ export async function GET(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { bannerid: string, storeid: string } }
+  { params }: { params: { bannerid: string; storeid: string } }
 ) {
   try {
     const { userId } = await auth();
@@ -66,13 +66,14 @@ export async function PATCH(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { storeid: string, bannerid: string } }
+  { params }: { params: { storeid: string; bannerid: string } }
 ) {
   try {
-    const { userId } = await auth();
+    const session = await getServerSession();
+    const userId = session?.user.id;
     if (!userId) throw new Error("Unauthenticated");
 
-    console.log(params.storeid, " ",params.bannerid)
+    console.log(params.storeid, " ", params.bannerid);
 
     // if(!params.bannerid) throw new Error("Banner ID must be provided");
 
