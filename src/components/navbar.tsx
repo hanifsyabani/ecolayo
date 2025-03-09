@@ -8,6 +8,8 @@ import { redirect } from "next/navigation";
 import db from "@/lib/db";
 import { Settings } from "lucide-react";
 import Link from "next/link";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 interface NavProps {
   store_name: string;
@@ -15,7 +17,8 @@ interface NavProps {
 }
 
 export default async function Navbar({ store_name, store_id }: NavProps) {
-  const { userId } = await auth();
+  const session = await getServerSession(authOptions)
+  const userId  = session?.user.id
 
   if (!userId) redirect("/sign-in");
 
@@ -45,7 +48,6 @@ export default async function Navbar({ store_name, store_id }: NavProps) {
           <Button className="text-white">Search</Button>
         </div>
         <div className="flex items-center gap-3">
-          <UserButton />
           <Link href={`/admin/store/${store_id}/settings`}>
             <Settings className="text-gray-800 cursor-pointer" />
           </Link>

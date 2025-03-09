@@ -1,6 +1,8 @@
 import SettingForm from "@/components/admin/settings/setting-form";
+import { authOptions } from "@/lib/auth";
 import db from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
+import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
 interface SettingsPageProps {
@@ -10,9 +12,10 @@ interface SettingsPageProps {
 }
 
 export default async function page(props: SettingsPageProps) {
-  const { userId } = await auth();
+   const session = await getServerSession(authOptions)
+    const userId = session?.user.id
 
-  if (!userId) redirect("/sign-in");
+  if (!userId) redirect("/login");
 
   const store = await db.store.findFirst({
     where: {

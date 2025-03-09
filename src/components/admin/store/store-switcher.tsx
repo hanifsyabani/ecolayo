@@ -25,7 +25,6 @@ interface StoreSwicherProps extends PopOverTriggerProps {
   items: Store[];
 }
 export default function StoreSwicher({
-  className,
   items = [],
 }: StoreSwicherProps) {
   const router = useRouter();

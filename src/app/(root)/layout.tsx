@@ -11,7 +11,6 @@ export default async function SetupLayout({
   params: { storeId: string };
 }) {
   const session = await getServerSession(authOptions);
-  console.log("session",session);
 
   if (!session?.user.id) redirect("/login");
 

@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import toast from "react-hot-toast";
 import { useState } from "react";
+import Link from "next/link";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const schema = z.object({
   email: z.string().email(),
@@ -25,7 +27,9 @@ export default function LoginPage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormFields>();
+  } = useForm<FormFields>({
+    resolver: zodResolver(schema),
+  });
 
   const onSubmit = async (data: FormFields) => {
     setIsLoadingForm(true);
@@ -36,7 +40,7 @@ export default function LoginPage() {
         password: data.password,
       });
 
-      console.log("res",res);
+      console.log("res", res);
 
       if (res?.error) {
         toast.error(res.error);
@@ -87,6 +91,12 @@ export default function LoginPage() {
       >
         {isLoadingForm ? <span className="spinner"></span> : "Login"}
       </Button>
+      <p className="text-center text-sm">
+        Dont have an account?{" "}
+        <Link href={"/register"} className="text-blue-500">
+          Register
+        </Link>
+      </p>
     </form>
   );
 }

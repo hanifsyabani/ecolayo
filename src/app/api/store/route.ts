@@ -1,5 +1,5 @@
+import { authOptions } from "@/lib/auth";
 import db from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -7,9 +7,10 @@ export async function POST(req: Request) {
   try {
     // const authData = await auth()
     // console.log(authData)
-    const session =await getServerSession ();
+    const session = await getServerSession(authOptions);
 
     const { name } = await req.json();
+    console.log(session);
 
     if (!session?.user.id) throw new Error("Unauthenticated");
     if(!name) throw new Error("Name must be provided");
@@ -23,6 +24,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(store);
   } catch (error: any) {
+    console.log(error);
     throw new Error(error);
   }
 }
