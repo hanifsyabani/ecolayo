@@ -1,35 +1,26 @@
-import Navbar from "@/components/navbar";
+import NavUser from "@/components/user/nav-user";
 import { authOptions } from "@/lib/auth";
 import db from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import React from "react";
 
-export default async function DashboardLayout({
+export default async function UserLayout({
   children,
-  params
 }: {
   children: React.ReactNode;
-  params: { storeid: string };
 }) {
+
   const session = await getServerSession(authOptions)
   const userId = session?.user.id
 
-  if (!userId) redirect("/login");
-  
+  if(!userId) redirect("/login")
+  if(session?.user.role !== "user") redirect("/login")
 
-  const store = await db.store.findFirst({
-    where: {
-      id: params.storeid,
-      userId,
-    },
-  });
-
-  if (!store) redirect("/");
-
+  const category = await db.category.findMany();
   return (
     <div>
-      <Navbar store_name={store.name} store_id={store.id}/> 
+      <NavUser category={category} />
       {children}
     </div>
   );

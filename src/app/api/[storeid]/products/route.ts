@@ -1,5 +1,6 @@
+import { authOptions } from "@/lib/auth";
 import db from "@/lib/db";
-import { auth} from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -8,7 +9,7 @@ export async function POST(
   { params }: { params: { storeid: string } }
 ) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     const userId = session?.user.id;
 
     const { name, price, images, categoryid, isFeatured, isArchived } =
@@ -59,10 +60,9 @@ export async function GET(
     const { userId } = await auth();
 
     // untuk filter
-    const {searchParams} = new URL(req.url)
+    const { searchParams } = new URL(req.url);
     const categoryid = searchParams.get("categoryid") || undefined;
     const isFeatured = searchParams.get("isFeatured");
-
 
     console.log("user id", userId);
     if (!userId) throw new Error("Unauthenticated");
@@ -83,13 +83,13 @@ export async function GET(
         isFeatured: isFeatured ? true : undefined,
         isArchived: false,
       },
-      include:{
+      include: {
         images: true,
-        category: true
+        category: true,
       },
-      orderBy:{
-        createdAt: 'desc'
-      }
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     return NextResponse.json(product);

@@ -1,5 +1,5 @@
+import { authOptions } from "@/lib/auth";
 import db from "@/lib/db";
-import { auth} from "@clerk/nextjs/server";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -45,8 +45,8 @@ export async function GET(
   { params }: { params: { storeid: string } }
 ) {
   try {
-    const { userId } = await auth();
-    // const user = await currentUser()
+    const session = await getServerSession(authOptions);
+    const userId = session?.user.id;
 
     console.log("user id", userId);
     if (!userId) throw new Error("Unauthenticated");

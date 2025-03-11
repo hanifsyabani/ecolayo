@@ -1,3 +1,4 @@
+import { authOptions } from "@/lib/auth";
 import db from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 import { getServerSession } from "next-auth";
@@ -8,7 +9,8 @@ export async function GET(
   { params }: { params: { categoryid: string } }
 ) {
   try {
-    const { userId } = await auth();
+    const session = await getServerSession(authOptions);
+    const userId = session?.user.id;
     if (!userId) throw new Error("Unauthenticated");
 
     if (!params.categoryid) throw new Error("Category ID must be provided");
@@ -30,7 +32,7 @@ export async function PATCH(
   { params }: { params: { categoryid: string; storeid: string } }
 ) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     const userId = session?.user.id;
     if (!userId) throw new Error("Unauthenticated");
 
@@ -70,7 +72,8 @@ export async function DELETE(
   { params }: { params: { storeid: string, categoryid: string } }
 ) {
   try {
-    const { userId } = await auth();
+    const session = await getServerSession(authOptions);
+    const userId = session?.user.id;
     if (!userId) throw new Error("Unauthenticated");
 
     console.log(params.storeid, " ",params.categoryid)

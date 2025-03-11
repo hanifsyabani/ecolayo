@@ -1,15 +1,14 @@
 import Image from "next/image";
 import NavBottom from "./nav-bottom";
-import { UserButton } from "@clerk/nextjs";
-import { Input } from "./ui/input";
+  import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import db from "@/lib/db";
 import { Settings } from "lucide-react";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import ButtonLogout from "./button-logout";
 
 interface NavProps {
   store_name: string;
@@ -20,13 +19,15 @@ export default async function Navbar({ store_name, store_id }: NavProps) {
   const session = await getServerSession(authOptions)
   const userId  = session?.user.id
 
-  if (!userId) redirect("/sign-in");
+  if (!userId) redirect("/login");
 
   const stores = await db.store.findMany({
     where: {
       userId,
     },
   });
+
+  
   return (
     <>
       <nav className="py-2 px-8 flex justify-between items-center">
@@ -51,6 +52,7 @@ export default async function Navbar({ store_name, store_id }: NavProps) {
           <Link href={`/admin/store/${store_id}/settings`}>
             <Settings className="text-gray-800 cursor-pointer" />
           </Link>
+          <ButtonLogout/>
         </div>
       </nav>
       <NavBottom items={stores} />

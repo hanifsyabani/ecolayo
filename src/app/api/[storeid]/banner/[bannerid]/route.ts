@@ -1,3 +1,4 @@
+import { authOptions } from "@/lib/auth";
 import db from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 import { getServerSession } from "next-auth";
@@ -8,7 +9,8 @@ export async function GET(
   { params }: { params: { bannerid: string } }
 ) {
   try {
-    const { userId } = await auth();
+    const session = await getServerSession(authOptions);
+    const userId = session?.user.id;
     if (!userId) throw new Error("Unauthenticated");
 
     if (!params.bannerid) throw new Error("Banner ID must be provided");
@@ -30,7 +32,8 @@ export async function PATCH(
   { params }: { params: { bannerid: string; storeid: string } }
 ) {
   try {
-    const { userId } = await auth();
+    const session = await getServerSession(authOptions);
+    const userId = session?.user.id;
     if (!userId) throw new Error("Unauthenticated");
 
     const { label, imageUrl } = await req.json();
@@ -69,7 +72,7 @@ export async function DELETE(
   { params }: { params: { storeid: string; bannerid: string } }
 ) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     const userId = session?.user.id;
     if (!userId) throw new Error("Unauthenticated");
 
