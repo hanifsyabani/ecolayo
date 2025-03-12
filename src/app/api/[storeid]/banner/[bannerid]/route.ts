@@ -1,6 +1,5 @@
 import { authOptions } from "@/lib/auth";
 import db from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -87,16 +86,26 @@ export async function DELETE(
       },
     });
 
+    const banner = await db.banner.findUnique({
+      where: { id: params.bannerid },
+    });
+    
+    if (!banner) {
+      return NextResponse.json({ error: "Banner not found" }, { status: 404 });
+    }
+
     if (!storeByUserId) throw new Error("Store not found");
 
-    const banner = await db.banner.delete({
+    await db.banner.delete({
       where: {
+        storeid: params.storeid,
         id: params.bannerid,
       },
     });
 
-    return NextResponse.json(banner);
+    return NextResponse.json({ message: "Banner deleted successfully" });
   } catch (error: any) {
+    console.log("error : ",error)
     throw new Error(error);
   }
 }

@@ -8,7 +8,7 @@ export async function POST(
   { params }: { params: { storeid: string } }
 ) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     const userId = session?.user.id;
 
     const { name, bannerid } = await req.json();
@@ -36,6 +36,7 @@ export async function POST(
 
     return NextResponse.json(category);
   } catch (error: any) {
+    console.log("error category: ",error);
     throw new Error(error);
   }
 }

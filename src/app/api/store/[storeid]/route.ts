@@ -1,5 +1,5 @@
+import { authOptions } from "@/lib/auth";
 import db from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -8,7 +8,8 @@ export async function PATCH(
   { params }: { params: { storeid: string } }
 ) {
   try {
-    const { userId } = await auth();
+    const session = await getServerSession(authOptions);
+    const userId = session?.user.id;
     if (!userId) throw new Error("Unauthenticated");
 
     const { name } = await req.json();

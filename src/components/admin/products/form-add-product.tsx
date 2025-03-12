@@ -44,7 +44,7 @@ interface ProductFormProps {
 }
 
 const schema = z.object({
-  name: z.string().min(5, { message: "Name must be at least 5 characters" }),
+  name: z.string().min(1, { message: "Name must be at least 5 characters" }),
   price: z.coerce.number().min(1, { message: "Price must be at least 1" }),
   images: z.object({ url: z.string() }).array().min(1, {message: "At least one image is required"}),
   categoryid: z.string().min(1, { message: "Category must be selected" }),

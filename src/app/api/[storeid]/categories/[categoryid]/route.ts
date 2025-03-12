@@ -1,6 +1,5 @@
 import { authOptions } from "@/lib/auth";
 import db from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -69,14 +68,14 @@ export async function PATCH(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { storeid: string, categoryid: string } }
+  { params }: { params: { storeid: string; categoryid: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
     if (!userId) throw new Error("Unauthenticated");
 
-    console.log(params.storeid, " ",params.categoryid)
+    console.log("store id: ",params.storeid, " ","category id: ", params.categoryid);
 
     // if(!params.bannerid) throw new Error("Banner ID must be provided");
 
@@ -89,13 +88,13 @@ export async function DELETE(
 
     if (!storeByUserId) throw new Error("Store not found");
 
-    const banner = await db.category.delete({
+    await db.category.delete({
       where: {
+        storeid: params.storeid,
         id: params.categoryid,
       },
     });
-
-    return NextResponse.json(banner);
+    return NextResponse.json({ message: "Category deleted successfully" });
   } catch (error: any) {
     throw new Error(error);
   }

@@ -1,6 +1,5 @@
 import { authOptions } from "@/lib/auth";
 import db from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -57,31 +56,22 @@ export async function GET(
   { params }: { params: { storeid: string } }
 ) {
   try {
-    const { userId } = await auth();
+    const session = await getServerSession(authOptions);
+    const userId = session?.user.id;
 
     // untuk filter
-    const { searchParams } = new URL(req.url);
-    const categoryid = searchParams.get("categoryid") || undefined;
-    const isFeatured = searchParams.get("isFeatured");
+    // const { searchParams } = new URL(req.url);
+    // const categoryid = searchParams.get("categoryid") || undefined;
+    // const isFeatured = searchParams.get("isFeatured");
 
-    console.log("user id", userId);
     if (!userId) throw new Error("Unauthenticated");
-
-    const storeByUserId = await db.store.findFirst({
-      where: {
-        id: params.storeid,
-        userId,
-      },
-    });
-
-    if (!storeByUserId) throw new Error("Store not found");
 
     const product = await db.product.findMany({
       where: {
         storeid: params.storeid,
-        categoryid,
-        isFeatured: isFeatured ? true : undefined,
-        isArchived: false,
+        // categoryid,
+        // isFeatured: isFeatured ? true : undefined,
+        // isArchived: false,
       },
       include: {
         images: true,

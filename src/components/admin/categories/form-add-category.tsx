@@ -37,7 +37,7 @@ interface CategoryFormProps {
 }
 
 const schema = z.object({
-  name: z.string().min(5),
+  name: z.string().min(1),
   bannerid: z.string().min(5),
 });
 type FormFields = z.infer<typeof schema>;

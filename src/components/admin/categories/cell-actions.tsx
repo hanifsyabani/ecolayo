@@ -43,6 +43,7 @@ export default function CellActionCategory(data: CellActionProps) {
     } catch (error) {
       toast.error("Error deleting");
     } finally {
+      setIsOpen(false)
       setIsLoadingForm(false);
     }
   }
@@ -74,7 +75,7 @@ export default function CellActionCategory(data: CellActionProps) {
         <DialogContent className="bg-white">
           <DialogHeader>
             <DialogTitle>
-              Are you sure you want to delete the banner?
+              Are you sure you want to delete the category?
             </DialogTitle>
             <DialogDescription>
               This action cannot be undone. This will permanently delete your

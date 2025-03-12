@@ -12,15 +12,20 @@ export default function HeadingBanner() {
   const [banners, setBanners] = useState<Banner | null>(null);
 
   useEffect(() => {
-    axios
-      .get(
-        "/api/af990241-e9fd-458c-9612-47ea908df21f/banner/b2e7beca-ced3-43da-a1f6-9e124a0d6881"
-      )
-      .then((res) => setBanners(res.data))
-      .catch((err) => console.error(err));
-  }, []);
+    const fetchBanner = async () => {
+      try {
+        const response = await axios.get(
+          "/api/af990241-e9fd-458c-9612-47ea908df21f/banner/b2e7beca-ced3-43da-a1f6-9e124a0d6881"
+        );
+        setBanners(response.data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    }
 
-  console.log(banners);
+    fetchBanner();
+  }, [])
+
 
   return (
     <div className="p-6 rounded-xl">

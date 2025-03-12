@@ -1,14 +1,11 @@
 import HeadingBanner from "@/components/user/heading-banner";
-import { Banner } from "@prisma/client";
-import axios from "axios";
+import ProductFeatured from "@/components/user/products/product-featured";
 
-interface pageProps {
-  banner: Banner[];
-}
-export default async function page({ banner }: pageProps) {
+export default async function page() {
   return (
     <>
       <HeadingBanner />
+      <ProductFeatured title="Popular Products"/>
     </>
   );
 }

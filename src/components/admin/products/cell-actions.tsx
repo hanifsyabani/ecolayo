@@ -43,6 +43,7 @@ export default function CellActionCategory(data: CellActionProps) {
     } catch (error) {
       toast.error("Error deleting");
     } finally {
+      setIsOpen(false)
       setIsLoadingForm(false);
     }
   }

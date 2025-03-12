@@ -33,7 +33,7 @@ export default async function page({
   }));
 
   return (
-    <div className="px-8 mt-6">
+    <div className="px-8 py-10">
       <ListProducts data={formattedProducts} />
     </div>
   );

@@ -1,7 +1,6 @@
 import SettingForm from "@/components/admin/settings/setting-form";
 import { authOptions } from "@/lib/auth";
 import db from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 

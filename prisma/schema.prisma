@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -47,7 +41,7 @@ model Store {
 model Banner {
   id         String     @id @default(uuid())
   storeid    String
-  store      Store      @relation("StoreToBanner", fields: [storeid], references: [id])
+  store      Store      @relation("StoreToBanner", fields: [storeid], references: [id], onDelete: Cascade)
   label      String
   imageUrl   String
   categories Category[] @relation("BannerToCategory")
@@ -60,9 +54,9 @@ model Banner {
 model Category {
   id       String    @id @default(uuid())
   storeid  String
-  store    Store     @relation("StoreToCategory", fields: [storeid], references: [id])
+  store    Store     @relation("StoreToCategory", fields: [storeid], references: [id], onDelete: Cascade)
   bannerid String
-  banner   Banner    @relation("BannerToCategory", fields: [bannerid], references: [id])
+  banner   Banner    @relation("BannerToCategory", fields: [bannerid], references: [id], onDelete: Cascade)
   name     String
   product  Product[] @relation("CategoryToProduct")
 
@@ -76,9 +70,9 @@ model Category {
 model Product {
   id         String   @id @default(uuid())
   storeid    String
-  store      Store    @relation("StoreToProduct", fields: [storeid], references: [id])
+  store      Store    @relation("StoreToProduct", fields: [storeid], references: [id], onDelete: Cascade)
   categoryid String
-  category   Category @relation("CategoryToProduct", fields: [categoryid], references: [id])
+  category   Category @relation("CategoryToProduct", fields: [categoryid], references: [id], onDelete: Cascade)
   name       String
   price      Decimal
   isFeatured Boolean  @default(false)

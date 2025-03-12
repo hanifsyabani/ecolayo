@@ -1,6 +1,5 @@
 import { authOptions } from "@/lib/auth";
 import db from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -9,7 +8,8 @@ export async function GET(
   { params }: { params: { productid: string } }
 ) {
   try {
-    const { userId } = await auth();
+    const session = await getServerSession(authOptions);
+    const userId = session?.user.id;
     if (!userId) throw new Error("Unauthenticated");
 
     if (!params.productid) throw new Error("Product ID must be provided");
@@ -97,7 +97,8 @@ export async function DELETE(
   { params }: { params: { storeid: string; productid: string } }
 ) {
   try {
-    const { userId } = await auth();
+    const session = await getServerSession(authOptions);
+    const userId = session?.user.id;
     if (!userId) throw new Error("Unauthenticated");
 
     const storeByUserId = await db.store.findFirst({
@@ -111,6 +112,7 @@ export async function DELETE(
 
     const product = await db.product.delete({
       where: {
+        storeid: params.storeid,
         id: params.productid,
       },
     });
