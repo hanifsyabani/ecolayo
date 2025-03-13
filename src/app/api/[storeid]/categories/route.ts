@@ -49,25 +49,19 @@ export async function GET(
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
 
-    console.log("user id", userId);
+    // console.log("user id", userId);
     if (!userId) throw new Error("Unauthenticated");
 
-    const storeByUserId = await db.store.findFirst({
-      where: {
-        id: params.storeid,
-        userId,
-      },
-    });
-
-    if (!storeByUserId) throw new Error("Store not found");
-
-    const banner = await db.category.findMany({
+    const category = await db.category.findMany({
       where: {
         storeid: params.storeid,
       },
+      include: {
+        banner: true,
+      }
     });
 
-    return NextResponse.json(banner);
+    return NextResponse.json(category);
   } catch (error: any) {
     console.log(error);
     console.log(error.message);

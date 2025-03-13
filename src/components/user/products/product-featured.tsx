@@ -9,8 +9,6 @@ interface ProductListProps {
   title: string;
 }
 
-
-
 export default function ProductFeatured({ title }: ProductListProps) {
   const [products, setProducts] = useState<Product[]>([]);
 
@@ -32,13 +30,12 @@ export default function ProductFeatured({ title }: ProductListProps) {
     fetchProducts();
   }, []);
 
-
   return (
-    <div className="px-4">
-      <h1 className="text-lg font-semibold">{title}</h1>
-      <div className="flex items-center gap-20">
-        {products.map((product:any) => (
-          <ProductCard product={product} categories={null} key={product?.id}/>
+    <div className="px-4 mt-10">
+      <h1 className="text-xl font-semibold">{title}</h1>
+      <div className="flex items-center justify-center flex-wrap gap-20">
+        {products.map((product: any) => (
+          <ProductCard product={product} categories={null} key={product?.id} />
         ))}
       </div>
     </div>

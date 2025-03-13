@@ -30,7 +30,7 @@ interface BannerFormProps {
 }
 
 const schema = z.object({
-  label: z.string().min(5),
+  label: z.string().min(1),
   imageUrl: z.string().min(5),
 });
 type FormFields = z.infer<typeof schema>;

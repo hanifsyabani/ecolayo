@@ -98,7 +98,7 @@ export async function DELETE(
 
     await db.banner.delete({
       where: {
-        storeid: params.storeid,
+        // storeid: params.storeid,
         id: params.bannerid,
       },
     });
