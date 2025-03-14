@@ -39,14 +39,15 @@ model Store {
 }
 
 model Banner {
-  id         String     @id @default(uuid())
-  storeid    String
-  store      Store      @relation("StoreToBanner", fields: [storeid], references: [id], onDelete: Cascade)
-  label      String
-  imageUrl   String
-  categories Category[] @relation("BannerToCategory")
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  id             String     @id @default(uuid())
+  storeid        String
+  store          Store      @relation("StoreToBanner", fields: [storeid], references: [id], onDelete: Cascade)
+  label          String
+  imageUrl       String
+  categoryBanner String?
+  categories     Category[] @relation("BannerToCategory")
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
 
   @@index([storeid])
 }
@@ -77,6 +78,7 @@ model Product {
   price      Decimal
   isFeatured Boolean  @default(false)
   isArchived Boolean  @default(false)
+  stars      Float    @default(0.0)
   images     Images[] @relation("ProductToImages")
 
   createdAt DateTime @default(now())

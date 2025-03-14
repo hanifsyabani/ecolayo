@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { Skeleton } from "../ui/skeleton";
 
 interface Banner {
   imageUrl: string;
@@ -13,6 +14,7 @@ interface Banner {
 
 export default function HeadingBanner() {
   const [banners, setBanners] = useState<Banner[] | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchBanner = async () => {
@@ -23,6 +25,8 @@ export default function HeadingBanner() {
         setBanners(response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -42,32 +46,36 @@ export default function HeadingBanner() {
           backgroundPosition: "center",
         }}
       >
-        <div className="w-full h-full flex pl-10 items-center ">
-          <div>
-            <div className="space-y-4">
-              <h1 className="text-4xl font-bold text-white  max-w-sm tracking-wider">
-                Fresh & Healthy Organic Food
-              </h1>
-              <div className="flex gap-2 ">
-                <div className="bg-green-300 w-1"></div>
-                <div className="text-white max-w-md">
-                  <p className="text-lg">
-                    Sale up to{" "}
-                    <span className="bg-orange-500 p-1 rounded-md ">
-                      30% OFF
-                    </span>
-                  </p>
-                  <p className="font-extralight">
-                    Free shipping on all your order
-                  </p>
+        {isLoading ? (
+          <Skeleton className="w-full h-full rounded-xl" />
+        ) : (
+          <div className="w-full h-full flex pl-10 items-center ">
+            <div>
+              <div className="space-y-4">
+                <h1 className="text-4xl font-bold text-white  max-w-sm tracking-wider">
+                  Fresh & Healthy Organic Food
+                </h1>
+                <div className="flex gap-2 ">
+                  <div className="bg-green-300 w-1"></div>
+                  <div className="text-white max-w-md">
+                    <p className="text-lg">
+                      Sale up to{" "}
+                      <span className="bg-orange-500 p-1 rounded-md ">
+                        30% OFF
+                      </span>
+                    </p>
+                    <p className="font-extralight">
+                      Free shipping on all your order
+                    </p>
+                  </div>
                 </div>
               </div>
+              <Button className="bg-white text-primary rounded-full text-sm mt-10 hover:bg-gray-300">
+                Shop Now <ArrowRight />
+              </Button>
             </div>
-            <Button className="bg-white text-primary rounded-full text-sm mt-10 hover:bg-gray-100">
-              Shop Now <ArrowRight />
-            </Button>
           </div>
-        </div>
+        )}
       </div>
       <div className="w-[35%] space-y-4">
         <div
@@ -77,22 +85,26 @@ export default function HeadingBanner() {
             backgroundPosition: "center",
           }}
         >
-          <div className="w-full h-full flex items-center pl-7 ">
-            <div className="space-y-4">
-              <div>
-                <h5>SUMMER SALE</h5>
-                <h1 className="text-4xl font-semibold">75% OFF</h1>
+          {isLoading ? (
+            <Skeleton className="w-full h-full rounded-xl" />
+          ) : (
+            <div className="w-full h-full flex items-center pl-7 ">
+              <div className="space-y-4">
+                <div>
+                  <h5>SUMMER SALE</h5>
+                  <h1 className="text-4xl font-semibold">75% OFF</h1>
+                </div>
+                <p className="text-xs text-gray-500">Only Fruit & Vegetables</p>
+                <Link
+                  href={"/"}
+                  className="text-primary flex items-center gap-2 font-bold"
+                >
+                  <p>Shop Now </p>
+                  <ArrowRight />
+                </Link>
               </div>
-              <p className="text-xs text-gray-500">Only Fruit & Vegetables</p>
-              <Link
-                href={"/"}
-                className="text-primary flex items-center gap-2 font-bold"
-              >
-                <p>Shop Now </p>
-                <ArrowRight />
-              </Link>
             </div>
-          </div>
+          )}
         </div>
         <div
           className="bg-cover rounded-xl aspect-[2/1] "
@@ -101,21 +113,25 @@ export default function HeadingBanner() {
             backgroundPosition: "center",
           }}
         >
-          <div className="w-full h-full flex justify-center items-center ">
-            <div className="text-center text-white space-y-4">
-              <p>BEST DEAL</p>
-              <h1 className="text-3xl max-w-xs font-bold">
-                Special Products Deal of the Month
-              </h1>
-              <Link
-                href={"/"}
-                className="text-primary flex items-center justify-center gap-2 font-bold"
-              >
-                <p>Shop Now </p>
-                <ArrowRight />
-              </Link>
+          {isLoading ? (
+            <Skeleton className="w-full h-full rounded-xl" />
+          ) : (
+            <div className="w-full h-full flex justify-center items-center ">
+              <div className="text-center text-white space-y-4">
+                <p>BEST DEAL</p>
+                <h1 className="text-3xl max-w-xs font-bold">
+                  Special Products Deal of the Month
+                </h1>
+                <Link
+                  href={"/"}
+                  className="text-primary hover:text-white flex items-center justify-center gap-2 font-bold"
+                >
+                  <p>Shop Now </p>
+                  <ArrowRight />
+                </Link>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

@@ -46,10 +46,17 @@ interface ProductFormProps {
 const schema = z.object({
   name: z.string().min(1, { message: "Name must be at least 5 characters" }),
   price: z.coerce.number().min(1, { message: "Price must be at least 1" }),
-  images: z.object({ url: z.string() }).array().min(1, {message: "At least one image is required"}),
+  images: z
+    .object({ url: z.string() })
+    .array()
+    .min(1, { message: "At least one image is required" }),
   categoryid: z.string().min(1, { message: "Category must be selected" }),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
+  stars: z
+    .coerce.number()
+    .min(1, { message: "Rating must be at least 1" })
+    .max(5, { message: "Rating must be at most 5" }),
 });
 type FormFields = z.infer<typeof schema>;
 
@@ -172,29 +179,46 @@ export default function FormAddProduct(datas: ProductFormProps) {
                 <p className="text-red-500 text-sm">{errors.price.message}</p>
               )}
             </div>
-            <div>
-              <Label>Category</Label>
-              <Select onValueChange={(value) => setValue("categoryid", value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent className="bg-white">
-                  {datas.categories?.map((category) => (
-                    <SelectItem
-                      key={category.id}
-                      value={category.id}
-                      className="hover:bg-gray-200 cursor-pointer"
-                    >
-                      {category.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.categoryid && (
-                <p className="text-red-500 text-sm">
-                  {errors.categoryid.message}
-                </p>
-              )}
+            <div className="flex items-center gap-4">
+              <div className="w-1/2">
+                <Label>Category</Label>
+                <Select
+                  onValueChange={(value) => setValue("categoryid", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    {datas.categories?.map((category) => (
+                      <SelectItem
+                        key={category.id}
+                        value={category.id}
+                        className="hover:bg-gray-200 cursor-pointer"
+                      >
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.categoryid && (
+                  <p className="text-red-500 text-sm">
+                    {errors.categoryid.message}
+                  </p>
+                )}
+              </div>
+              <div className="w-1/2">
+                <Label htmlFor="stars">Rating</Label>
+                <Input
+                  id="stars"
+                  {...register("stars")}
+                  className="border border-gray-800"
+                  placeholder="5"
+                  type="number"
+                />
+                {errors.stars && (
+                  <p className="text-red-500 text-sm">{errors.stars.message}</p>
+                )}
+              </div>
             </div>
             <div className="flex items-center gap-10">
               <div>
@@ -252,9 +276,9 @@ export default function FormAddProduct(datas: ProductFormProps) {
                 )
               }
             />
-             {errors.images && (
-                <p className="text-red-500 text-sm">{errors.images.message}</p>
-              )}
+            {errors.images && (
+              <p className="text-red-500 text-sm">{errors.images.message}</p>
+            )}
           </div>
         </div>
         <div className="">

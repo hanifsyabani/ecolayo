@@ -8,6 +8,7 @@ import CellAction from "./cell-actions"
 export type BannerColumn = {
   id: string
   label: string
+  categoryBanner: string
   createdAt: string
 }
 
@@ -15,6 +16,10 @@ export const Columns: ColumnDef<BannerColumn>[] = [
   {
     accessorKey: "label",
     header: "Label",
+  },
+  {
+    accessorKey: "categoryBanner",
+    header: "Category Banner",
   },
   {
     accessorKey: "createdAt",

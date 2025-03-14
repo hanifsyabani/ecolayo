@@ -62,7 +62,7 @@ export default function NavBottomUser({ category }: NavUserProps) {
       </div>
       {routeUser.map((route) => (
         <div key={route.label}>
-          <p className="text-white text-sm">{route.label}</p>
+          <p className="text-white text-sm hover:text-primary cursor-pointer">{route.label}</p>
         </div>
       ))}
     </nav>

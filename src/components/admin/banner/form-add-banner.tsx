@@ -24,6 +24,13 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 import UploadImage from "./upload-image";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface BannerFormProps {
   datas: Banner | null;
@@ -32,6 +39,7 @@ interface BannerFormProps {
 const schema = z.object({
   label: z.string().min(1),
   imageUrl: z.string().min(5),
+  categoryBanner: z.string().min(1),
 });
 type FormFields = z.infer<typeof schema>;
 
@@ -42,7 +50,6 @@ export default function FormAddBanner(datas: BannerFormProps) {
   const router = useRouter();
 
   const isEditing = Boolean(datas.datas);
-  // console.log(isEditing);
 
   const title = isEditing ? "Edit Banner" : "Add Banner";
   const toastMessage = isEditing
@@ -61,6 +68,7 @@ export default function FormAddBanner(datas: BannerFormProps) {
     defaultValues: {
       label: datas.datas?.label || "",
       imageUrl: datas.datas?.imageUrl || "",
+      categoryBanner: datas.datas?.categoryBanner || "",
     },
   });
 
@@ -123,17 +131,54 @@ export default function FormAddBanner(datas: BannerFormProps) {
       <Separator />
       <form className="mt-10 space-y-4 " onSubmit={handleSubmit(onSubmit)}>
         <div className="flex  gap-10">
-          <div className="w-1/2">
-            <Label htmlFor="label">Label Banner</Label>
-            <Input
-              id="label"
-              {...register("label")}
-              className="border border-gray-800"
-              placeholder="Add label banner"
-            />
-            {errors.label && (
-              <p className="text-red-500 text-sm">{errors.label.message}</p>
-            )}
+          <div className="w-1/2 space-y-4">
+            <div>
+              <Label htmlFor="label">Label Banner</Label>
+              <Input
+                id="label"
+                {...register("label")}
+                className="border border-gray-800"
+                placeholder="Add label banner"
+              />
+              {errors.label && (
+                <p className="text-red-500 text-sm">{errors.label.message}</p>
+              )}
+            </div>
+            <div>
+              <Label htmlFor="label">Category Banner</Label>
+              <Select
+                onValueChange={(value) => setValue("categoryBanner", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Category Banner" />
+                </SelectTrigger>
+                <SelectContent className="bg-white">
+                  <SelectItem
+                    value="product"
+                    className="hover:bg-gray-200 cursor-pointer "
+                  >
+                    Product
+                  </SelectItem>
+                  <SelectItem
+                    value="jumbotron"
+                    className="hover:bg-gray-200 cursor-pointer "
+                  >
+                    Home-Jumbotron
+                  </SelectItem>
+                  <SelectItem
+                    value="promote"
+                    className="hover:bg-gray-200 cursor-pointer "
+                  >
+                    Home-Promote
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.categoryBanner && (
+                <p className="text-red-500 text-sm">
+                  {errors.categoryBanner.message}
+                </p>
+              )}
+            </div>
           </div>
           <div>
             <Label htmlFor="imageUrl">Image</Label>

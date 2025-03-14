@@ -11,11 +11,12 @@ export async function POST(
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
 
-    const { name, price, images, categoryid, isFeatured, isArchived } =
+    const { name, price, images, categoryid, isFeatured, isArchived, stars } =
       await req.json();
 
     if (!userId) throw new Error("Unauthenticated");
     if (!name) throw new Error("Name must be provided");
+    if(!stars) throw new Error("Stars must be provided");
     if (!categoryid) throw new Error("category must be provided");
     if (!price) throw new Error("Price must be provided");
     if (!images || !images.length) throw new Error("Images must be provided");
@@ -36,6 +37,7 @@ export async function POST(
         categoryid,
         isFeatured,
         isArchived,
+        stars,
         storeid: params.storeid,
         images: {
           createMany: {

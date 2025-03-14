@@ -33,7 +33,7 @@ export default function ProductFeatured({ title }: ProductListProps) {
   return (
     <div className="px-4 mt-10">
       <h1 className="text-xl font-semibold">{title}</h1>
-      <div className="flex items-center justify-center flex-wrap gap-20">
+      <div className="flex items-center justify-center flex-wrap">
         {products.map((product: any) => (
           <ProductCard product={product} categories={null} key={product?.id} />
         ))}

@@ -5,7 +5,7 @@ import { shopServiceItem } from "@/lib/item";
 
 export default async function page() {
   return (
-    <div>
+    <div className="pb-20">
       <HeadingBanner />
       <div className="flex justify-evenly items-center gap-4 mb-10">
         {shopServiceItem.map((item) => (

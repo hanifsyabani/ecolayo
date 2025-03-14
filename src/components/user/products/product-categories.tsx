@@ -1,5 +1,6 @@
 "use client";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { Banner, Category } from "@prisma/client";
 import axios from "axios";
 import { ArrowRight } from "lucide-react";
@@ -12,6 +13,7 @@ interface CategoryWithBanner extends Category {
 
 export default function ProductCategories() {
   const [category, setCategory] = useState<CategoryWithBanner[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -22,6 +24,8 @@ export default function ProductCategories() {
         setCategory(response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -37,22 +41,29 @@ export default function ProductCategories() {
         </div>
       </div>
 
-      <div className="flex justify-center items-center mt-4">
-        <div className="grid grid-cols-6 gap-10">
-          {category.map((item) => (
-            <div key={item.id} className="w-52 h-20">
-              <Image
-                src={item?.banner?.imageUrl}
-                width={100}
-                height={100}
-                alt="categoryimg"
-                className="w-32 h-full bg-contain rounded-xl mx-auto"
-              />
-              <h1 className="text-sm font-medium text-center pt-2">
-                {item.name}
-              </h1>
-            </div>
-          ))}
+      <div className="flex justify-evenly items-center mt-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-y-14">
+          {isLoading
+            ? Array.from({ length: 6 }).map((_, index) => (
+                <Skeleton key={index} className="w-52 h-20 rounded-xl" />
+              ))
+            : category.map((item) => (
+                <div
+                  key={item.id}
+                  className="w-52 h-20 flex flex-col items-center"
+                >
+                  <Image
+                    src={item?.banner?.imageUrl}
+                    width={100}
+                    height={100}
+                    alt="categoryimg"
+                    className="w-32 h-full bg-contain rounded-xl"
+                  />
+                  <h1 className="text-sm font-medium text-center pt-2">
+                    {item.name}
+                  </h1>
+                </div>
+              ))}
         </div>
       </div>
     </div>

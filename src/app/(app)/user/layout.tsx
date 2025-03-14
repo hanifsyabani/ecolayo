@@ -21,7 +21,7 @@ export default async function UserLayout({
   return (
     <div>
       <NavUser category={category} />
-      <div className="pb-10">{children}</div>
+      <div>{children}</div>
     </div>
   );
 }

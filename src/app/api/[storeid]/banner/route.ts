@@ -11,11 +11,12 @@ export async function POST(
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
 
-    const { label, imageUrl } = await req.json();
+    const { label, imageUrl, categoryBanner } = await req.json();
 
     if (!userId) throw new Error("Unauthenticated");
     if (!label) throw new Error("Label must be provided");
     if (!imageUrl) throw new Error("Image URL must be provided");
+    if (!categoryBanner) throw new Error("Category banner must be provided");
 
     const storeByUserId = await db.store.findFirst({
       where: {
@@ -31,6 +32,7 @@ export async function POST(
         storeid: params.storeid,
         label,
         imageUrl,
+        categoryBanner,
       },
     });
 
