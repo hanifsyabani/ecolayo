@@ -8,7 +8,7 @@ import CellAction from "./cell-actions"
 export type BannerColumn = {
   id: string
   label: string
-  categoryBanner: string
+  categoryBanner: string | null
   createdAt: string
 }
 

@@ -20,6 +20,7 @@ export default async function page({
   const formattedBanners:BannerColumn[] = banner.map((item) =>({
     id: item.id,
     label : item.label,
+    categoryBanner: item.categoryBanner,
     createdAt: format(item.createdAt, 'MMM do, yyyy')
   }))
 

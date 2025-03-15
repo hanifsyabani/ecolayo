@@ -154,22 +154,34 @@ export default function FormAddBanner(datas: BannerFormProps) {
                 </SelectTrigger>
                 <SelectContent className="bg-white">
                   <SelectItem
-                    value="product"
+                    value="main jumbotron"
                     className="hover:bg-gray-200 cursor-pointer "
                   >
-                    Product
+                    Main-Jumbotron
                   </SelectItem>
                   <SelectItem
-                    value="jumbotron"
+                    value="sec jumbotron"
                     className="hover:bg-gray-200 cursor-pointer "
                   >
-                    Home-Jumbotron
+                    sec-Jumbotron
+                  </SelectItem>
+                  <SelectItem
+                    value="third jumbotron"
+                    className="hover:bg-gray-200 cursor-pointer "
+                  >
+                    third-Jumbotron
                   </SelectItem>
                   <SelectItem
                     value="promote"
                     className="hover:bg-gray-200 cursor-pointer "
                   >
-                    Home-Promote
+                    Promote
+                  </SelectItem>
+                  <SelectItem
+                    value="category"
+                    className="hover:bg-gray-200 cursor-pointer "
+                  >
+                    Category
                   </SelectItem>
                 </SelectContent>
               </Select>

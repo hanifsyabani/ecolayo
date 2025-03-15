@@ -1,6 +1,9 @@
-import { Banner } from '@prisma/client';
-import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+"use client";
+
+import { Banner } from "@prisma/client";
+import axios from "axios";
+import Image from "next/image";
+import React, { useEffect, useState } from "react";
 
 export default function PromoteBanner() {
   const [banners, setBanners] = useState<Banner[] | null>(null);
@@ -22,9 +25,29 @@ export default function PromoteBanner() {
 
     fetchBanner();
   }, []);
-  return (
-    <div>
 
-    </div>
-  )
+  const promoteBanners = banners?.filter(
+    (banner) => banner.categoryBanner === "promote"
+  );
+
+  return (
+    <>
+      <div className="flex justify-evenly items-center mt-32">
+        {promoteBanners?.map((item) => (
+          <div
+            key={item.id}
+            className="w-[30%] hover:shadow-lg cursor-pointer p-4"
+          >
+            <Image
+              width={100}
+              height={100}
+              src={item.imageUrl}
+              alt=""
+              className="w-full"
+            />
+          </div>
+        ))}
+      </div>
+    </>
+  );
 }

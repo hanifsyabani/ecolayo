@@ -35,10 +35,11 @@ export async function PATCH(
     const userId = session?.user.id;
     if (!userId) throw new Error("Unauthenticated");
 
-    const { label, imageUrl } = await req.json();
+    const { label, imageUrl, categoryBanner } = await req.json();
 
     if (!label) throw new Error("Label must be provided");
     if (!imageUrl) throw new Error("Image URL must be provided");
+    if (!categoryBanner) throw new Error("Category banner must be provided");
 
     const storeByUserId = await db.store.findFirst({
       where: {
@@ -57,6 +58,7 @@ export async function PATCH(
       data: {
         label,
         imageUrl,
+        categoryBanner
       },
     });
 
