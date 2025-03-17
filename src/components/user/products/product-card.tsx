@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import { FaStar } from "react-icons/fa";
-import PreviewProduct from "./preview-product";
+import PreviewProduct from "./dialog-preview-product";
 
 interface ProductCardProps {
   product:
@@ -83,7 +83,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </Link>
       </div>
 
-      <PreviewProduct open={openDialog} setOpenDialog={setOpenDialog} />
+      <PreviewProduct open={openDialog} setOpenDialog={setOpenDialog} product={product}  />
     </>
   );
 }

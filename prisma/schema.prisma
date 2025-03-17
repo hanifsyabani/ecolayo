@@ -69,23 +69,31 @@ model Category {
 }
 
 model Product {
-  id         String   @id @default(uuid())
-  storeid    String
-  store      Store    @relation("StoreToProduct", fields: [storeid], references: [id], onDelete: Cascade)
-  categoryid String
-  category   Category @relation("CategoryToProduct", fields: [categoryid], references: [id], onDelete: Cascade)
-  name       String
-  price      Decimal
-  isFeatured Boolean  @default(false)
-  isArchived Boolean  @default(false)
-  stars      Float    @default(0.0)
-  images     Images[] @relation("ProductToImages")
+  id          String   @id @default(uuid())
+  storeid     String
+  store       Store    @relation("StoreToProduct", fields: [storeid], references: [id], onDelete: Cascade)
+  categoryid  String
+  category    Category @relation("CategoryToProduct", fields: [categoryid], references: [id], onDelete: Cascade)
+  name        String
+  price       Decimal
+  description String?
+  tag         Tag[]    @relation("ProductToTag")
+  isFeatured  Boolean  @default(false)
+  isArchived  Boolean  @default(false)
+  stars       Float    @default(0.0)
+  images      Images[] @relation("ProductToImages")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([storeid])
   @@index([categoryid])
+}
+
+model Tag {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  product   Product[] @relation("ProductToTag")
 }
 
 model Images {
