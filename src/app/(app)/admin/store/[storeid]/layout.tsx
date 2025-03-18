@@ -12,6 +12,11 @@ export default async function DashboardLayout({
   children: React.ReactNode;
   params: { storeid: string };
 }) {
+
+  if (!params?.storeid) {
+    return <div>Loading...</div>; // Cegah error jika params belum ada
+  }
+
   const session = await getServerSession(authOptions)
   const userId = session?.user.id
 

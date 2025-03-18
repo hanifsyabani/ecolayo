@@ -196,9 +196,10 @@ export default function FormAddBanner(datas: BannerFormProps) {
             <Label htmlFor="imageUrl">Image</Label>
             <UploadImage
               value={getValues("imageUrl") ? [getValues("imageUrl")] : []}
-              onChange={(urls) => setValue("imageUrl", urls)}
+              onChange={(urls) => setValue("imageUrl", urls[0] || "")} // Ambil elemen pertama
               onRemove={() => setValue("imageUrl", "")}
             />
+
             {errors.imageUrl && (
               <p className="text-red-500 text-sm">{errors.imageUrl.message}</p>
             )}

@@ -11,15 +11,29 @@ export async function POST(
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
 
-    const { name, price, images, categoryid, isFeatured, isArchived, stars } =
-      await req.json();
+    const {
+      name,
+      price,
+      images,
+      categoryid,
+      isFeatured,
+      isArchived,
+      stars,
+      description,
+      shortDescription,
+      tag,
+    } = await req.json();
 
     if (!userId) throw new Error("Unauthenticated");
     if (!name) throw new Error("Name must be provided");
-    if(!stars) throw new Error("Stars must be provided");
+    if (!stars) throw new Error("Stars must be provided");
     if (!categoryid) throw new Error("category must be provided");
     if (!price) throw new Error("Price must be provided");
     if (!images || !images.length) throw new Error("Images must be provided");
+    if (!tag) throw new Error("Tag must be provided");
+    if (!description) throw new Error("Description must be provided");
+    if (!shortDescription)
+      throw new Error("Short Description must be provided");
 
     const storeByUserId = await db.store.findFirst({
       where: {
@@ -38,6 +52,14 @@ export async function POST(
         isFeatured,
         isArchived,
         stars,
+        description,
+        shortDescription,
+        tag: {
+          connectOrCreate: tag.map((tagName: string) => ({
+            where: { name: tagName },
+            create: { name: tagName },
+          })),
+        },
         storeid: params.storeid,
         images: {
           createMany: {
@@ -49,6 +71,7 @@ export async function POST(
 
     return NextResponse.json(product);
   } catch (error: any) {
+    console.log("Error detected:  ", error);
     throw new Error(error);
   }
 }
@@ -78,6 +101,7 @@ export async function GET(
       include: {
         images: true,
         category: true,
+        tag:true
       },
       orderBy: {
         createdAt: "desc",

@@ -39,13 +39,30 @@ export async function PATCH(
     const userId = session?.user.id;
     if (!userId) throw new Error("Unauthenticated");
 
-    const { name, price, images, categoryid, isFeatured, isArchived } =
-      await req.json();
+    const {
+      name,
+      price,
+      images,
+      categoryid,
+      isFeatured,
+      isArchived,
+      stars,
+      shortDescription,
+      description,
+      tag,
+    } = await req.json();
 
     if (!name) throw new Error("Name must be provided");
     if (!categoryid) throw new Error("Image URL must be provided");
     if (!price) throw new Error("Price must be provided");
     if (!images || !images.length) throw new Error("Images must be provided");
+    if (!tag) throw new Error("Tag must be provided");
+    if (!description) throw new Error("Description must be provided");
+    if (!shortDescription)
+      throw new Error("Short Description must be provided");
+    if (!stars) throw new Error("Rating must be provided");
+
+    console.log("tag: ", tag);
 
     const storeByUserId = await db.store.findFirst({
       where: {
@@ -70,6 +87,16 @@ export async function PATCH(
         categoryid,
         isFeatured,
         isArchived,
+        stars,
+        shortDescription,
+        description,
+        tag: {
+          set: [], // Hapus relasi tag lama
+          connectOrCreate: tag.map((tagName: string) => ({
+            where: { name: tagName },
+            create: { name: tagName },
+          })),
+        },
       },
     });
 

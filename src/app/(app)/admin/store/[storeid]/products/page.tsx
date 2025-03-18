@@ -16,6 +16,7 @@ export default async function page({
     },
     include: {
       category: true,
+      tag:true
     },
     orderBy: {
       createdAt: "desc",
@@ -29,11 +30,12 @@ export default async function page({
     isArchived: item.isArchived,
     price: formatter.format(item.price.toNumber()),
     category : item.category.name,
+    tag : item.tag.map((tag) => tag.name).join(", "),
     createdAt: format(item.createdAt, "MMM do, yyyy"),
   }));
 
   return (
-    <div className="px-8 py-10">
+    <div className="px-8 py-10 ">
       <ListProducts data={formattedProducts} />
     </div>
   );

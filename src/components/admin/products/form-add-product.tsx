@@ -22,9 +22,9 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Category, Images, Product } from "@prisma/client";
+import { Category, Images, Product, Tag } from "@prisma/client";
 import axios from "axios";
-import { MoveLeft, Trash } from "lucide-react";
+import { MoveLeft, Trash, X } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -32,12 +32,15 @@ import toast from "react-hot-toast";
 import { z } from "zod";
 import UploadImage from "../banner/upload-image";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
 
 interface ProductFormProps {
   datas:
     | (Omit<Product, "price"> & {
         price: number; // Ganti Decimal jadi number
         images: Images[];
+        tag: Tag[];
       })
     | null;
   categories: Category[] | null;
@@ -53,21 +56,29 @@ const schema = z.object({
   categoryid: z.string().min(1, { message: "Category must be selected" }),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
-  stars: z
-    .coerce.number()
+  stars: z.coerce
+    .number()
     .min(1, { message: "Rating must be at least 1" })
     .max(5, { message: "Rating must be at most 5" }),
+  description: z
+    .string()
+    .min(1, { message: "Description must be at least 5 characters" }),
+  shortDescription: z
+    .string()
+    .min(1, { message: "Short Description must be at least 5 characters" }),
+  tag: z.string().array().default([]),
 });
 type FormFields = z.infer<typeof schema>;
 
 export default function FormAddProduct(datas: ProductFormProps) {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
+  const [tags, setTags] = useState<string[]>(datas.datas?.tag.map((tag) => tag.name) || []);
+  const [tagInput, setTagInput] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const params = useParams();
   const router = useRouter();
 
   const isEditing = Boolean(datas.datas);
-  // console.log(isEditing);
 
   const title = isEditing ? "Edit Product" : "Add Product";
   const toastMessage = isEditing
@@ -89,10 +100,29 @@ export default function FormAddProduct(datas: ProductFormProps) {
       images: datas.datas?.images || [],
       price: parseFloat(String(datas.datas?.price)) || 0,
       categoryid: datas.datas?.categoryid || "",
+      stars: datas.datas?.stars || 0,
+      shortDescription: datas.datas?.shortDescription || "",
+      description: datas.datas?.description || "",
+      tag: datas.datas?.tag.map((tag) => tag.name) || [],
       isFeatured: datas.datas?.isFeatured || false,
       isArchived: datas.datas?.isArchived || false,
     },
   });
+
+  const addTag = () => {
+    if (tagInput.trim() && !tags.includes(tagInput.trim())) {
+      const newTags = [...tags, tagInput.trim()];
+      setTags(newTags);
+      setValue("tag", newTags);
+      setTagInput("");
+    }
+  };
+
+  const removeTag = (tag: string) => {
+    const newTags = tags.filter((t) => t !== tag);
+    setTags(newTags);
+    setValue("tag", newTags);
+  };
 
   async function onSubmit(data: FormFields) {
     try {
@@ -131,7 +161,7 @@ export default function FormAddProduct(datas: ProductFormProps) {
   }
 
   return (
-    <>
+    <div className="">
       <Button
         className="bg-secondary text-white"
         onClick={() => router.push(`/admin/store/${params.storeid}/products`)}
@@ -220,6 +250,20 @@ export default function FormAddProduct(datas: ProductFormProps) {
                 )}
               </div>
             </div>
+            <div>
+              <Label htmlFor="shortDescription">Short Description</Label>
+              <Textarea
+                id="shortDescription"
+                {...register("shortDescription")}
+                className="border border-gray-800"
+                placeholder="Add Short Description here..."
+              />
+              {errors.shortDescription && (
+                <p className="text-red-500 text-sm">
+                  {errors.shortDescription.message}
+                </p>
+              )}
+            </div>
             <div className="flex items-center gap-10">
               <div>
                 <Label>Featured</Label>
@@ -252,36 +296,79 @@ export default function FormAddProduct(datas: ProductFormProps) {
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="images">Images</Label>
-            <UploadImage
-              value={
-                Array.isArray(getValues("images"))
-                  ? getValues("images").map((img) => img.url)
-                  : []
-              }
-              onChange={(urls: any) => {
-                // Pastikan `urls` selalu array
-                const urlArray = Array.isArray(urls) ? urls : [urls];
+          <div className="w-1/2 space-y-4">
+            <div>
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                {...register("description")}
+                className="border border-gray-800 h-52"
+                placeholder="Add Description here..."
+              />
+              {errors.description && (
+                <p className="text-red-500 text-sm">
+                  {errors.description.message}
+                </p>
+              )}
+            </div>
 
-                setValue(
-                  "images",
-                  urlArray.map((url: any) => ({ url }))
-                );
-              }}
-              onRemove={(url) =>
-                setValue(
-                  "images",
-                  (getValues("images") || []).filter((img) => img.url !== url)
-                )
-              }
-            />
-            {errors.images && (
-              <p className="text-red-500 text-sm">{errors.images.message}</p>
-            )}
+            <div>
+              <Label htmlFor="tags">Tags</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="tags"
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && (e.preventDefault(), addTag())
+                  }
+                  placeholder="Type a tag and press Enter"
+                />
+              </div>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {tags.map((tag, index) => (
+                  <Badge key={index} className="flex bg-secondary text-white items-center gap-1">
+                    {tag}
+                    <X
+                      className="w-4 h-4 cursor-pointer"
+                      onClick={() => removeTag(tag)}
+                    />
+                  </Badge>
+                ))}
+              </div>
+            </div>
+
+            <div className="">
+              <Label htmlFor="images">Images</Label>
+              <UploadImage
+                value={
+                  Array.isArray(getValues("images"))
+                    ? getValues("images").map((img) => img.url)
+                    : []
+                }
+                onChange={(urls: any) => {
+                  // Pastikan `urls` selalu array
+                  const urlArray = Array.isArray(urls) ? urls : [urls];
+
+                  setValue(
+                    "images",
+                    urlArray.map((url: any) => ({ url }))
+                  );
+                }}
+                onRemove={(url) =>
+                  setValue(
+                    "images",
+                    (getValues("images") || []).filter((img) => img.url !== url)
+                  )
+                }
+              />
+              {errors.images && (
+                <p className="text-red-500 text-sm">{errors.images.message}</p>
+              )}
+            </div>
           </div>
         </div>
-        <div className="">
+        <div>
           <Button
             className={cn(
               "bg-secondary text-white mt-4 ",
@@ -327,6 +414,6 @@ export default function FormAddProduct(datas: ProductFormProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }

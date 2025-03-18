@@ -11,7 +11,8 @@ export default async function page({
       id: params.productid,
     },
     include:{
-      images:true
+      images:true,
+      tag:true
     }
   }); 
 
@@ -24,12 +25,12 @@ export default async function page({
   const safeProduct = product
   ? {
       ...product,
-      price: product.price.toNumber(), // ✅ Kirim sebagai number
+      price: product.price.toNumber(), 
     }
   : null;
   
   return (
-    <div className="px-8 mt-6 pb-8 ">
+    <div className="px-8 mt-6 pb-20">
       <FormAddProduct datas={safeProduct} categories={categories} />
     </div>
   );
