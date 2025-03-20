@@ -4,8 +4,8 @@ import "./globals.css";
 import { ModalProvider } from "@/provider/modal-provider";
 import { Toaster } from "react-hot-toast";
 import NextTopLoader from "nextjs-toploader";
-import { SessionProvider } from "next-auth/react";
 import SessionProviderWrapper from "@/components/SessionProvider";
+import ReduxProvider from "@/provider/redux-provider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -23,37 +23,37 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-      <html lang="en">
-        <link rel="icon" href="/logo.png" />
-        <body className={`${poppins.className} antialiased`}>
+    <html lang="en">
+      <link rel="icon" href="/logo.png" />
+      <body className={`${poppins.className} antialiased`}>
+        <ReduxProvider>
           <SessionProviderWrapper>
-
-          <NextTopLoader color="#2C742F" />
-          <ModalProvider />
-          {children}
-          <Toaster
-            position="top-center"
-            gutter={12}
-            containerStyle={{ margin: "8px" }}
-            toastOptions={{
-              success: {
-                duration: 3000,
-              },
-              error: {
-                duration: 5000,
-              },
-              style: {
-                fontSize: "16px",
-                maxWidth: "500px",
-                padding: "16px 24px",
-                backgroundColor: "white",
-                color: "black",
-              },
-            }}
-          />
+            <NextTopLoader color="#2C742F" />
+            <ModalProvider />
+            {children}
+            <Toaster
+              position="top-center"
+              gutter={12}
+              containerStyle={{ margin: "8px" }}
+              toastOptions={{
+                success: {
+                  duration: 3000,
+                },
+                error: {
+                  duration: 5000,
+                },
+                style: {
+                  fontSize: "16px",
+                  maxWidth: "500px",
+                  padding: "16px 24px",
+                  backgroundColor: "white",
+                  color: "black",
+                },
+              }}
+            />
           </SessionProviderWrapper>
-
-        </body>
-      </html>
+        </ReduxProvider>
+      </body>
+    </html>
   );
 }

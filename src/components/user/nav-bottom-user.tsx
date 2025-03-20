@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { useEffect, useState } from "react";
 
 interface NavUserProps {
   category: Category[];
@@ -17,6 +18,26 @@ interface NavUserProps {
 export default function NavBottomUser({ category }: NavUserProps) {
   const pathname = usePathname();
   const params = useParams();
+  const [scrolled, setScrolled] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset;
+
+      if (scrollTop > lastScrollY) {
+        setScrolled(true);
+      } else  {
+        setScrolled(false);
+      }
+      setLastScrollY(scrollTop);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [lastScrollY]);
 
   const routeUser = [
     {
@@ -41,7 +62,11 @@ export default function NavBottomUser({ category }: NavUserProps) {
     },
   ];
   return (
-    <nav className="bg-gray-800 w-full flex items-center gap-8 py-2 px-3">
+    <nav
+      className={`bg-gray-800 z-10 mt-14 w-full flex items-center gap-8 transition-transform duration-300 fixed py-2 px-3 ${
+        scrolled ? "-translate-y-full" : "translate-y-0"
+      } `}
+    >
       <div>
         <Select>
           <SelectTrigger className="text-white border-none">
@@ -62,7 +87,9 @@ export default function NavBottomUser({ category }: NavUserProps) {
       </div>
       {routeUser.map((route) => (
         <div key={route.label}>
-          <p className="text-white text-sm hover:text-primary cursor-pointer">{route.label}</p>
+          <p className="text-white text-sm hover:text-primary cursor-pointer">
+            {route.label}
+          </p>
         </div>
       ))}
     </nav>

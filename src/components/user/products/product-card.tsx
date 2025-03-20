@@ -1,18 +1,22 @@
 "use client";
 
-import { Category, Images, Product } from "@prisma/client";
+import { Category, Images, Product, Tag } from "@prisma/client";
 import { Expand, ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import { FaStar } from "react-icons/fa";
 import PreviewProduct from "./dialog-preview-product";
+import { useDispatch } from "react-redux";
+import { addToCart } from "@/app/redux/cart-slice";
 
 interface ProductCardProps {
   product:
     | (Omit<Product, "price"> & {
         price: number;
         images: Images[];
+        tag: Tag[];
+        category: Category;
       })
     | null;
   categories: Category[] | null;
@@ -20,6 +24,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const [openDialog, setOpenDialog] = useState(false);
+  const dispatch = useDispatch();
 
   const formatter = new Intl.NumberFormat("id-ID", {
     minimumFractionDigits: 0,
@@ -55,35 +60,39 @@ export default function ProductCard({ product }: ProductCardProps) {
             <Expand className="text-white" />
           </div>
         </div>
-        <Link
-          href={`/user/product/${product?.id}`}
-          className="flex justify-between items-center "
-        >
-          <div className="mt-2 space-y-1">
-            <h1 className="text-sm font-extralight">{product?.name}</h1>
-            <p className="text-sm">{formatter.format(product?.price || 0)}</p>
-            <div className="flex items-center gap-1">
-              {Array.from({ length: 5 }).map((_, index) => (
-                <FaStar
-                  key={index}
-                  size={10}
-                  className={
-                    index < (product?.stars || 0)
-                      ? "text-yellow-500"
-                      : "text-gray-300"
-                  }
-                />
-              ))}
+        <div className="flex justify-between items-center ">
+          <Link href={`/user/product/${product?.id}`}>
+            <div className="mt-2 space-y-1">
+              <h1 className="text-sm font-extralight">{product?.name}</h1>
+              <p className="text-sm">{formatter.format(product?.price || 0)}</p>
+              <div className="flex items-center gap-1">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <FaStar
+                    key={index}
+                    size={10}
+                    className={
+                      index < (product?.stars || 0)
+                        ? "text-yellow-500"
+                        : "text-gray-300"
+                    }
+                  />
+                ))}
+              </div>
             </div>
-          </div>
+          </Link>
           <ShoppingCart
             size={25}
+            onClick={() => product && dispatch(addToCart(product))}
             className="hover:bg-primary p-1 hover:text-white hover:rounded-full cursor-pointer"
           />
-        </Link>
+        </div>
       </div>
 
-      <PreviewProduct open={openDialog} setOpenDialog={setOpenDialog} product={product}  />
+      <PreviewProduct
+        open={openDialog}
+        setOpenDialog={setOpenDialog}
+        product={product}
+      />
     </>
   );
 }

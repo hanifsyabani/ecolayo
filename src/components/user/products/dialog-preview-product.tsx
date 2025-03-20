@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { Category, Images, Product } from "@prisma/client";
+import { Category, Images, Product, Tag } from "@prisma/client";
 import Image from "next/image";
 import { FaStar } from "react-icons/fa";
 import HeadDetailProduct from "./head-detail-product";
@@ -19,6 +19,8 @@ interface PreviewProductProps {
     | (Omit<Product, "price"> & {
         price: number;
         images: Images[];
+        tag: Tag[];
+        category: Category;
       })
     | null;
 }

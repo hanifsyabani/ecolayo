@@ -1,12 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Images, Product } from "@prisma/client";
+import { Category, Images, Product, Tag } from "@prisma/client";
 import { Heart, ShoppingCart } from "lucide-react";
 import React from "react";
 import {
   FaFacebook,
   FaInstagram,
-  FaLess,
   FaMinus,
   FaPinterest,
   FaPlus,
@@ -19,6 +18,8 @@ interface HeadProductProps {
     | (Omit<Product, "price"> & {
         price: number;
         images: Images[];
+        tag: Tag[];
+        category: Category
       })
     | null;
 }
@@ -92,6 +93,18 @@ export default function HeadDetailProduct({ product }: HeadProductProps) {
         <div className="bg-gray-200 rounded-full p-2">
           <Heart size={20} className="" />
         </div>
+      </div>
+
+      <div className="mt-8">
+        <h3 className="text-sm">
+          Category: <span className="text-gray-500"> {product?.category?.name}</span>
+        </h3>
+        <h3 className="text-sm">
+          Tag :
+          <span className="text-gray-500">
+             {product?.tag.map((tag) => tag.name).join(", ")}
+          </span>
+        </h3>
       </div>
     </div>
   );
