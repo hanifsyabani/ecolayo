@@ -3,10 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Settings, ShoppingCart } from "lucide-react";
+import { Settings} from "lucide-react";
 import ButtonLogout from "../button-logout";
 import NavBottomUser from "./nav-bottom-user";
-import Cart from "./cart";
 import { SidebarTrigger } from "../ui/sidebar";
 
 interface NavUserProps {
@@ -14,7 +13,7 @@ interface NavUserProps {
 }
 export default function NavUser({ category }: NavUserProps) {
   return (
-    <nav >
+    <nav>
       <div className="py-2 px-8 fixed w-full bg-white z-50 flex justify-between items-center">
         <Link href={`/admin/store/`} className="flex items-center gap-2">
           <Image
@@ -38,8 +37,7 @@ export default function NavUser({ category }: NavUserProps) {
             <Settings className="text-gray-800 cursor-pointer" />
           </Link>
           <SidebarTrigger />
-          <ShoppingCart size={20} className="text-primary" />
-          {/* <Cart /> */}
+
           <ButtonLogout />
         </div>
       </div>
