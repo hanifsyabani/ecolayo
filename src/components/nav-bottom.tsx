@@ -30,7 +30,7 @@ export default function NavBottom({ items }: { items: Store[] }) {
     },
   ];
   return (
-    <nav className={`bg-gray-800 w-full flex items-center fixed gap-8  }`}>
+    <nav className={`bg-gray-800 w-full flex items-center gap-8  }`}>
       <StoreSwicher items={items} />
       {routes.map((route) => (
         <Link

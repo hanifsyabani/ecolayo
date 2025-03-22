@@ -1,3 +1,4 @@
+import { ProductProps } from "@/components/interface/product";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Category, Images, Product, Tag } from "@prisma/client";
@@ -13,18 +14,8 @@ import {
   FaTwitter,
 } from "react-icons/fa";
 
-interface HeadProductProps {
-  product:
-    | (Omit<Product, "price"> & {
-        price: number;
-        images: Images[];
-        tag: Tag[];
-        category: Category
-      })
-    | null;
-}
 
-export default function HeadDetailProduct({ product }: HeadProductProps) {
+export default function HeadDetailProduct({ product }: ProductProps) {
   const formatter = new Intl.NumberFormat("id-ID", {
     minimumFractionDigits: 0,
     style: "currency",
@@ -97,12 +88,15 @@ export default function HeadDetailProduct({ product }: HeadProductProps) {
 
       <div className="mt-8">
         <h3 className="text-sm">
-          Category: <span className="text-gray-500"> {product?.category?.name}</span>
+          Category :{" "}
+          <span className="text-gray-500"> {product?.category?.name}</span>
         </h3>
-        <h3 className="text-sm">
+        <h3 className="text-sm flex gap-1 ">
           Tag :
-          <span className="text-gray-500">
-             {product?.tag.map((tag) => tag.name).join(", ")}
+          <span className="text-gray-500 flex gap-1 ">
+            {product?.tag.map((tag) => (
+              <p className="hover:underline cursor-pointer" key={tag.id}>{tag.name},</p>
+            ))}
           </span>
         </h3>
       </div>

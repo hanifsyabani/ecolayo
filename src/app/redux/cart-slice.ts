@@ -1,8 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Product, Images, Tag, Category } from "@prisma/client";
-import { Decimal } from "@prisma/client/runtime/library"; // Import Decimal untuk konversi
 
-// Perbaikan: Samakan tipe dengan yang digunakan di tampilan
 interface CartItem extends Omit<Product, "price"> {
   price: number; // Konversi Decimal ke number
   images: Images[];
