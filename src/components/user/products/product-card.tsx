@@ -9,6 +9,7 @@ import { FaStar } from "react-icons/fa";
 import PreviewProduct from "./dialog-preview-product";
 import { useDispatch } from "react-redux";
 import { addToCart } from "@/app/redux/cart-slice";
+import toast from "react-hot-toast";
 
 interface ProductCardProps {
   product:
@@ -19,7 +20,6 @@ interface ProductCardProps {
         category: Category;
       })
     | null;
-  categories: Category[] | null;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
@@ -31,6 +31,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     style: "currency",
     currency: "IDR",
   });
+
   return (
     <>
       <div className="w-52 mt-4  rounded-xl hover:shadow-xl border-b-2 border-b-white cursor-pointer hover:border-b-primary overflow-hidden p-3">
@@ -82,7 +83,10 @@ export default function ProductCard({ product }: ProductCardProps) {
           </Link>
           <ShoppingCart
             size={25}
-            onClick={() => product && dispatch(addToCart(product))}
+            onClick={() => {
+              product && dispatch(addToCart(product))
+              toast.success("Product added to cart");
+            }}
             className="hover:bg-primary p-1 hover:text-white hover:rounded-full cursor-pointer"
           />
         </div>

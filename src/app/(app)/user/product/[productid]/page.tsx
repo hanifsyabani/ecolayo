@@ -1,4 +1,4 @@
-import DetailsProduct from "@/components/user/products/details-product";
+import BottomDetailsProduct from "@/components/user/products/bottom-details-product";
 import HeadDetailProduct from "@/components/user/products/head-detail-product";
 import db from "@/lib/db";
 import Image from "next/image";
@@ -27,8 +27,8 @@ export default async function page({
     : null;
 
   return (
-    <div className="w-full">
-      <div className="flex justify-center gap-4">
+    <div className="w-full py-10">
+      <div className="flex justify-center gap-4 px-4">
         <div className="w-1/2 h-full flex justify-center items-center">
           {product?.images &&
           product?.images.length > 0 &&
@@ -52,7 +52,7 @@ export default async function page({
           <HeadDetailProduct product={safeProduct} />
         </div>
       </div>
-      <DetailsProduct product={safeProduct} />
+      <BottomDetailsProduct product={safeProduct} />
     </div>
   );
 }

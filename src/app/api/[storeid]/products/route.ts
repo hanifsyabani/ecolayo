@@ -111,7 +111,7 @@ export async function GET(
     return NextResponse.json(product);
   } catch (error: any) {
     console.log(error);
-    console.log(error.message);
+    // console.log(error.message);
     throw new Error(error);
   }
 }

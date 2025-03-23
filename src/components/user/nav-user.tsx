@@ -7,15 +7,18 @@ import { Settings} from "lucide-react";
 import ButtonLogout from "../button-logout";
 import NavBottomUser from "./nav-bottom-user";
 import { SidebarTrigger } from "../ui/sidebar";
+import CartTrigger from "./cart-trigger";
 
 interface NavUserProps {
   category: Category[];
 }
 export default function NavUser({ category }: NavUserProps) {
+
+  
   return (
     <nav>
       <div className="py-2 px-8 fixed w-full bg-white z-50 flex justify-between items-center">
-        <Link href={`/admin/store/`} className="flex items-center gap-2">
+        <Link href={`/`} className="flex items-center gap-2">
           <Image
             src={"/logo.png"}
             width={100}
@@ -23,7 +26,7 @@ export default function NavUser({ category }: NavUserProps) {
             alt="logo"
             className="w-10"
           />
-          <h1 className="text-xl font-bold">Store</h1>
+          <h1 className="text-xl font-bold">EcoLayo</h1>
         </Link>
         <div className="flex items-center">
           <Input
@@ -36,8 +39,8 @@ export default function NavUser({ category }: NavUserProps) {
           <Link href={`/admin/store/settings`}>
             <Settings className="text-gray-800 cursor-pointer" />
           </Link>
-          <SidebarTrigger />
-
+         
+          <CartTrigger/>
           <ButtonLogout />
         </div>
       </div>

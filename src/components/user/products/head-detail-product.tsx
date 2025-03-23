@@ -1,9 +1,13 @@
+"use client";
+
+import { addToCart } from "@/app/redux/cart-slice";
 import { ProductProps } from "@/components/interface/product";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Category, Images, Product, Tag } from "@prisma/client";
+import { Product } from "@prisma/client";
 import { Heart, ShoppingCart } from "lucide-react";
 import React from "react";
+import toast from "react-hot-toast";
 import {
   FaFacebook,
   FaInstagram,
@@ -13,14 +17,17 @@ import {
   FaStar,
   FaTwitter,
 } from "react-icons/fa";
-
+import { useDispatch } from "react-redux";
 
 export default function HeadDetailProduct({ product }: ProductProps) {
+  const dispatch = useDispatch();
+
   const formatter = new Intl.NumberFormat("id-ID", {
     minimumFractionDigits: 0,
     style: "currency",
     currency: "IDR",
   });
+
   return (
     <div>
       <div className="flex items-center gap-2 mt-2">
@@ -70,14 +77,20 @@ export default function HeadDetailProduct({ product }: ProductProps) {
 
       <p className="my-6 text-gray-500 text-sm">{product?.shortDescription}</p>
 
-      <div className="flex items-center justify-evenly gap-4">
+      <div className="flex items-center gap-4">
         <div className="flex items-center gap-8 shadow-md rounded-full w-32 px-2 ">
           <FaMinus size={20} className="bg-gray-100 rounded-full p-1" />
           1
           <FaPlus size={20} className="bg-gray-100 rounded-full p-1" />
         </div>
 
-        <Button className="text-white text-sm rounded-full w-60">
+        <Button
+          className="text-white text-sm rounded-full w-60"
+          onClick={() => {
+            product && dispatch(addToCart(product));
+            toast.success("Product added to cart");
+          }}
+        >
           <ShoppingCart /> Add to Cart
         </Button>
 
@@ -95,7 +108,9 @@ export default function HeadDetailProduct({ product }: ProductProps) {
           Tag :
           <span className="text-gray-500 flex gap-1 ">
             {product?.tag.map((tag) => (
-              <p className="hover:underline cursor-pointer" key={tag.id}>{tag.name},</p>
+              <p className="hover:underline cursor-pointer" key={tag.id}>
+                {tag.name},
+              </p>
             ))}
           </span>
         </h3>

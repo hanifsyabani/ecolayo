@@ -21,11 +21,12 @@ export default async function UserLayout({
   if (session?.user.role !== "user") redirect("/login");
 
   const category = await db.category.findMany();
+  
   return (
     <SidebarProvider>
       <div className="w-full">
         <NavUser category={category} />
-        <div className="pt-32 px-4">{children}</div>
+        <div className="pt-32 ">{children}</div>
       </div>
       <SidebarCart />
     </SidebarProvider>

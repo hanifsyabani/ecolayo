@@ -35,7 +35,7 @@ export default function ProductFeatured({ title }: ProductListProps) {
       <h1 className="text-xl font-semibold">{title}</h1>
       <div className="flex items-center justify-center flex-wrap">
         {products.map((product: any) => (
-          <ProductCard product={product} categories={null} key={product?.id} />
+          <ProductCard product={product} key={product?.id} />
         ))}
       </div>
     </div>

@@ -54,7 +54,6 @@ export default function PreviewProduct({
               <DialogTitle className="text-3xl">{product?.name}</DialogTitle>
             </DialogHeader>
             <HeadDetailProduct product={product} />
-            {/* <p>{product.}</p> */}
           </div>
         </DialogContent>
       </Dialog>

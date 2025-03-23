@@ -280,15 +280,14 @@ const SidebarTrigger = React.forwardRef<
       ref={ref}
       data-sidebar="trigger"
       variant="ghost"
-      size="icon"
-      className={cn("h-7 w-7", className)}
+      className={cn(className, "p-0", "h-auto", "w-auto")}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
       }}
       {...props}
     >
-      <ShoppingCartIcon size={24} className="text-primary"/>
+      <ShoppingCartIcon size={20} className="text-primary"/>
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )
