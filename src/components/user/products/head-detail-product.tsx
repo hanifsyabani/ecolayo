@@ -1,12 +1,11 @@
 "use client";
 
 import { addToCart } from "@/app/redux/cart-slice";
-import { ProductProps } from "@/components/interface/product";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Product } from "@prisma/client";
+import { Category, Images, Product, Tag } from "@prisma/client";
 import { Heart, ShoppingCart } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 import {
   FaFacebook,
@@ -19,14 +18,37 @@ import {
 } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 
-export default function HeadDetailProduct({ product }: ProductProps) {
+export interface ProductProps {
+  setDialog?: (open: boolean) => void;
+  product:
+    | (Omit<Product, "price"> & {
+        price: number;
+        images: Images[];
+        tag: Tag[];
+        category: Category;
+      })
+    | null;
+}
+
+export default function HeadDetailProduct({
+  product,
+  setDialog,
+}: ProductProps) {
   const dispatch = useDispatch();
+  const [quantity, setQuantity] = useState(1);
 
   const formatter = new Intl.NumberFormat("id-ID", {
     minimumFractionDigits: 0,
     style: "currency",
     currency: "IDR",
   });
+
+  function incrementQuantity() {
+    setQuantity((prev) => prev + 1);
+  }
+  function decrementQuantity() {
+    setQuantity((prev) => prev - 1);
+  }
 
   return (
     <div>
@@ -79,15 +101,32 @@ export default function HeadDetailProduct({ product }: ProductProps) {
 
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-8 shadow-md rounded-full w-32 px-2 ">
-          <FaMinus size={20} className="bg-gray-100 rounded-full p-1" />
-          1
-          <FaPlus size={20} className="bg-gray-100 rounded-full p-1" />
+          <FaMinus
+            size={20}
+            className="bg-gray-100 rounded-full p-1 cursor-pointer"
+            onClick={decrementQuantity}
+          />
+          {quantity}
+          <FaPlus
+            size={20}
+            className="bg-gray-100 rounded-full p-1 cursor-pointer"
+            onClick={incrementQuantity}
+          />
         </div>
 
         <Button
           className="text-white text-sm rounded-full w-60"
           onClick={() => {
-            product && dispatch(addToCart(product));
+            if (product) {
+              dispatch(
+                addToCart({
+                  ...product,
+                  quantity,
+                })
+              );
+            }
+            if (setDialog) setDialog(false);
+
             toast.success("Product added to cart");
           }}
         >

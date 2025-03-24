@@ -52,12 +52,15 @@ export function SidebarCart() {
                       height={100}
                       alt="productimg"
                     />
-                    <div>
-                      <p className="text-sm ">{item.name}</p>
-                      <p className="text-sm">
-                        {" "}
-                        {formatter.format(item.quantity * item.price)}
-                      </p>
+                    <div className="flex items-center gap-4">
+                      <div>
+                        <p className="text-sm ">{item.name}</p>
+                        <p className="text-sm">
+                          {" "}
+                          {formatter.format(item.quantity * item.price)}
+                        </p>
+                      </div>
+                      <p>{item.quantity}</p>
                     </div>
                   </div>
                   <X
@@ -75,9 +78,7 @@ export function SidebarCart() {
                 <h1>{cart.length} Product</h1>
                 <h1>{formatter.format(totalPrice())}</h1>
               </div>
-              <Button
-                className="mt-3 w-full   text-white py-1 rounded-full"
-              >
+              <Button className="mt-3 w-full   text-white py-1 rounded-full">
                 Checkout
               </Button>
               <Button

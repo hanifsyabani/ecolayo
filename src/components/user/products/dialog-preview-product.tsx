@@ -53,7 +53,7 @@ export default function PreviewProduct({
             <DialogHeader>
               <DialogTitle className="text-3xl">{product?.name}</DialogTitle>
             </DialogHeader>
-            <HeadDetailProduct product={product} />
+            <HeadDetailProduct product={product} setDialog={setOpenDialog} />
           </div>
         </DialogContent>
       </Dialog>

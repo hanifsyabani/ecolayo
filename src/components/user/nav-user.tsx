@@ -6,7 +6,6 @@ import { Button } from "../ui/button";
 import { Settings} from "lucide-react";
 import ButtonLogout from "../button-logout";
 import NavBottomUser from "./nav-bottom-user";
-import { SidebarTrigger } from "../ui/sidebar";
 import CartTrigger from "./cart-trigger";
 
 interface NavUserProps {
