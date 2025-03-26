@@ -14,7 +14,7 @@ interface BannerProps {
   data: BannerColumn[];
 }
 
-export default function ListBanner(data: BannerProps) {
+export default function ListBanner({data}: BannerProps) {
   const params = useParams();
 
   return (
@@ -29,7 +29,7 @@ export default function ListBanner(data: BannerProps) {
       </div>
       <Separator className="my-4 bg-gray-300" />
 
-      <DataTable data={data.data} columns={Columns} searchKey="label" />
+      <DataTable data={data} columns={Columns} searchKey="label" />
 
       <Heading title="API" description="API calls for Banner"/> 
       <ApiList idIndikator="bannerid" nameIndikator="banner"/>

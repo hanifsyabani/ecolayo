@@ -4,6 +4,8 @@ import { Product } from "@prisma/client";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import ProductCard from "./product-card";
+import TitleHome from "../title-home";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ProductListProps {
   title: string;
@@ -11,6 +13,7 @@ interface ProductListProps {
 
 export default function ProductFeatured({ title }: ProductListProps) {
   const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -24,6 +27,8 @@ export default function ProductFeatured({ title }: ProductListProps) {
         setProducts(featuredProducts);
       } catch (error) {
         console.error("Error fetching products:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -32,11 +37,15 @@ export default function ProductFeatured({ title }: ProductListProps) {
 
   return (
     <div className="px-4 mt-10">
-      <h1 className="text-xl font-semibold">{title}</h1>
+      <TitleHome title={title} link="/products/featured" />
       <div className="flex items-center justify-center flex-wrap">
-        {products.map((product: any) => (
-          <ProductCard product={product} key={product?.id} />
-        ))}
+        {isLoading
+          ? Array.from({ length: 5 }).map((_, index) => (
+              <Skeleton key={index} className="w-52 h-44 rounded-xl" />
+            ))
+          : products.map((product: any) => (
+              <ProductCard product={product} key={product?.id} />
+            ))}
       </div>
     </div>
   );

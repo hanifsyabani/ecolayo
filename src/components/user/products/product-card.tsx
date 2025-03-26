@@ -84,7 +84,10 @@ export default function ProductCard({ product }: ProductCardProps) {
           <ShoppingCart
             size={25}
             onClick={() => {
-              product && dispatch(addToCart(product))
+              product && dispatch(addToCart({
+                ...product,
+                quantity:1
+              }))
               toast.success("Product added to cart");
             }}
             className="hover:bg-primary p-1 hover:text-white hover:rounded-full cursor-pointer"

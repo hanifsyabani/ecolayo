@@ -6,6 +6,7 @@ import axios from "axios";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import TitleHome from "../title-home";
 
 interface CategoryWithBanner extends Category {
   banner: Banner;
@@ -34,12 +35,7 @@ export default function ProductCategories() {
 
   return (
     <div className="px-4 pb-8 overflow-hidden">
-      <div className="flex justify-between items-center">
-        <h1 className="text-xl font-semibold">Popular Categories</h1>
-        <div className="flex text-sm items-center text-primary">
-          View All <ArrowRight size={15} />
-        </div>
-      </div>
+      <TitleHome title="Product Categories" link="/products/categories" />
 
       <div className="flex justify-evenly items-center mt-4">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-y-14">

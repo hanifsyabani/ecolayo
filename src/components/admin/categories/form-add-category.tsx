@@ -27,12 +27,12 @@ import axios from "axios";
 import { MoveLeft, Trash } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import {useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 
 interface CategoryFormProps {
-  datas: Category | null;
+  category: Category | null;
   banners: Banner[] | null;
 }
 
@@ -42,14 +42,13 @@ const schema = z.object({
 });
 type FormFields = z.infer<typeof schema>;
 
-export default function FormAddCategory(datas: CategoryFormProps) {
+export default function FormAddCategory({category, banners}: CategoryFormProps) {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const params = useParams();
   const router = useRouter();
 
-  const isEditing = Boolean(datas.datas);
-  // console.log(isEditing);
+  const isEditing = Boolean(category);
 
   const title = isEditing ? "Edit Category" : "Add Category";
   const toastMessage = isEditing
@@ -65,8 +64,8 @@ export default function FormAddCategory(datas: CategoryFormProps) {
   } = useForm<FormFields>({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: datas.datas?.name || "",
-      bannerid: datas.datas?.bannerid || "",
+      name: category?.name || "",
+      bannerid: category?.bannerid || "",
     },
   });
 
@@ -128,7 +127,7 @@ export default function FormAddCategory(datas: CategoryFormProps) {
           </Button>
         )}
       </div>
-      <Separator />
+      <Separator  />
       <form className="mt-10 space-y-4 " onSubmit={handleSubmit(onSubmit)}>
         <div className="flex  gap-10">
           <div className="w-1/2">
@@ -145,18 +144,25 @@ export default function FormAddCategory(datas: CategoryFormProps) {
           </div>
           <div>
             <Label htmlFor="bannerid">Banner</Label>
-            <Select onValueChange={(value) => setValue("bannerid", value)} value={datas.datas?.bannerid}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a banner" />
-              </SelectTrigger>
-              <SelectContent className="bg-white">
-                {datas.banners?.map((banner) => (
-                  <SelectItem key={banner.id} value={banner.id} className="hover:bg-gray-200 cursor-pointer">
-                    {banner.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              <Select
+                onValueChange={(value) => setValue("bannerid", value)}
+                value={category?.bannerid}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a banner" />
+                </SelectTrigger>
+                <SelectContent className="bg-white max-h-60">
+                  {banners?.map((banner) => (
+                    <SelectItem
+                      key={banner.id}
+                      value={banner.id}
+                      className="hover:bg-gray-200 cursor-pointer"
+                    >
+                      {banner.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             {errors.bannerid && (
               <p className="text-red-500 text-sm">{errors.bannerid.message}</p>
             )}

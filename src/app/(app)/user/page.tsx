@@ -1,4 +1,5 @@
 import HeadingBanner from "@/components/user/heading-banner";
+import NewestProduct from "@/components/user/products/newest-product";
 import ProductCategories from "@/components/user/products/product-categories";
 import ProductFeatured from "@/components/user/products/product-featured";
 import PromoteBanner from "@/components/user/promote-banner";
@@ -25,6 +26,7 @@ export default async function page() {
       <ProductCategories/>
       <ProductFeatured title="Popular Products" />
       <PromoteBanner/>
+      <NewestProduct/>
     </div>
   );
 }

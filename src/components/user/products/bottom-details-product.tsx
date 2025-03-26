@@ -61,7 +61,7 @@ export default function BottomDetailsProduct({ product }: ProductProps) {
           ))}
         </div>
 
-        <Separator className=" bg-gray-200 mt-4  "/>
+        <Separator className=" bg-gray-200 mt-4  " />
 
         <div>{renderContent(detailTab)}</div>
 
@@ -77,11 +77,10 @@ export default function BottomDetailsProduct({ product }: ProductProps) {
             </div>
           </div>
         </div>
-
       </div>
-        <div className="mt-20 bg-[#F7F7F7]">
-          <Newsletter />
-        </div>
+      <div className="mt-20 bg-[#F7F7F7] px-6 py-8">
+        <Newsletter />
+      </div>
     </>
   );
 }

@@ -31,7 +31,7 @@ export default async function page({
   
   return (
     <div className="px-8 mt-6 pb-20">
-      <FormAddProduct datas={safeProduct} categories={categories} />
+      <FormAddProduct products={safeProduct} categories={categories} />
     </div>
   );
 }

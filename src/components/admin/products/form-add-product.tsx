@@ -36,7 +36,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 
 interface ProductFormProps {
-  datas:
+  products:
     | (Omit<Product, "price"> & {
         price: number; // Ganti Decimal jadi number
         images: Images[];
@@ -70,15 +70,15 @@ const schema = z.object({
 });
 type FormFields = z.infer<typeof schema>;
 
-export default function FormAddProduct(datas: ProductFormProps) {
+export default function FormAddProduct({products, categories}: ProductFormProps) {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
-  const [tags, setTags] = useState<string[]>(datas.datas?.tag.map((tag) => tag.name) || []);
+  const [tags, setTags] = useState<string[]>(products?.tag.map((tag) => tag.name) || []);
   const [tagInput, setTagInput] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const params = useParams();
   const router = useRouter();
 
-  const isEditing = Boolean(datas.datas);
+  const isEditing = Boolean(products);
 
   const title = isEditing ? "Edit Product" : "Add Product";
   const toastMessage = isEditing
@@ -96,16 +96,16 @@ export default function FormAddProduct(datas: ProductFormProps) {
   } = useForm<FormFields>({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: datas.datas?.name || "",
-      images: datas.datas?.images || [],
-      price: parseFloat(String(datas.datas?.price)) || 0,
-      categoryid: datas.datas?.categoryid || "",
-      stars: datas.datas?.stars || 0,
-      shortDescription: datas.datas?.shortDescription || "",
-      description: datas.datas?.description || "",
-      tag: datas.datas?.tag.map((tag) => tag.name) || [],
-      isFeatured: datas.datas?.isFeatured || false,
-      isArchived: datas.datas?.isArchived || false,
+      name: products?.name || "",
+      images: products?.images || [],
+      price: parseFloat(String(products?.price)) || 0,
+      categoryid: products?.categoryid || "",
+      stars: products?.stars || 0,
+      shortDescription: products?.shortDescription || "",
+      description: products?.description || "",
+      tag: products?.tag.map((tag) => tag.name) || [],
+      isFeatured: products?.isFeatured || false,
+      isArchived: products?.isArchived || false,
     },
   });
 
@@ -219,7 +219,7 @@ export default function FormAddProduct(datas: ProductFormProps) {
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent className="bg-white">
-                    {datas.categories?.map((category) => (
+                    {categories?.map((category) => (
                       <SelectItem
                         key={category.id}
                         value={category.id}

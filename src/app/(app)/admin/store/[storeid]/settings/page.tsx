@@ -1,4 +1,5 @@
 import SettingForm from "@/components/admin/settings/setting-form";
+import { Card, CardContent } from "@/components/ui/card";
 import { authOptions } from "@/lib/auth";
 import db from "@/lib/db";
 import { getServerSession } from "next-auth";
@@ -11,8 +12,8 @@ interface SettingsPageProps {
 }
 
 export default async function page(props: SettingsPageProps) {
-   const session = await getServerSession(authOptions)
-    const userId = session?.user.id
+  const session = await getServerSession(authOptions);
+  const userId = session?.user.id;
 
   if (!userId) redirect("/login");
 
@@ -26,8 +27,10 @@ export default async function page(props: SettingsPageProps) {
   if (!store) redirect("/");
 
   return (
-    <div className="px-8 mt-6">
-      <SettingForm datas={store} />
-    </div>
+    <Card className="px-3 py-8 ">
+      <CardContent className="bg-white py-4 rounded-xl">
+        <SettingForm datas={store} />
+      </CardContent>
+    </Card>
   );
 }

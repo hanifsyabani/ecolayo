@@ -1,3 +1,4 @@
+import Footer from "@/components/user/footer";
 import { Button } from "@/components/ui/button";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import NavUser from "@/components/user/nav-user";
@@ -23,10 +24,11 @@ export default async function UserLayout({
   const category = await db.category.findMany();
   
   return (
-    <SidebarProvider>
+    <SidebarProvider admin={false}>
       <div className="w-full">
         <NavUser category={category} />
         <div className="pt-32 ">{children}</div>
+        <Footer/>
       </div>
       <SidebarCart />
     </SidebarProvider>

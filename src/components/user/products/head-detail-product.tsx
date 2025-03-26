@@ -17,6 +17,7 @@ import {
   FaTwitter,
 } from "react-icons/fa";
 import { useDispatch } from "react-redux";
+import Sosmed from "../sosmed";
 
 export interface ProductProps {
   setDialog?: (open: boolean) => void;
@@ -74,27 +75,7 @@ export default function HeadDetailProduct({
       </h1>
 
       <div className="flex justify-end">
-        <div className="flex items-center gap-3">
-          <p className="text-sm">Share Product</p>
-          <div className="flex items-center gap-2">
-            <FaFacebook
-              size={30}
-              className="hover:bg-primary rounded-full cursor-pointer p-1 text-gray-500 hover:text-white"
-            />
-            <FaInstagram
-              size={30}
-              className="hover:bg-primary rounded-full cursor-pointer p-1 text-gray-500 hover:text-white"
-            />
-            <FaTwitter
-              size={30}
-              className="hover:bg-primary rounded-full cursor-pointer p-1 text-gray-500 hover:text-white"
-            />
-            <FaPinterest
-              size={30}
-              className="hover:bg-primary rounded-full cursor-pointer p-1 text-gray-500 hover:text-white"
-            />
-          </div>
-        </div>
+        <Sosmed/>
       </div>
 
       <p className="my-6 text-gray-500 text-sm">{product?.shortDescription}</p>
