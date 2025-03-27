@@ -20,7 +20,7 @@ export default async function page({
 
   return (
     <div className="px-8 mt-6 ">
-      <FormAddCategory datas={category} banners={banners} />
+      <FormAddCategory category={category} banners={banners} />
     </div>
   );
 }

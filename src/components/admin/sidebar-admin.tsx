@@ -1,13 +1,12 @@
 'use client'
 
-import React, { act } from "react";
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
 } from "../ui/sidebar";
-import { Calendar, Fullscreen, Home, Inbox, Logs, Settings, ShoppingBasket } from "lucide-react";
+import { Fullscreen, Home, Logs, Settings, ShoppingBasket } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import ButtonLogout from "../button-logout";
@@ -22,40 +21,42 @@ export default function SidebarAdmin({
   store_name,
   store_id,
 }: SidebarAdminProps) {
-  const params = useParams()
-  const pathname = usePathname()
+  const params = useParams();
+  const pathname = usePathname();
   const items = [
     {
       title: "Home",
-      url: "/",
+      url: `/admin/store/${params.storeid}`,
       icon: Home,
-      active: pathname === "/",
+      // active: pathname === "/",
     },
     {
       title: "Products",
       url: `/admin/store/${params.storeid}/products`,
       icon: ShoppingBasket,
-      active: pathname === `/admin/store/${params.storeid}/products`,
+      // active: pathname === `/admin/store/${params.storeid}/products`,
     },
     {
       title: "Banners",
       url: `/admin/store/${params.storeid}/banners`,
       icon: Fullscreen,
-      active: pathname === `/admin/store/${params.storeid}/banners`,
+      // active: pathname === `/admin/store/${params.storeid}/banners`,
     },
     {
       title: "Categories",
       url: `/admin/store/${params.storeid}/categories`,
       icon: Logs,
-      active: pathname === `/admin/store/${params.storeid}/categories`,
+      // active: pathname === `/admin/store/${params.storeid}/categories`,
     },
 
     {
       title: "Settings",
       url: `/admin/store/${store_id}/settings`,
       icon: Settings,
+      // active: pathname === `/admin/store/${store_id}/settings`,
     },
   ];
+
   return (
     <Sidebar className="bg-white" side="left">
       <SidebarContent className="py-5 px-2 h-full">
@@ -75,16 +76,22 @@ export default function SidebarAdmin({
 
         <SidebarGroup className="flex-1">
           <SidebarGroupContent className="space-y-4">
-            {items.map((item) => (
+            {items.map((item) => {
+              const isActive = pathname === item.url;
+              return(
+
               <Link
                 href={item.url}
                 key={item.title}
-                className="hover:bg-gray-200 py-2 rounded-full px-3 cursor-pointer flex items-center gap-4"
+                className={`${
+                  isActive ? "bg-primary text-white" : "bg-white hover:bg-gray-200"
+                }  py-2 rounded-full px-3 cursor-pointer flex items-center gap-4`}
               >
                 <item.icon size={25} />
                 <span>{item.title}</span>
               </Link>
-            ))}
+              )
+            })}
           </SidebarGroupContent>
         </SidebarGroup>
 

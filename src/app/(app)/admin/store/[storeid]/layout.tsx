@@ -35,7 +35,7 @@ export default async function DashboardLayout({
   return (
     <SidebarProvider admin={true}>
       <SidebarAdmin store_name={store.name} store_id={store.id} />
-      <div className="w-full bg-gray-200">
+      <div className="w-full bg-gray-200 ">
         <Navbar />
         {children}
       </div>

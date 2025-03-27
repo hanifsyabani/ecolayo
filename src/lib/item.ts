@@ -1,4 +1,5 @@
 import { BoxIcon, HeadphonesIcon, ShoppingBag, Truck } from "lucide-react";
+import { FaBox, FaImage, FaList, FaUser } from "react-icons/fa";
 
 export const shopServiceItem =[
   {
@@ -22,3 +23,39 @@ export const shopServiceItem =[
     description : "30 days Money-Back Guarantee"
   },
 ]
+
+
+export const commonStats = [
+  {
+    title: "Total Users",
+    key: "totalUsers",
+    description: "Jumlah pengguna terdaftar",
+    icon: FaUser,
+    value: 0
+    
+  },
+  {
+    title: "Total Banner",
+    key: "totalStores",
+    description: "Jumlah toko yang dibuat",
+    icon: FaImage,
+    value: 0
+
+  },
+  {
+    title: "Total Products",
+    key: "totalProducts",
+    description: "Jumlah produk yang tersedia",
+    icon: FaBox,
+    value: 0
+
+  },
+  {
+    title: "Total Categories",
+    key: "totalCategories",
+    description: "Jumlah kategori yang ada",
+    icon: FaList,
+    value: 0
+
+  },
+];
