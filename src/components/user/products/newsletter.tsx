@@ -4,7 +4,7 @@ import Sosmed from "../sosmed";
 
 export default function Newsletter() {
   return (
-    <div className="flex items-center px-4 mt-20 ">
+    <div className="flex items-center px-8 mt-20 ">
       <div className="w-[40%]">
         <h1 className="text-xl font-semibold">Subscribe our Newsletter</h1>
         <p className="text-sm text-gray-500 mt-2">

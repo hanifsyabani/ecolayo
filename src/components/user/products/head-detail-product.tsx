@@ -21,6 +21,7 @@ interface ProductProps {
         images: Images[];
         tag: Tag[];
         category: Category;
+        isLike?: boolean;
       })
     | null;
 }
@@ -45,7 +46,7 @@ export default function HeadDetailProduct({
     setQuantity((prev) => prev + 1);
   }
   function decrementQuantity() {
-    setQuantity((prev) => prev - 1);
+    setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
   }
 
   async function handleLiked() {
@@ -58,8 +59,12 @@ export default function HeadDetailProduct({
         }
       );
 
-      
       setIsLiked((prev) => !prev);
+      
+      if (product) {
+        product.isLike = !isLiked;
+      }
+
       toast.success(isLiked ? "Product Unliked" : "Product Liked");
     } catch (error) {
       toast.error("Failed Liked Product");
@@ -136,7 +141,7 @@ export default function HeadDetailProduct({
         </Button>
 
         <div
-          className="bg-gray-200 rounded-full p-2 cursor-pointer"
+          className={`bg-gray-200 rounded-full p-2 cursor-pointer ${isLoadingForm && "cursor-not-allowed"}`}
           onClick={handleLiked}
         >
           {isLiked ? (

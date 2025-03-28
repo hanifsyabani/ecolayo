@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import {  useEffect, useState } from "react";
+import {   useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { usePathname, useRouter } from "next/navigation";
@@ -34,7 +34,6 @@ export default function StoreModal() {
   });
 
   const storedModal = useStoreModal();
-  const pathname = usePathname();
 
 
   // useEffect(() => {

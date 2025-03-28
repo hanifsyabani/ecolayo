@@ -36,7 +36,7 @@ export default function ProductFeatured({ title }: ProductListProps) {
   }, []);
 
   return (
-    <div className="px-4 mt-10">
+    <div className="px-4 mt-20">
       <TitleHome title={title} link="/products/featured" />
       <div className="flex items-center justify-center flex-wrap">
         {isLoading
