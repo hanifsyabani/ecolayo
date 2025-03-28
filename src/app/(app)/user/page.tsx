@@ -1,15 +1,17 @@
-import HeadingBanner from "@/components/user/heading-banner";
-import NewestProduct from "@/components/user/products/newest-product";
-import ProductCategories from "@/components/user/products/product-categories";
-import ProductFeatured from "@/components/user/products/product-featured";
-import PromoteBanner from "@/components/user/promote-banner";
+import ClientTestimoni from "@/components/user/home/client-testimoni";
+import HeadingBanner from "@/components/user/home/heading-banner";
+import NewestProduct from "@/components/user/home/newest-product";
+import ProductCategories from "@/components/user/home/product-categories";
+import ProductFeatured from "@/components/user/home/product-featured";
+import PromoteBanner from "@/components/user/home/promote-banner";
+import Newsletter from "@/components/user/products/newsletter";
 import { shopServiceItem } from "@/lib/item";
 
 export default async function page() {
   return (
     <div className="pb-20">
       <HeadingBanner />
-      <div className="flex justify-evenly items-center gap-4 mb-10">
+      <div className="flex justify-evenly items-center gap-4 mt-10 mb-16">
         {shopServiceItem.map((item) => (
           <div
             key={item.title}
@@ -23,10 +25,12 @@ export default async function page() {
           </div>
         ))}
       </div>
-      <ProductCategories/>
+      <ProductCategories />
       <ProductFeatured title="Popular Products" />
-      <PromoteBanner/>
-      <NewestProduct/>
+      <PromoteBanner />
+      <NewestProduct />
+      <ClientTestimoni />
+      <Newsletter/>
     </div>
   );
 }

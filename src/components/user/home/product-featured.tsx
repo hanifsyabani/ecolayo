@@ -3,8 +3,8 @@
 import { Product } from "@prisma/client";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import ProductCard from "./product-card";
-import TitleHome from "../title-home";
+import ProductCard from "../products/product-card";
+import TitleHome from "./title-home";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface ProductListProps {

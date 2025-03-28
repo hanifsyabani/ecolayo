@@ -5,21 +5,15 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Category, Images, Product, Tag } from "@prisma/client";
 import { Heart, ShoppingCart } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import {
-  FaFacebook,
-  FaInstagram,
-  FaMinus,
-  FaPinterest,
-  FaPlus,
-  FaStar,
-  FaTwitter,
-} from "react-icons/fa";
+import { FaHeart, FaMinus, FaPlus, FaStar } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import Sosmed from "../sosmed";
+import axios from "axios";
+import { useParams } from "next/navigation";
 
-export interface ProductProps {
+interface ProductProps {
   setDialog?: (open: boolean) => void;
   product:
     | (Omit<Product, "price"> & {
@@ -37,6 +31,9 @@ export default function HeadDetailProduct({
 }: ProductProps) {
   const dispatch = useDispatch();
   const [quantity, setQuantity] = useState(1);
+  const [isLoadingForm, setIsLoadingForm] = useState(false);
+  const [isLiked, setIsLiked] = useState(product?.isLike || false);
+  const params = useParams();
 
   const formatter = new Intl.NumberFormat("id-ID", {
     minimumFractionDigits: 0,
@@ -50,6 +47,30 @@ export default function HeadDetailProduct({
   function decrementQuantity() {
     setQuantity((prev) => prev - 1);
   }
+
+  async function handleLiked() {
+    try {
+      setIsLoadingForm(true);
+      await axios.patch(
+        `/api/${params.storeid}/products/${product?.id}/liked-product`,
+        {
+          isLiked: !isLiked,
+        }
+      );
+
+      
+      setIsLiked((prev) => !prev);
+      toast.success(isLiked ? "Product Unliked" : "Product Liked");
+    } catch (error) {
+      toast.error("Failed Liked Product");
+    } finally {
+      setIsLoadingForm(false);
+    }
+  }
+
+  useEffect(() => {
+    setIsLiked(product?.isLike || false);
+  }, [product?.isLike]);
 
   return (
     <div>
@@ -75,7 +96,7 @@ export default function HeadDetailProduct({
       </h1>
 
       <div className="flex justify-end">
-        <Sosmed/>
+        <Sosmed />
       </div>
 
       <p className="my-6 text-gray-500 text-sm">{product?.shortDescription}</p>
@@ -114,8 +135,15 @@ export default function HeadDetailProduct({
           <ShoppingCart /> Add to Cart
         </Button>
 
-        <div className="bg-gray-200 rounded-full p-2">
-          <Heart size={20} className="" />
+        <div
+          className="bg-gray-200 rounded-full p-2 cursor-pointer"
+          onClick={handleLiked}
+        >
+          {isLiked ? (
+            <FaHeart size={20} className="text-primary" />
+          ) : (
+            <Heart size={20} className="text-primary" />
+          )}
         </div>
       </div>
 

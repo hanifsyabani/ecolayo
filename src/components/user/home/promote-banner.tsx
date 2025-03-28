@@ -42,7 +42,7 @@ export default function PromoteBanner() {
               width={100}
               height={100}
               src={item.imageUrl}
-              alt=""
+              alt="promotebanner"
               className="w-full"
             />
           </div>

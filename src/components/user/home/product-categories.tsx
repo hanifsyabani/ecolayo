@@ -6,7 +6,7 @@ import axios from "axios";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import TitleHome from "../title-home";
+import TitleHome from "./title-home";
 
 interface CategoryWithBanner extends Category {
   banner: Banner;

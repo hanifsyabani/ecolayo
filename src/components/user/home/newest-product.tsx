@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import TitleHome from "../title-home";
+import TitleHome from "./title-home";
 import axios from "axios";
 import { ProductProps } from "@/components/interface/product";
-import ProductCard from "./product-card";
+import ProductCard from "../products/product-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Product } from "@prisma/client";
 
@@ -15,7 +15,6 @@ export default function NewestProduct() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-
         const response = await axios.get(
           "/api/af990241-e9fd-458c-9612-47ea908df21f/products"
         );
@@ -39,21 +38,24 @@ export default function NewestProduct() {
     fetchProducts();
   }, []);
 
-
-
   return (
     <div className="mt-20 px-4">
       <TitleHome title="Newest Product" link="/products/newest" />
-
-      <div className="flex items-center justify-center flex-wrap">
-        {isLoading
-          ? Array.from({ length: 5 }).map((_, index) => (
-              <Skeleton key={index} className="w-52 h-44 rounded-xl" />
-            ))
-          : newestProducts.map((product: any) => (
-              <ProductCard product={product} key={product?.id} />
-            ))}
-      </div>
+      {newestProducts.length === 0 ? (
+        <div className="flex justify-center items-center">
+          <h1>No products found</h1>
+        </div>
+      ) : (
+        <div className="flex items-center justify-center flex-wrap">
+          {isLoading
+            ? Array.from({ length: 5 }).map((_, index) => (
+                <Skeleton key={index} className="w-52 h-44 rounded-xl" />
+              ))
+            : newestProducts.map((product: any) => (
+                <ProductCard product={product} key={product?.id} />
+              ))}
+        </div>
+      )}
     </div>
   );
 }

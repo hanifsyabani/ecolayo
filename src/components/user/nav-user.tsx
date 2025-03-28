@@ -1,3 +1,5 @@
+'use client'
+
 import { Category } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,11 +9,26 @@ import { Settings} from "lucide-react";
 import ButtonLogout from "../button-logout";
 import NavBottomUser from "./nav-bottom-user";
 import CartTrigger from "./cart-trigger";
+import { useEffect, useState } from "react";
 
-interface NavUserProps {
-  category: Category[];
-}
-export default function NavUser({ category }: NavUserProps) {
+
+export default function NavUser() {
+
+  const [category, setCategory] = useState<Category[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("/api/af990241-e9fd-458c-9612-47ea908df21f/categories");
+        const data = await response.json();
+        setCategory(data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   
   return (

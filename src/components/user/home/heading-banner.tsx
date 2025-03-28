@@ -2,10 +2,10 @@
 
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { Skeleton } from "../ui/skeleton";
+import { Skeleton } from "../../ui/skeleton";
 
 interface Banner {
   imageUrl: string;
