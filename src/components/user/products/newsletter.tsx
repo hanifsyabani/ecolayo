@@ -2,7 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Sosmed from "../sosmed";
 
-export default function Newsletter() {
+interface NewsletterProps {
+  isSosmed?: boolean;
+}
+
+export default function Newsletter({ isSosmed }: NewsletterProps) {
   return (
     <div className="flex items-center px-8 mt-20 ">
       <div className="w-[40%]">
@@ -14,14 +18,17 @@ export default function Newsletter() {
         </p>
       </div>
 
-      <div className="flex items-center w-1/2 gap-8">
-        <div className="flex items-center"> 
-          <Input placeholder="Enter your email adress" className="rounded-full w-80 bg-white"/>
+      <div className="flex items-center justify-center w-1/2 gap-8">
+        <div className="flex items-center">
+          <Input
+            placeholder="Enter your email adress"
+            className="rounded-full w-80 bg-white"
+          />
           <Button className="text-white rounded-full">Subscribe</Button>
         </div>
-        <div>
-          <Sosmed/>
-        </div>
+        {isSosmed && (
+            <Sosmed />
+        )}
       </div>
     </div>
   );

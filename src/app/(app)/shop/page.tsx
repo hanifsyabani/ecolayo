@@ -30,7 +30,7 @@ export default async function page() {
       <PromoteBanner />
       <NewestProduct />
       <ClientTestimoni />
-      <Newsletter/>
+      <Newsletter isSosmed={false}/>
     </div>
   );
 }

@@ -59,3 +59,22 @@ export const commonStats = [
 
   },
 ];
+
+export const footerLinks = [
+  {
+    title: "My Account",
+    links: ["My Account", "Order History", "Shopping Cart", "Wishlist"],
+  },
+  {
+    title: "Helps",
+    links: ["Contact", "FAQs", "Terms & Condition", "Privacy Policy"],
+  },
+  {
+    title: "Proxy",
+    links: ["About", "Shop", "Product", "Track Order"],
+  },
+  {
+    title: "Categories",
+    links: ["Fruit & Vegetables", "Meat & Fish", "Bread & Bakery", "Beauty & Health"],
+  },
+];

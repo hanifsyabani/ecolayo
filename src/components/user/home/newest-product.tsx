@@ -41,21 +41,22 @@ export default function NewestProduct() {
   return (
     <div className="mt-20 px-4">
       <TitleHome title="Newest Product" link="/products/newest" />
-      {newestProducts.length === 0 ? (
-        <div className="flex justify-center items-center">
-          <h1>No products found</h1>
-        </div>
-      ) : (
-        <div className="flex items-center justify-center flex-wrap">
-          {isLoading
-            ? Array.from({ length: 5 }).map((_, index) => (
-                <Skeleton key={index} className="w-52 h-44 rounded-xl" />
-              ))
-            : newestProducts.map((product: any) => (
-                <ProductCard product={product} key={product?.id} />
-              ))}
-        </div>
-      )}
+
+      <div className="flex items-center justify-center flex-wrap gap-4">
+        {isLoading ? (
+          Array.from({ length: newestProducts.length || 5 }).map((_, index) => (
+            <Skeleton key={index} className="w-52 h-44 rounded-xl" />
+          ))
+        ) : newestProducts.length === 0 ? (
+          <div className="flex justify-center items-center">
+            <h1>No products found</h1>
+          </div>
+        ) : (
+          newestProducts.map((product:any) => (
+            <ProductCard product={product} key={product.id} />
+          ))
+        )}
+      </div>
     </div>
   );
 }

@@ -289,7 +289,7 @@ const SidebarTrigger = React.forwardRef<
       }}
       {...props}
     >
-      <ShoppingCartIcon size={20} className="text-primary cursor-pointer"/>
+      <ShoppingCartIcon size={25} className="text-gray-800 cursor-pointer"/>
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )

@@ -79,7 +79,7 @@ export default function BottomDetailsProduct({ product }: ProductProps) {
         </div>
       </div>
       <div className="mt-20 bg-[#F7F7F7] px-6 py-8">
-        <Newsletter />
+        <Newsletter isSosmed={true}/>
       </div>
     </>
   );

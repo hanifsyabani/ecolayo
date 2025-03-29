@@ -24,9 +24,9 @@ export default async function UserLayout({
   
   return (
     <SidebarProvider admin={false}>
-      <div className="w-full">
+      <div className="w-full  flex flex-col">
         <NavUser />
-        <div className="pt-32 ">{children}</div>
+        <main className="pt-32 flex-grow">{children}</main>
         <Footer/>
       </div>
       <SidebarCart />

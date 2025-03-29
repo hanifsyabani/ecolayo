@@ -15,7 +15,7 @@ export default async function SetupLayout({
   if (!session?.user.id) redirect("/login");
 
   if (session?.user.role === "user") {
-    redirect("/user");
+    redirect("/shop");
   }
 
   const store = await db.store.findFirst({

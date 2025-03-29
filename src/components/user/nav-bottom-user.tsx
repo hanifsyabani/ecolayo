@@ -63,7 +63,7 @@ export default function NavBottomUser({ category }: NavUserProps) {
   ];
   return (
     <nav
-      className={`bg-gray-800 z-10 mt-14 w-full flex items-center gap-8 transition-transform duration-300 fixed py-2 px-3 ${
+      className={`bg-gray-800 z-10 mt-24 w-full flex items-center gap-8 transition-transform duration-300 fixed py-2 px-3 ${
         scrolled ? "-translate-y-full" : "translate-y-0"
       } `}
     >
