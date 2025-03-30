@@ -67,12 +67,18 @@ const schema = z.object({
     .string()
     .min(1, { message: "Short Description must be at least 5 characters" }),
   tag: z.string().array().default([]),
+  stock: z.coerce.number().min(0),
 });
 type FormFields = z.infer<typeof schema>;
 
-export default function FormAddProduct({products, categories}: ProductFormProps) {
+export default function FormAddProduct({
+  products,
+  categories,
+}: ProductFormProps) {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
-  const [tags, setTags] = useState<string[]>(products?.tag.map((tag) => tag.name) || []);
+  const [tags, setTags] = useState<string[]>(
+    products?.tag.map((tag) => tag.name) || []
+  );
   const [tagInput, setTagInput] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const params = useParams();
@@ -106,6 +112,7 @@ export default function FormAddProduct({products, categories}: ProductFormProps)
       tag: products?.tag.map((tag) => tag.name) || [],
       isFeatured: products?.isFeatured || false,
       isArchived: products?.isArchived || false,
+      stock: products?.stock || 0,
     },
   });
 
@@ -161,7 +168,7 @@ export default function FormAddProduct({products, categories}: ProductFormProps)
   }
 
   return (
-    <div className="">
+    <>
       <Button
         className="bg-secondary text-white"
         onClick={() => router.push(`/admin/store/${params.storeid}/products`)}
@@ -196,18 +203,33 @@ export default function FormAddProduct({products, categories}: ProductFormProps)
                 <p className="text-red-500 text-sm">{errors.name.message}</p>
               )}
             </div>
-            <div>
-              <Label htmlFor="price">Price</Label>
-              <Input
-                id="price"
-                {...register("price")}
-                className="border border-gray-800"
-                placeholder="Rp"
-                type="number"
-              />
-              {errors.price && (
-                <p className="text-red-500 text-sm">{errors.price.message}</p>
-              )}
+            <div className="flex items-center gap-4">
+              <div className="w-1/2">
+                <Label htmlFor="price">Price</Label>
+                <Input
+                  id="price"
+                  {...register("price")}
+                  className="border border-gray-800"
+                  placeholder="Rp"
+                  type="number"
+                />
+                {errors.price && (
+                  <p className="text-red-500 text-sm">{errors.price.message}</p>
+                )}
+              </div>
+              <div className="w-1/2">
+              <Label htmlFor="stock">Stock Product</Label>
+                <Input
+                  id="stock"
+                  {...register("stock")}
+                  className="border border-gray-800"
+                  placeholder="Add stock product"
+                  type="number"
+                />
+                {errors.stock && (
+                  <p className="text-red-500 text-sm">{errors.stock.message}</p>
+                )}
+              </div>
             </div>
             <div className="flex items-center gap-4">
               <div className="w-1/2">
@@ -327,7 +349,10 @@ export default function FormAddProduct({products, categories}: ProductFormProps)
               </div>
               <div className="flex flex-wrap gap-2 mt-2">
                 {tags.map((tag, index) => (
-                  <Badge key={index} className="flex bg-secondary text-white items-center gap-1">
+                  <Badge
+                    key={index}
+                    className="flex bg-secondary text-white items-center gap-1"
+                  >
                     {tag}
                     <X
                       className="w-4 h-4 cursor-pointer"
@@ -414,6 +439,6 @@ export default function FormAddProduct({products, categories}: ProductFormProps)
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 }

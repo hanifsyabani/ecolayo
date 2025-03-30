@@ -32,6 +32,23 @@ export default function ProductCard({ product }: ProductCardProps) {
     currency: "IDR",
   });
 
+  function handleAddtoCart() {
+
+    if(!product?.stock){
+      toast.error("Product out of stock")
+      return
+    }
+
+    product && 
+      dispatch(
+        addToCart({
+          ...product,
+          quantity: 1,
+        })
+      );
+    toast.success("Product added to cart");
+  }
+
   return (
     <>
       <div className="w-52 mt-4  rounded-xl hover:shadow-xl border-b-2 border-b-white cursor-pointer hover:border-b-primary overflow-hidden p-3">
@@ -83,13 +100,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           </Link>
           <ShoppingCart
             size={25}
-            onClick={() => {
-              product && dispatch(addToCart({
-                ...product,
-                quantity:1
-              }))
-              toast.success("Product added to cart");
-            }}
+            onClick={handleAddtoCart}
             className="hover:bg-primary p-1 hover:text-white hover:rounded-full cursor-pointer"
           />
         </div>

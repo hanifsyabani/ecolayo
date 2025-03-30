@@ -77,23 +77,46 @@ export default function HeadDetailProduct({
     setIsLiked(product?.isLike || false);
   }, [product?.isLike]);
 
+  function handleAddtoCart() {
+
+    if(!product?.stock){
+      toast.error("Product out of stock")
+      return
+    }
+
+    if (product) {
+      dispatch(
+        addToCart({
+          ...product,
+          quantity,
+        })
+      );
+    }
+    if (setDialog) setDialog(false);
+
+    toast.success("Product added to cart");
+  }
+
   return (
-    <div>
-      <div className="flex items-center gap-2 mt-2">
-        <div className="flex items-center ">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <FaStar
-              key={i}
-              size={10}
-              className={cn(
-                product?.stars && i < product.stars
-                  ? "text-yellow-500"
-                  : "text-gray-300"
-              )}
-            />
-          ))}
+    <>
+      <div className="flex items-center gap-6 mt-2">
+        <div className="flex items-center gap-2 ">
+          <div className="flex items-center ">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <FaStar
+                key={i}
+                size={10}
+                className={cn(
+                  product?.stars && i < product.stars
+                    ? "text-yellow-500"
+                    : "text-gray-300"
+                )}
+              />
+            ))}
+          </div>
+          <p className="text-xs text-gray-400">4 Reviews</p>
         </div>
-        <p className="text-xs text-gray-400">4 Reviews</p>
+        <p className="text-xs text-gray-400">Stock: {product?.stock || 0}</p>
       </div>
 
       <h1 className="text-xl text-secondary font-semibold py-4">
@@ -123,25 +146,16 @@ export default function HeadDetailProduct({
 
         <Button
           className="text-white text-sm rounded-full w-60"
-          onClick={() => {
-            if (product) {
-              dispatch(
-                addToCart({
-                  ...product,
-                  quantity,
-                })
-              );
-            }
-            if (setDialog) setDialog(false);
-
-            toast.success("Product added to cart");
-          }}
+          onClick={handleAddtoCart}
+          disabled={!product?.stock}
         >
           <ShoppingCart /> Add to Cart
         </Button>
 
         <div
-          className={`bg-gray-200 rounded-full p-2 cursor-pointer ${isLoadingForm && "cursor-not-allowed"}`}
+          className={`bg-gray-200 rounded-full p-2 cursor-pointer ${
+            isLoadingForm && "cursor-not-allowed"
+          }`}
           onClick={handleLiked}
         >
           {isLiked ? (
@@ -168,6 +182,6 @@ export default function HeadDetailProduct({
           </span>
         </h3>
       </div>
-    </div>
+    </>
   );
 }

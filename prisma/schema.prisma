@@ -83,6 +83,7 @@ model Product {
   isFeatured       Boolean  @default(false)
   isArchived       Boolean  @default(false)
   stars            Float    @default(0.0)
+  stock            Int?    @default(0)
   images           Images[] @relation("ProductToImages")
 
   createdAt DateTime @default(now())

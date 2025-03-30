@@ -1,4 +1,5 @@
 import FormAddProduct from "@/components/admin/products/form-add-product";
+import { Card, CardContent } from "@/components/ui/card";
 import db from "@/lib/db";
 
 export default async function page({
@@ -30,8 +31,10 @@ export default async function page({
   : null;
   
   return (
-    <div className="px-8 mt-6 pb-20">
-      <FormAddProduct products={safeProduct} categories={categories} />
-    </div>
+    <Card className="px-3 py-8 ">
+      <CardContent className="bg-white py-4 rounded-xl">
+        <FormAddProduct products={safeProduct} categories={categories}/>
+      </CardContent>
+    </Card>
   );
 }

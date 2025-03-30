@@ -22,6 +22,7 @@ export async function POST(
       description,
       shortDescription,
       tag,
+      stock
     } = await req.json();
 
     if (!userId) throw new Error("Unauthenticated");
@@ -32,6 +33,7 @@ export async function POST(
     if (!images || !images.length) throw new Error("Images must be provided");
     if (!tag) throw new Error("Tag must be provided");
     if (!description) throw new Error("Description must be provided");
+    if (!stock) throw new Error("Stock must be provided");
     if (!shortDescription)
       throw new Error("Short Description must be provided");
 
@@ -51,6 +53,7 @@ export async function POST(
         categoryid,
         isFeatured,
         isArchived,
+        stock,
         stars,
         description,
         shortDescription,
@@ -94,14 +97,11 @@ export async function GET(
     const product = await db.product.findMany({
       where: {
         storeid: params.storeid,
-        // categoryid,
-        // isFeatured: isFeatured ? true : undefined,
-        // isArchived: false,
       },
       include: {
         images: true,
         category: true,
-        tag:true
+        tag: true,
       },
       orderBy: {
         createdAt: "desc",

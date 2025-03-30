@@ -9,6 +9,7 @@ import {
 import { Category, Images, Product, Tag } from "@prisma/client";
 import Image from "next/image";
 import HeadDetailProduct from "./head-detail-product";
+import { Badge } from "@/components/ui/badge";
 
 interface PreviewProductProps {
   open: boolean;
@@ -28,6 +29,7 @@ export default function PreviewProduct({
   setOpenDialog,
   product,
 }: PreviewProductProps) {
+  const isStock = product?.stock ? "In Stock" : "Out of Stock";
   return (
     <>
       <Dialog open={open} onOpenChange={setOpenDialog}>
@@ -51,7 +53,16 @@ export default function PreviewProduct({
           </div>
           <div className="w-1/2">
             <DialogHeader>
-              <DialogTitle className="text-3xl">{product?.name}</DialogTitle>
+              <div className="flex gap-3 ">
+                <DialogTitle className="text-3xl">{product?.name}</DialogTitle>
+                <Badge
+                  className={`text-xs text-white p-1 ${
+                    product?.stock ? "bg-primary" : "bg-red-500"
+                  }`}
+                >
+                  {isStock}
+                </Badge>
+              </div>
             </DialogHeader>
             <HeadDetailProduct product={product} setDialog={setOpenDialog} />
           </div>

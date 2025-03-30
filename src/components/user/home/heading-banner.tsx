@@ -46,7 +46,7 @@ export default function HeadingBanner() {
 
 
   return (
-    <div className="flex justify-center p-6 items-center gap-4">
+    <div className="flex justify-center p-10 items-center gap-4">
       <div
         className="bg-cover rounded-xl aspect-[1.8/1] w-[65%] "
         style={{

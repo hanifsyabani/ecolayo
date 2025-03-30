@@ -29,7 +29,7 @@ export function SidebarCart() {
 
   return (
     <Sidebar className="bg-white " side="right">
-      <SidebarContent className="pt-14">
+      <SidebarContent className="pt-28">
         <SidebarGroup>
           <SidebarGroupLabel className="text-xl">
             Shopping Cart ({cart.length})
@@ -55,12 +55,14 @@ export function SidebarCart() {
                     <div className="flex items-center gap-4">
                       <div>
                         <p className="text-sm ">{item.name}</p>
-                        <p className="text-sm">
-                          {" "}
-                          {formatter.format(item.quantity * item.price)}
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-gray-500">{item.quantity} x </p>
+                          <p className="text-sm">
+                            {" "}
+                            {formatter.format(item.quantity * item.price)}
+                          </p>
+                        </div>
                       </div>
-                      <p>{item.quantity}</p>
                     </div>
                   </div>
                   <X

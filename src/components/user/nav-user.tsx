@@ -55,7 +55,7 @@ export default function NavUser() {
           </div>
           <div className="flex items-center gap-6">
             <Link href={`/shop/wishlist`}>
-              <Heart size={20} className="text-gray-800 cursor-pointer" />
+              <Heart size={20} className="text-gray-800  hover:text-primary cursor-pointer" />
             </Link>
 
             <CartTrigger />
