@@ -6,7 +6,7 @@ export default withAuth(
     const { pathname } = req.nextUrl;
     const userRole = req.nextauth.token?.role;
 
-    // Proteksi akses ke halaman admin (hanya role "admin" yang bisa)
+    // Proteksi akses ke halaman admin
     if (pathname.startsWith("/admin") && userRole !== "admin") {
       return NextResponse.redirect(new URL("/", req.url));
     }

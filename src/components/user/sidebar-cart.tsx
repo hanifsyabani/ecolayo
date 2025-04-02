@@ -12,6 +12,7 @@ import { clearCart, removeFromCart } from "@/app/redux/cart-slice";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { Button } from "../ui/button";
+import Link from "next/link";
 
 export function SidebarCart() {
   const cart = useSelector((state: RootState) => state.cart.items);
@@ -29,8 +30,8 @@ export function SidebarCart() {
 
   return (
     <Sidebar className="bg-white " side="right">
-      <SidebarContent className="pt-28">
-        <SidebarGroup>
+      <SidebarContent className="pt-24 flex flex-row min-h-screen">
+        <SidebarGroup className="">
           <SidebarGroupLabel className="text-xl">
             Shopping Cart ({cart.length})
           </SidebarGroupLabel>
@@ -39,7 +40,7 @@ export function SidebarCart() {
               Your cart is empty
             </div>
           ) : (
-            <div className="space-y-8 my-5 ">
+            <div className="space-y-8 my-5 flex-1 ">
               {cart.map((item) => (
                 <div
                   key={item.id}
@@ -75,7 +76,7 @@ export function SidebarCart() {
             </div>
           )}
           {cart.length > 0 && (
-            <>
+            <div className="flex-grow pt-10">
               <div className="flex justify-between items-center text-sm">
                 <h1>{cart.length} Product</h1>
                 <h1>{formatter.format(totalPrice())}</h1>
@@ -83,13 +84,21 @@ export function SidebarCart() {
               <Button className="mt-3 w-full   text-white py-1 rounded-full">
                 Checkout
               </Button>
+              <Link href={'/shop/shop-cart'}>
+                <Button
+                  variant={"destructive"}
+                  className="mt-3 w-full border border-primary hover:bg-primary hover:text-white   py-1 rounded-full"
+                >
+                  Go to Cart
+                </Button>
+              </Link>
               <Button
                 onClick={() => dispatch(clearCart())}
                 className="mt-3 w-full hover:bg-red-700 bg-red-500   text-white py-1 rounded-full"
               >
                 Clear All
               </Button>
-            </>
+            </div>
           )}
         </SidebarGroup>
       </SidebarContent>

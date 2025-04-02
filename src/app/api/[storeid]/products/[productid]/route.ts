@@ -48,6 +48,7 @@ export async function PATCH(
       isFeatured,
       isArchived,
       stars,
+      stock,
       shortDescription,
       description,
       tag,
@@ -63,7 +64,6 @@ export async function PATCH(
       throw new Error("Short Description must be provided");
     if (!stars) throw new Error("Rating must be provided");
 
-    console.log("tag: ", tag);
 
     const storeByUserId = await db.store.findFirst({
       where: {
@@ -90,6 +90,7 @@ export async function PATCH(
         isArchived,
         stars,
         shortDescription,
+        stock,
         description,
         tag: {
           set: [], // Hapus relasi tag lama

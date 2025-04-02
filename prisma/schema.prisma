@@ -16,6 +16,8 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   session   Session[]
+  cart      Cart?     @relation("UserToCart")
+  cartId    String? 
 }
 
 model Session {
@@ -69,22 +71,23 @@ model Category {
 }
 
 model Product {
-  id               String   @id @default(uuid())
+  id               String     @id @default(uuid())
   storeid          String
-  store            Store    @relation("StoreToProduct", fields: [storeid], references: [id], onDelete: Cascade)
+  store            Store      @relation("StoreToProduct", fields: [storeid], references: [id], onDelete: Cascade)
   categoryid       String
-  category         Category @relation("CategoryToProduct", fields: [categoryid], references: [id], onDelete: Cascade)
+  category         Category   @relation("CategoryToProduct", fields: [categoryid], references: [id], onDelete: Cascade)
   name             String
   price            Decimal
   description      String?
   shortDescription String?
-  tag              Tag[]    @relation("ProductToTag")
-  isLike           Boolean  @default(false)
-  isFeatured       Boolean  @default(false)
-  isArchived       Boolean  @default(false)
-  stars            Float    @default(0.0)
-  stock            Int?    @default(0)
-  images           Images[] @relation("ProductToImages")
+  tag              Tag[]      @relation("ProductToTag")
+  isLike           Boolean    @default(false)
+  isFeatured       Boolean    @default(false)
+  isArchived       Boolean    @default(false)
+  stars            Float      @default(0.0)
+  stock            Int?       @default(0)
+  images           Images[]   @relation("ProductToImages")
+  cartItems        CartItem[] @relation("ProductToCartItem")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -109,4 +112,28 @@ model Images {
   updatedAt DateTime @updatedAt
 
   @@index([productid])
+}
+
+model Cart {
+  id        String     @id @default(uuid())
+  userId    String     @unique
+  user      User?      @relation("UserToCart", fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+  id        String  @id @default(uuid())
+  cartId    String
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation("ProductToCartItem", fields: [productId], references: [id], onDelete: Cascade)
+  quantity  Int     @default(1)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cartId, productId])
+  @@index([productId]) // Setiap produk hanya boleh satu entry per cart
 }
