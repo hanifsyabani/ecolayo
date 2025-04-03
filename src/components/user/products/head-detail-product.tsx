@@ -1,6 +1,6 @@
 "use client";
 
-import { addToCart } from "@/app/redux/cart-slice";
+import {  addToCartAsync } from "@/app/redux/cart-slice";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Category, Images, Product, Tag } from "@prisma/client";
@@ -8,10 +8,11 @@ import { Heart, ShoppingCart } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { FaHeart, FaMinus, FaPlus, FaStar } from "react-icons/fa";
-import { useDispatch } from "react-redux";
 import Sosmed from "../sosmed";
 import axios from "axios";
 import { useParams } from "next/navigation";
+import { useAppDispatch } from "@/hooks/use-app-dispatch";
+import { useSession } from "next-auth/react";
 
 interface ProductProps {
   setDialog?: (open: boolean) => void;
@@ -30,11 +31,12 @@ export default function HeadDetailProduct({
   product,
   setDialog,
 }: ProductProps) {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [quantity, setQuantity] = useState(1);
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [isLiked, setIsLiked] = useState(product?.isLike || false);
   const params = useParams();
+  const { data: session } = useSession();
 
   const formatter = new Intl.NumberFormat("id-ID", {
     minimumFractionDigits: 0,
@@ -60,7 +62,7 @@ export default function HeadDetailProduct({
       );
 
       setIsLiked((prev) => !prev);
-      
+
       if (product) {
         product.isLike = !isLiked;
       }
@@ -77,20 +79,26 @@ export default function HeadDetailProduct({
     setIsLiked(product?.isLike || false);
   }, [product?.isLike]);
 
-  function handleAddtoCart() {
-
-    if(!product?.stock){
-      toast.error("Product out of stock")
-      return
+  async function handleAddtoCart() {
+    if (!product?.stock) {
+      toast.error("Product out of stock");
+      return;
     }
 
-    if (product) {
-      dispatch(
-        addToCart({
-          ...product,
+    if (!session) return toast.error("Please login first");
+
+    try {
+      await dispatch(
+        addToCartAsync({
+          userId: session.user.id,
+          productId: product.id,
           quantity,
         })
-      );
+      ).unwrap();
+
+      toast.success("Product added to cart");
+    } catch (error) {
+      toast.error("Error adding to cart");
     }
     if (setDialog) setDialog(false);
 

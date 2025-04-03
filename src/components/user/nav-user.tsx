@@ -33,7 +33,7 @@ export default function NavUser() {
 
   return (
     <nav>
-      <div className="fixed w-full bg-white z-50">
+      <div className="fixed w-full bg-white z-40">
         <NavTopUser />
         <div className="py-2 px-8 flex justify-between items-center">
           <Link href={`/`} className="flex items-center gap-2">

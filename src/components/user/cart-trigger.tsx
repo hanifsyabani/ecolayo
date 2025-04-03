@@ -1,19 +1,31 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { SidebarTrigger } from "../ui/sidebar";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
+import { useSession } from "next-auth/react";
+import { useAppDispatch } from "@/hooks/use-app-dispatch";
+import { fetchCartAsync } from "@/app/redux/cart-slice";
 
 export default function CartTrigger() {
-  const cart = useSelector((state: RootState) => state.cart.items);
+  const { cart } = useSelector((state: RootState) => state.cart);
+  const itemCount = cart?.items?.length || 0;
+  const dispatch = useAppDispatch();
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    if (session?.user?.id) {
+      dispatch(fetchCartAsync(session.user.id));
+    }
+  }, [dispatch, session?.user?.id]);
 
   return (
-    <div className="flex relative ">
+    <div className="flex relative">
       <SidebarTrigger />
-      {cart.length > 0 && (
-        <div className="w-3 h-3 -right-2 bg-primary rounded-full absolute flex justify-center items-center text-white text-xs">
-          {cart.length}
+      {itemCount > 0 && (
+        <div className="w-5 h-5 -right-4 -top-2 bg-primary rounded-full absolute flex justify-center items-center text-white text-xs">
+          {itemCount}
         </div>
       )}
     </div>

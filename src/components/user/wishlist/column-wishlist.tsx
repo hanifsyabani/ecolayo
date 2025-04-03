@@ -1,11 +1,10 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
-import Action from "./action"
+import { ColumnDef } from "@tanstack/react-table";
+import Action from "./action";
 import { Category, Images, Product, Tag } from "@prisma/client";
+import { Badge } from "@/components/ui/badge";
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
 export type WishlistColumn = Omit<Product, "price"> & {
   price: number;
   images: Images[];
@@ -23,11 +22,23 @@ export const Columns: ColumnDef<WishlistColumn>[] = [
     header: "Price",
   },
   {
-    accessorKey: "stock",
     header: "Stock",
+    cell: ({ row }) => (
+      <div>
+        {row.original.stock ? (
+          <Badge className="bg-green-600 text-white cursor-pointer">
+            In Stock ({row.original.stock})
+          </Badge>
+        ) : (
+          <Badge className="bg-red-600 text-white hover:bg-red-900 cursor-pointer">
+            Out of Stock
+          </Badge>
+        )}
+      </div>
+    ),
   },
   {
     id: "actions",
-    cell: ({row}) => <Action product={row.original}/>,
+    cell: ({ row }) => <Action product={row.original} />,
   },
-]
+];

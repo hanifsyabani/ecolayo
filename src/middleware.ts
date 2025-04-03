@@ -15,12 +15,11 @@ export default withAuth(
   },
   {
     callbacks: {
-      authorized: ({ token }) => !!token, // Hanya lanjut jika token ada (user login)
+      authorized: ({ token }) => !!token, 
     },
   }
 );
 
-// Terapkan middleware pada path yang butuh proteksi
 export const config = {
   matcher: ["/user/:path*", "/admin/:path*"],
 };

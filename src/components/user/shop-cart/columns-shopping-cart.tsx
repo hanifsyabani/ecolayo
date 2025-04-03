@@ -1,22 +1,36 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Category, Images, Product, Tag } from "@prisma/client";
+import {  Images } from "@prisma/client";
+import Image from "next/image";
 import QuantityShopCart from "./quantity-shop-cart";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type WishlistColumn = Omit<Product, "price"> & {
+export type ShopCartColumn = {
   price: number;
+  quantity: number;
   images: Images[];
-  tag: Tag[];
-  category: Category;
+  name: string
+  totalPrice : any
 };
 
-export const Columns: ColumnDef<WishlistColumn>[] = [
+
+export const Columns: ColumnDef<ShopCartColumn>[] = [
   {
-    accessorKey: "name",
+    id: "name",
     header: "Product",
+    cell: ({ row }) => (
+      <div className="flex items-center gap-2">
+        <Image
+          src={row.original.images[0].url}
+          width={80}
+          height={80}
+          alt={row.original.name}
+        />
+        <h1>{row.original.name}</h1>
+      </div>
+    ),
   },
   {
     accessorKey: "price",
@@ -25,12 +39,15 @@ export const Columns: ColumnDef<WishlistColumn>[] = [
   {
     id: "quantity",
     header: "Quantity",
-    cell: () => <QuantityShopCart />,
+    cell: ({row}) => (
+      <QuantityShopCart quantity={row.original.quantity} />
+    ),
   },
   {
-    id:'subtotal',
-    header: 'Subtotal',
-    cell: () => <div>subtotal</div>
-
-  }
+    id: "subtotal",
+    header: "Subtotal",
+    cell: ({row}) => (
+      <h1>{row.original.totalPrice}</h1>
+    )
+  },
 ];

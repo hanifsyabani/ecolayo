@@ -49,7 +49,7 @@ export default async function page(props: PageProps) {
     ...stat,
     value:
       stat.key === "totalUsers"
-        ? 1 // Misalkan hanya admin yang memiliki akses
+        ? 1 
         : stat.key === "totalStores"
         ? store.banners.length
         : stat.key === "totalProducts"

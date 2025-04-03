@@ -16,8 +16,7 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   session   Session[]
-  cart      Cart?     @relation("UserToCart")
-  cartId    String? 
+  cart      Cart?     @relation("UserToCart") 
 }
 
 model Session {
@@ -116,7 +115,7 @@ model Images {
 
 model Cart {
   id        String     @id @default(uuid())
-  userId    String     @unique
+  userId    String?    @unique  // Opsional, karena user bisa saja belum memiliki cart
   user      User?      @relation("UserToCart", fields: [userId], references: [id], onDelete: Cascade)
   items     CartItem[]
   createdAt DateTime   @default(now())
@@ -125,8 +124,8 @@ model Cart {
 
 model CartItem {
   id        String  @id @default(uuid())
-  cartId    String
-  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  cartId    String? 
+  cart      Cart?   @relation(fields: [cartId], references: [id], onDelete: Cascade)
   productId String
   product   Product @relation("ProductToCartItem", fields: [productId], references: [id], onDelete: Cascade)
   quantity  Int     @default(1)

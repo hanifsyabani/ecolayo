@@ -38,7 +38,7 @@ export default function ProductFeatured({ title }: ProductListProps) {
   return (
     <div className="px-4 mt-20">
       <TitleHome title={title} link="/products/featured" />
-      <div className="flex items-center justify-center flex-wrap">
+      <div className="flex items-center justify-center gap-6 flex-wrap">
         {isLoading
           ? Array.from({ length: 5 }).map((_, index) => (
               <Skeleton key={index} className="w-52 h-44 rounded-xl" />
