@@ -7,29 +7,23 @@ import CartTotal from "./cart-total";
 import Newsletter from "../products/newsletter";
 import { useAppDispatch } from "@/hooks/use-app-dispatch";
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
-import { fetchCartAsync, updateCartAsync } from "@/app/redux/cart-slice";
+import { deleteCartAsync, fetchCartAsync, updateCartAsync } from "@/app/redux/cart-slice";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
 
 export default function ShoppingCart() {
   const { cart, loading } = useSelector((state: RootState) => state.cart);
   const [isLoading, setIsLoading] = useState(false);
   const [cartUpdates, setCartUpdates] = useState<Record<string, number>>({});
-  const router = useRouter()
 
   const dispatch = useAppDispatch();
-  const { data: session } = useSession();
 
   useEffect(() => {
-    if (session?.user?.id) {
-      dispatch(fetchCartAsync());
-    }
-  }, [dispatch, session?.user?.id]);
+    dispatch(fetchCartAsync());
+  }, [dispatch]);
 
   const formatter = new Intl.NumberFormat("id-ID", {
     minimumFractionDigits: 0,
@@ -38,14 +32,22 @@ export default function ShoppingCart() {
   });
 
   const shopCartData: ShopCartColumn[] = (cart?.items ?? []).map((item) => ({
+    id: item.id,
     productId: item.productId,
     name: item.product.name,
     price: item.product.price,
     images: item.product.images || [],
-    quantity: cartUpdates[item.productId] !== undefined ? cartUpdates[item.productId] : item.quantity,
-    totalPrice: formatter.format(item.product.price * (cartUpdates[item.productId] !== undefined ? cartUpdates[item.productId] : item.quantity)),
+    quantity:
+      cartUpdates[item.productId] !== undefined
+        ? cartUpdates[item.productId]
+        : item.quantity,
+    totalPrice: formatter.format(
+      item.product.price *
+        (cartUpdates[item.productId] !== undefined
+          ? cartUpdates[item.productId]
+          : item.quantity)
+    ),
   }));
-
 
   function handleQuantityChange(productId: string, quantity: number) {
     setCartUpdates((prev) => ({
@@ -53,24 +55,29 @@ export default function ShoppingCart() {
       [productId]: quantity,
     }));
   }
-  
+
   async function handleUpdateCart() {
     setIsLoading(true);
     try {
-      const updatePromises = Object.entries(cartUpdates).map(([productId, quantity]) => {
-        return dispatch(
-          updateCartAsync({
-            productId,
-            quantity,
-          })
-        ).unwrap();
-      });
-      
+      const updatePromises = Object.entries(cartUpdates).map(
+        ([productId, quantity]) => {
+          return dispatch(
+            updateCartAsync({
+              productId,
+              quantity,
+            })
+          ).unwrap();
+        }
+      );
+
       await Promise.all(updatePromises);
-      
-      
+
       setCartUpdates({});
       toast.success("Cart updated successfully");
+      // .unwrap() dipakai untuk:
+      // Mengakses hasil asli dari async thunk
+      // Menangkap error pakai try/catch
+      // Bikin penanganan error lebih fleksibel dan seperti async/await biasa
       await dispatch(fetchCartAsync()).unwrap();
     } catch (error) {
       toast.error(
@@ -86,6 +93,8 @@ export default function ShoppingCart() {
     0
   );
 
+ 
+
   // if (loading) return <div className="spinner"></div>;
 
   return (
@@ -93,16 +102,16 @@ export default function ShoppingCart() {
       <div className="flex px-8 py-10 justify-center gap-6">
         <div className="w-[70%]">
           <div>
-            <DataTable 
-              columns={Columns(handleQuantityChange)} 
-              data={shopCartData} 
+            <DataTable
+              columns={Columns(handleQuantityChange)}
+              data={shopCartData}
             />
             <div className="flex justify-between items-center">
               <Link href={"/shop"}>
                 <Button className="bg-gray-300 text-xs">Return to Shop</Button>
               </Link>
-              <Button 
-                className="bg-gray-300 text-xs" 
+              <Button
+                className="bg-gray-300 text-xs"
                 onClick={handleUpdateCart}
                 disabled={isLoading || Object.keys(cartUpdates).length === 0}
               >

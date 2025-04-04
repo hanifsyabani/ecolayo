@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Product, Images, Tag, Category } from "@prisma/client";
 import { ShopCartColumn } from "@/components/user/shop-cart/columns-shopping-cart";
+import { string } from "zod";
 
 // Define types
 interface CartItem {
@@ -35,7 +36,7 @@ const initialState: CartState = {
   error: null,
 };
 
-// Async thunk to add product to cart
+// POST
 export const addToCartAsync = createAsyncThunk(
   "cart/addToCartAsync",
   async ({ productId, quantity }: { productId: string; quantity: number }) => {
@@ -52,7 +53,7 @@ export const addToCartAsync = createAsyncThunk(
   }
 );
 
-// Async thunk to fetch cart
+// Get
 export const fetchCartAsync = createAsyncThunk(
   "cart/fetchCartAsync",
   async () => {
@@ -78,6 +79,13 @@ export const updateCartAsync = createAsyncThunk(
   }
 );
 
+export const deleteCartAsync = createAsyncThunk(
+  "cart/deleteCart",
+  async ({itemid}: {itemid: string}) => {
+     await axios.delete(`/api/cart/${itemid}`) 
+  }
+)
+
 const cartSlice = createSlice({
   name: "cart",
   initialState,
@@ -88,7 +96,7 @@ const cartSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Add to cart cases
+    // when post data
       .addCase(addToCartAsync.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -102,7 +110,7 @@ const cartSlice = createSlice({
         state.error = action.error.message || "Failed to add to cart";
       })
 
-      // Fetch cart cases
+      // when get data
       .addCase(fetchCartAsync.pending, (state) => {
         state.loading = true;
         state.error = null;

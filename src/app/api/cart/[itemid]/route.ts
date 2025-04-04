@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { cartitemid: string } }
+  { params }: { params: { itemid: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -19,9 +19,9 @@ export async function DELETE(
       );
     }
       
-    const cartItemId = params.cartitemid;
+    const itemId = params.itemid;
 
-    if (!cartItemId) {
+    if (!itemId) {
       return NextResponse.json(
         { error: "Cart item ID is required" },
         { status: 400 }
@@ -29,7 +29,7 @@ export async function DELETE(
     }
 
     const cartItem = await db.cartItem.findUnique({
-      where: { id: cartItemId },
+      where: { id: itemId },
     });
 
     if (!cartItem) {
@@ -41,7 +41,7 @@ export async function DELETE(
 
     await db.cartItem.delete({
       where: {
-        id: cartItemId,
+        id: itemId,
       },
     });
 

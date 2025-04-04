@@ -31,7 +31,11 @@ export default function CartTotal({ subtotal }: CartTotalProps) {
           </div>
           <div className="space-y-4 text-right">
             <p className="text-sm  ">{formatter.format(subtotal)}</p>
-            <p className="text-sm  ">{formatter.format(shippingCost)}</p>
+            {subtotal === 0 ? (
+              <p className="text-sm">Free</p>
+            ) : (
+              <p className="text-sm  ">{formatter.format(shippingCost)}</p>
+            )}
             <p className="text-sm  ">{formatter.format(tax)} (PPN 12%)</p>
             <p className="text-sm  font-semibold ">
               {formatter.format(finalTotal)}

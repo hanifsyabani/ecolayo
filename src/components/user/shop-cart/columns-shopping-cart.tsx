@@ -4,13 +4,11 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Images } from "@prisma/client";
 import Image from "next/image";
 import QuantityShopCart from "./quantity-shop-cart";
-import { X } from "lucide-react";
-import { useAppDispatch } from "@/hooks/use-app-dispatch";
-import { updateCartAsync } from "@/app/redux/cart-slice";
-import toast from "react-hot-toast";
+import RemoveFromCart from "./remove-from-cart";
 
 // This type is used to define the shape of our data.
 export type ShopCartColumn = {
+  id: string;
   productId: string;
   price: number;
   quantity: number;
@@ -22,24 +20,6 @@ export type ShopCartColumn = {
 export const Columns = (
   onQuantityChange: (productId: string, quantity: number) => void
 ): ColumnDef<ShopCartColumn>[] => {
-  const dispatch = useAppDispatch();
-
-  const handleRemoveItem = async (productId: string) => {
-    try {
-      await dispatch(
-        updateCartAsync({
-          productId,
-          quantity: 0,
-        })
-      ).unwrap();
-      toast.success("Item removed from cart");
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Error removing item"
-      );
-    }
-  };
-
   return [
     {
       id: "name",
@@ -87,13 +67,7 @@ export const Columns = (
     },
     {
       id: "delete",
-      cell: ({ row }) => (
-        <X
-          size={25}
-          className="bg-gray-200 rounded-full p-1 cursor-pointer"
-          onClick={() => handleRemoveItem(row.original.productId)}
-        />
-      ),
+      cell: ({ row }) => <RemoveFromCart itemid={row.original.id} />,
     },
   ];
 };

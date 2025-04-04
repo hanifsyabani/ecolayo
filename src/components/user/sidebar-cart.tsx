@@ -8,27 +8,28 @@ import {
 } from "@/components/ui/sidebar";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
-import { clearCart, fetchCartAsync } from "@/app/redux/cart-slice";
+import {
+  clearCart,
+  deleteCartAsync,
+  fetchCartAsync,
+} from "@/app/redux/cart-slice";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { useAppDispatch } from "@/hooks/use-app-dispatch";
-import { useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
 export function SidebarCart() {
   const { cart, loading } = useSelector((state: RootState) => state.cart);
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
-  const { data: session } = useSession();
 
   useEffect(() => {
-    if (session?.user?.id) {
-      dispatch(fetchCartAsync(session.user.id));
-    }
-  }, [dispatch, session?.user?.id]);
+    dispatch(fetchCartAsync());
+  }, [dispatch]);
 
   const formatter = new Intl.NumberFormat("id-ID", {
     minimumFractionDigits: 0,
@@ -36,31 +37,31 @@ export function SidebarCart() {
     currency: "IDR",
   });
 
-  const totalPrice =
-    cart?.items.reduce(
-      (total, item) => total + item.product.price * item.quantity,
-      0
-    ) || 0;
+  const totalPrice = cart?.items.reduce(
+    (total, item) => total + item.product.price * item.quantity,
+    0
+  );
 
   const itemCount = cart?.items.length || 0;
 
-  async function handleRemoveItem(itemId: string) {
+  async function handleRemoveItem(itemid: string) {
+    setIsLoading(true);
     try {
-      await axios.delete(`/api/cart/${itemId}`);
-      if (session?.user?.id) {
-        dispatch(fetchCartAsync(session.user.id));
-      }
+      await dispatch(deleteCartAsync({ itemid })).unwrap();
+      await dispatch(fetchCartAsync()).unwrap();
       toast.success("Item removed from cart");
     } catch (error) {
       toast.error("Failed to remove item");
+    } finally {
+      setIsLoading(false);
     }
   }
 
   async function handleClearCart() {
-    if (!session?.user?.id || !cart?.id) return;
+    if (!cart?.id) return;
 
     try {
-      await axios.delete(`/api/cart/${session.user.id}`);
+      await axios.delete(`/api/cart/`);
       dispatch(clearCart());
       toast.success("Cart cleared");
     } catch (error) {
@@ -70,7 +71,10 @@ export function SidebarCart() {
 
   return (
     <>
-      <Sidebar className="bg-white z-30 max-h-full overflow-x-hidden" side="right">
+      <Sidebar
+        className="bg-white z-30 max-h-full overflow-x-hidden"
+        side="right"
+      >
         <SidebarContent className="pt-24 pb-4 w-full overflow-x-hidden">
           <SidebarGroup className="flex-1 flex flex-col overflow-x-hidden">
             <SidebarGroupLabel className="text-xl">
@@ -120,11 +124,13 @@ export function SidebarCart() {
                         </div>
                       </div>
                     </div>
-                    <X
-                      size={30}
+                    <Button
                       onClick={() => handleRemoveItem(item.id)}
-                      className="cursor-pointer hover:bg-gray-200 p-1 rounded-full"
-                    />
+                      className="cursor-pointer hover:bg-gray-200 bg-white border border-gray-200 p-1 rounded-full w-7 h-7"
+                      disabled={isLoading}
+                    >
+                      <X size={30} />
+                    </Button>
                   </div>
                 ))}
               </div>
@@ -137,7 +143,7 @@ export function SidebarCart() {
                     {itemCount} {itemCount === 1 ? "Product" : "Products"}
                   </h1>
                   <h1 className="font-medium">
-                    {formatter.format(totalPrice)}
+                    {formatter.format(totalPrice || 0)}
                   </h1>
                 </div>
                 <Button className="w-full bg-primary text-white py-1 rounded-full mb-2">
