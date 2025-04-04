@@ -6,21 +6,28 @@ import Coupon from "./coupon";
 import CartTotal from "./cart-total";
 import Newsletter from "../products/newsletter";
 import { useAppDispatch } from "@/hooks/use-app-dispatch";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { fetchCartAsync } from "@/app/redux/cart-slice";
+import { fetchCartAsync, updateCartAsync } from "@/app/redux/cart-slice";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function ShoppingCart() {
   const { cart, loading } = useSelector((state: RootState) => state.cart);
+  const [isLoading, setIsLoading] = useState(false);
+  const [cartUpdates, setCartUpdates] = useState<Record<string, number>>({});
+  const router = useRouter()
 
   const dispatch = useAppDispatch();
   const { data: session } = useSession();
 
   useEffect(() => {
     if (session?.user?.id) {
-      dispatch(fetchCartAsync(session.user.id));
+      dispatch(fetchCartAsync());
     }
   }, [dispatch, session?.user?.id]);
 
@@ -31,27 +38,83 @@ export default function ShoppingCart() {
   });
 
   const shopCartData: ShopCartColumn[] = (cart?.items ?? []).map((item) => ({
+    productId: item.productId,
     name: item.product.name,
-    price: Number(item.product.price),
+    price: item.product.price,
     images: item.product.images || [],
-    quantity: item.quantity,
-    totalPrice: formatter.format(item.product.price * item.quantity),
+    quantity: cartUpdates[item.productId] !== undefined ? cartUpdates[item.productId] : item.quantity,
+    totalPrice: formatter.format(item.product.price * (cartUpdates[item.productId] !== undefined ? cartUpdates[item.productId] : item.quantity)),
   }));
 
-  // console.log(shopCartData);
-  // console.log(cart)
 
-  if (loading) return <div className="spinner"></div>;
+  function handleQuantityChange(productId: string, quantity: number) {
+    setCartUpdates((prev) => ({
+      ...prev,
+      [productId]: quantity,
+    }));
+  }
+  
+  async function handleUpdateCart() {
+    setIsLoading(true);
+    try {
+      const updatePromises = Object.entries(cartUpdates).map(([productId, quantity]) => {
+        return dispatch(
+          updateCartAsync({
+            productId,
+            quantity,
+          })
+        ).unwrap();
+      });
+      
+      await Promise.all(updatePromises);
+      
+      
+      setCartUpdates({});
+      toast.success("Cart updated successfully");
+      await dispatch(fetchCartAsync()).unwrap();
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Error updating cart"
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const totalPrice = shopCartData.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
+
+  // if (loading) return <div className="spinner"></div>;
 
   return (
     <>
       <div className="flex px-8 py-10 justify-center gap-6">
         <div className="w-[70%]">
-          <DataTable columns={Columns} data={shopCartData} />
+          <div>
+            <DataTable 
+              columns={Columns(handleQuantityChange)} 
+              data={shopCartData} 
+            />
+            <div className="flex justify-between items-center">
+              <Link href={"/shop"}>
+                <Button className="bg-gray-300 text-xs">Return to Shop</Button>
+              </Link>
+              <Button 
+                className="bg-gray-300 text-xs" 
+                onClick={handleUpdateCart}
+                disabled={isLoading || Object.keys(cartUpdates).length === 0}
+              >
+                {isLoading ? "Updating..." : "Update Cart"}
+              </Button>
+            </div>
+          </div>
+
           <Coupon />
         </div>
         <div className="w-[30%]">
-          <CartTotal />
+          <CartTotal subtotal={totalPrice || 0} />
         </div>
       </div>
       <Newsletter isSosmed={true} />

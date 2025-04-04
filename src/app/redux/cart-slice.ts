@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Product, Images, Tag, Category } from "@prisma/client";
+import { ShopCartColumn } from "@/components/user/shop-cart/columns-shopping-cart";
 
 // Define types
 interface CartItem {
@@ -37,25 +38,16 @@ const initialState: CartState = {
 // Async thunk to add product to cart
 export const addToCartAsync = createAsyncThunk(
   "cart/addToCartAsync",
-  async ({
-    userId,
-    productId,
-    quantity,
-  }: {
-    userId: string;
-    productId: string;
-    quantity: number;
-  }) => {
+  async ({ productId, quantity }: { productId: string; quantity: number }) => {
     const response = await axios.post("/api/cart", {
-      userId,
       productId,
       quantity,
     });
-    
+
     if (!response.data || response.data.error) {
       throw new Error(response.data?.error || "Failed to add to cart");
     }
-    
+
     return response.data.cart;
   }
 );
@@ -63,14 +55,26 @@ export const addToCartAsync = createAsyncThunk(
 // Async thunk to fetch cart
 export const fetchCartAsync = createAsyncThunk(
   "cart/fetchCartAsync",
-  async (userId: string) => {
-    const response = await axios.get(`/api/cart?userId=${userId}`);
-    
+  async () => {
+    const response = await axios.get(`/api/cart`);
+
     if (!response.data || response.data.error) {
       throw new Error(response.data?.error || "Failed to fetch cart");
     }
-    
+
     return response.data.cart;
+  }
+);
+
+export const updateCartAsync = createAsyncThunk(
+  "cart/updateCart",
+  async ({ productId, quantity }: { productId: string; quantity: number }) => {
+    const response = await axios.patch(`/api/cart`, {
+      productId,
+      quantity
+    });
+
+    return response.data;
   }
 );
 
@@ -97,7 +101,7 @@ const cartSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || "Failed to add to cart";
       })
-      
+
       // Fetch cart cases
       .addCase(fetchCartAsync.pending, (state) => {
         state.loading = true;
@@ -118,12 +122,12 @@ export const { clearCart } = cartSlice.actions;
 export default cartSlice.reducer;
 
 // Selector to get cart items count
-export const selectCartItemsCount = (state: { cart: CartState }) => 
+export const selectCartItemsCount = (state: { cart: CartState }) =>
   state.cart.cart?.items.reduce((total, item) => total + item.quantity, 0) || 0;
 
 // Selector to get cart total
 export const selectCartTotal = (state: { cart: CartState }) =>
   state.cart.cart?.items.reduce(
-    (total, item) => total + item.product.price * item.quantity, 
+    (total, item) => total + item.product.price * item.quantity,
     0
   ) || 0;

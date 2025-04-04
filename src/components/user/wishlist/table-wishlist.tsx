@@ -4,7 +4,6 @@ import { DataTable } from "@/components/ui/data-table";
 import { Columns, WishlistColumn } from "./column-wishlist";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Product } from "@prisma/client";
 import Sosmed from "../sosmed";
 
 export default function TableWishlist() {
@@ -16,13 +15,10 @@ export default function TableWishlist() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get<Product[]>(
-          "/api/af990241-e9fd-458c-9612-47ea908df21f/products"
+        const response = await axios.get(
+          "/api/af990241-e9fd-458c-9612-47ea908df21f/products/liked-product"
         );
-        const wishlistProducts: any = response.data.filter(
-          (product) => product.isLike
-        );
-        setWishlistProducts(wishlistProducts);
+        setWishlistProducts(response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
@@ -32,6 +28,8 @@ export default function TableWishlist() {
 
     fetchProducts();
   }, []);
+
+  if(isLoading) return <div className="spinner"></div>;
 
   return (
     <div className="px-8 mt-10">

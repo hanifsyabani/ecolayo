@@ -35,7 +35,6 @@ export default function HeadDetailProduct({
   const [quantity, setQuantity] = useState(1);
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [isLiked, setIsLiked] = useState(product?.isLike || false);
-  const params = useParams();
   const { data: session } = useSession();
 
   const formatter = new Intl.NumberFormat("id-ID", {
@@ -55,7 +54,7 @@ export default function HeadDetailProduct({
     try {
       setIsLoadingForm(true);
       await axios.patch(
-        `/api/${params.storeid}/products/${product?.id}/liked-product`,
+        `/api/af990241-e9fd-458c-9612-47ea908df21f/products/${product?.id}/liked-product`,
         {
           isLiked: !isLiked,
         }
@@ -90,7 +89,6 @@ export default function HeadDetailProduct({
     try {
       await dispatch(
         addToCartAsync({
-          userId: session.user.id,
           productId: product.id,
           quantity,
         })

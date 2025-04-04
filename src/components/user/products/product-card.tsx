@@ -56,7 +56,6 @@ export default function ProductCard({ product }: ProductCardProps) {
     try {
       await dispatch(
         addToCartAsync({
-          userId: session.user.id, 
           productId: product.id,
           quantity: 1,
         })

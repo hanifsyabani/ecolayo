@@ -29,7 +29,6 @@ export default function Action({ product }: ActionProps) {
         addToCartAsync({
           productId: product.id,
           quantity: 1,
-          userId: session?.user.id,
         })
       );
 
@@ -48,7 +47,7 @@ export default function Action({ product }: ActionProps) {
           isLoading ? "cursor-not-allowed opacity-70" : "cursor-pointer"
         } text-white text-sm rounded-full`}
         onClick={handleAddToCart}
-        disabled={isLoading}
+        disabled={isLoading || !product.stock}
       >
         <ShoppingCart /> Add to Cart
       </Button>

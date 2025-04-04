@@ -1,19 +1,23 @@
 // /api/cart/route.ts
+import { authOptions } from "@/lib/auth";
 import db from "@/lib/db";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { userId, productId, quantity } = await req.json();
+    const session = await getServerSession(authOptions);
+    const userId = session?.user.id;
 
-    if (!userId || !productId || !quantity) {
+    const { productId, quantity } = await req.json();
+
+    if (!productId || !quantity || !userId) {
       return NextResponse.json(
         { error: "User ID, product ID and quantity are required" },
         { status: 400 }
       );
     }
 
-    // Check if product exists and has stock
     const product = await db.product.findUnique({
       where: {
         id: productId,
@@ -97,8 +101,8 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
-    const { searchParams } = new URL(req.url);
-    const userId = searchParams.get("userId");
+    const session = await getServerSession(authOptions);
+    const userId = session?.user.id;
 
     if (!userId) {
       return NextResponse.json(
@@ -135,6 +139,59 @@ export async function GET(req: Request) {
     console.error("Error fetching cart:", error);
     return NextResponse.json(
       { error: "Failed to fetch cart" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(req: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    const userId = session?.user?.id;
+
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { productId, quantity } = await req.json();
+
+    if (!productId || quantity < 1) {
+      return NextResponse.json(
+        { error: "Invalid product ID or quantity" },
+        { status: 400 }
+      );
+    }
+
+    const cartItem = await db.cartItem.findFirst({
+      where: {
+        cart:{
+          userId
+        },
+        
+        productId,
+      },
+    });
+
+    if (!cartItem) {
+      return NextResponse.json(
+        { error: "Product not found in cart" },
+        { status: 404 }
+      );
+    }
+
+    const updatedCartItem = await db.cartItem.update({
+      where: { id: cartItem.id },
+      data: { quantity },
+    });
+
+    return NextResponse.json({
+      message: "Cart updated successfully",
+      cartItem: updatedCartItem,
+    });
+  } catch (error) {
+    console.error("Error updating cart:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
       { status: 500 }
     );
   }

@@ -1,13 +1,25 @@
 // /api/cart/item/[id]/route.ts
+import { authOptions } from "@/lib/auth";
 import db from "@/lib/db";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { cartid: string } }
+  { params }: { params: { cartitemid: string } }
 ) {
   try {
-    const cartItemId = params.cartid;
+    const session = await getServerSession(authOptions);
+    const userId = session?.user.id;
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "User ID is required" },
+        { status: 400 }
+      );
+    }
+      
+    const cartItemId = params.cartitemid;
 
     if (!cartItemId) {
       return NextResponse.json(
@@ -29,7 +41,7 @@ export async function DELETE(
 
     await db.cartItem.delete({
       where: {
-         id: cartItemId 
+        id: cartItemId,
       },
     });
 
@@ -45,3 +57,5 @@ export async function DELETE(
     );
   }
 }
+
+
