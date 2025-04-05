@@ -153,9 +153,9 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { productId, quantity } = await req.json();
+    const { id, quantity } = await req.json();
 
-    if (!productId || quantity < 1) {
+    if (!id || quantity < 1) {
       return NextResponse.json(
         { error: "Invalid product ID or quantity" },
         { status: 400 }
@@ -168,7 +168,7 @@ export async function PATCH(req: Request) {
           userId
         },
         
-        productId,
+        id,
       },
     });
 

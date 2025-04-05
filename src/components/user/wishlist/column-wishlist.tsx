@@ -2,24 +2,45 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import Action from "./action";
-import { Category, Images, Product, Tag } from "@prisma/client";
+import { Images} from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 
-export type WishlistColumn = Omit<Product, "price"> & {
+export type WishlistColumn = {
+  id: string;
+  name:string,
+  images: Images[]
+  stock: number;
   price: number;
-  images: Images[];
-  tag: Tag[];
-  category: Category;
-};
+}
 
-export const Columns: ColumnDef<WishlistColumn>[] = [
+export const Columns = (onRefresh: () => void): ColumnDef<WishlistColumn>[] => [
   {
     accessorKey: "name",
     header: "Product",
+    cell: ({ row }) => (
+      <div className="flex items-center gap-2">
+        <Image
+          src={row.original.images[0].url}
+          width={80}
+          height={80}
+          alt={row.original.name}
+        />
+        <h1>{row.original.name}</h1>
+      </div>
+    ),
   },
   {
-    accessorKey: "price",
     header: "Price",
+    cell : ({row}) => (
+      <div>
+        {new Intl.NumberFormat('id-ID', {
+          style: "currency",
+          currency: "IDR",
+          minimumFractionDigits: 0,
+        }).format(row.original.price)}
+      </div>
+    )
   },
   {
     header: "Stock",
@@ -39,6 +60,7 @@ export const Columns: ColumnDef<WishlistColumn>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <Action product={row.original} />,
+    cell: ({ row }) => <Action product={row.original} onRefresh={onRefresh} />,
   },
 ];
+

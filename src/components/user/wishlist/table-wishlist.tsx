@@ -12,28 +12,38 @@ export default function TableWishlist() {
   );
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(
-          "/api/af990241-e9fd-458c-9612-47ea908df21f/products/liked-product"
-        );
-        setWishlistProducts(response.data);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(
+        "/api/af990241-e9fd-458c-9612-47ea908df21f/products/liked-product"
+      );
+      setWishlistProducts(response.data);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchProducts();
   }, []);
 
-  if(isLoading) return <div className="spinner"></div>;
+  const formattedProduct: WishlistColumn[] = wishlistProducts.map(
+    (product) => ({
+      id: product.id,
+      name: product.name,
+      images: product.images,
+      price: product.price,
+      stock: product.stock,
+    })
+  );
+
+  if (isLoading) return <div className="spinner"></div>;
 
   return (
     <div className="px-8 mt-10">
-      <DataTable data={wishlistProducts} columns={Columns} />
+      <DataTable data={formattedProduct} columns={Columns(fetchProducts)} />
       <div className="pb-10">
         <Sosmed />
       </div>

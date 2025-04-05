@@ -23,6 +23,7 @@ export async function PATCH(
     const product = await db.product.update({
       where: {
         id: params.productid,
+        
       },
 
       data: {

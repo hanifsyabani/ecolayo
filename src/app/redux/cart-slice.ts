@@ -69,9 +69,9 @@ export const fetchCartAsync = createAsyncThunk(
 
 export const updateCartAsync = createAsyncThunk(
   "cart/updateCart",
-  async ({ productId, quantity }: { productId: string; quantity: number }) => {
+  async ({ id, quantity }: { id: string; quantity: number }) => {
     const response = await axios.patch(`/api/cart`, {
-      productId,
+      id,
       quantity
     });
 

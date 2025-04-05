@@ -93,7 +93,7 @@ export async function PATCH(
         stock,
         description,
         tag: {
-          set: [], // Hapus relasi tag lama
+          set: [], 
           connectOrCreate: tag.map((tagName: string) => ({
             where: { name: tagName },
             create: { name: tagName },

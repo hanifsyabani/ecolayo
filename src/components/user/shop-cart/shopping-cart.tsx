@@ -7,7 +7,11 @@ import CartTotal from "./cart-total";
 import Newsletter from "../products/newsletter";
 import { useAppDispatch } from "@/hooks/use-app-dispatch";
 import { useEffect, useState } from "react";
-import { deleteCartAsync, fetchCartAsync, updateCartAsync } from "@/app/redux/cart-slice";
+import {
+  deleteCartAsync,
+  fetchCartAsync,
+  updateCartAsync,
+} from "@/app/redux/cart-slice";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
 import { Button } from "@/components/ui/button";
@@ -33,26 +37,26 @@ export default function ShoppingCart() {
 
   const shopCartData: ShopCartColumn[] = (cart?.items ?? []).map((item) => ({
     id: item.id,
-    productId: item.productId,
     name: item.product.name,
     price: item.product.price,
     images: item.product.images || [],
     quantity:
-      cartUpdates[item.productId] !== undefined
-        ? cartUpdates[item.productId]
+      cartUpdates[item.id] !== undefined
+        ? cartUpdates[item.id]
         : item.quantity,
     totalPrice: formatter.format(
       item.product.price *
-        (cartUpdates[item.productId] !== undefined
-          ? cartUpdates[item.productId]
+        (cartUpdates[item.id] !== undefined
+          ? cartUpdates[item.id]
           : item.quantity)
     ),
   }));
 
-  function handleQuantityChange(productId: string, quantity: number) {
+
+  function handleQuantityChange(id: string, quantity: number) {
     setCartUpdates((prev) => ({
       ...prev,
-      [productId]: quantity,
+      [id]: quantity,
     }));
   }
 
@@ -60,10 +64,10 @@ export default function ShoppingCart() {
     setIsLoading(true);
     try {
       const updatePromises = Object.entries(cartUpdates).map(
-        ([productId, quantity]) => {
+        ([id, quantity]) => {
           return dispatch(
             updateCartAsync({
-              productId,
+              id,
               quantity,
             })
           ).unwrap();
@@ -93,10 +97,7 @@ export default function ShoppingCart() {
     0
   );
 
- 
-
-  // if (loading) return <div className="spinner"></div>;
-
+  // console.log(cart);
   return (
     <>
       <div className="flex px-8 py-10 justify-center gap-6">
@@ -123,7 +124,7 @@ export default function ShoppingCart() {
           <Coupon />
         </div>
         <div className="w-[30%]">
-          <CartTotal subtotal={totalPrice || 0} />
+          <CartTotal subtotal={totalPrice} />
         </div>
       </div>
       <Newsletter isSosmed={true} />

@@ -11,14 +11,6 @@ import { fetchCartAsync } from "@/app/redux/cart-slice";
 export default function CartTrigger() {
   const { cart } = useSelector((state: RootState) => state.cart);
   const itemCount = cart?.items?.length || 0;
-  const dispatch = useAppDispatch();
-  const { data: session } = useSession();
-
-  useEffect(() => {
-    if (session?.user?.id) {
-      dispatch(fetchCartAsync(session.user.id));
-    }
-  }, [dispatch, session?.user?.id]);
 
   return (
     <div className="flex relative">

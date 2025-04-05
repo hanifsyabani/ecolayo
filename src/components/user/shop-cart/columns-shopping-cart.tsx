@@ -9,7 +9,6 @@ import RemoveFromCart from "./remove-from-cart";
 // This type is used to define the shape of our data.
 export type ShopCartColumn = {
   id: string;
-  productId: string;
   price: number;
   quantity: number;
   images: Images[];
@@ -55,7 +54,7 @@ export const Columns = (
       cell: ({ row }) => (
         <QuantityShopCart
           quantity={row.original.quantity}
-          productId={row.original.productId}
+          productId={row.original.id}
           onQuantityChange={onQuantityChange}
         />
       ),
