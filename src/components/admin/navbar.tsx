@@ -1,12 +1,9 @@
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { redirect } from "next/navigation";
-import db from "@/lib/db";
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { SidebarTrigger } from "../ui/sidebar";
-import StoreSwicher from "./store/store-switcher";
 
 export default async function Navbar() {
   const session = await getServerSession(authOptions);
@@ -14,18 +11,10 @@ export default async function Navbar() {
 
   if (!userId) redirect("/login");
 
-  const stores = await db.store.findMany({
-    where: {
-      userId,
-    },
-  });
 
   return (
     <>
       <nav className="py-2 px-3 flex gap-32 items-center bg-white">
-        <div className="flex items-center gap-2">
-          <StoreSwicher items={stores} />
-        </div>
 
         <div className="flex items-center justify-center">
           <Input

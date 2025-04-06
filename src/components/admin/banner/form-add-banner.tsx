@@ -97,7 +97,7 @@ export default function FormAddBanner(datas: BannerFormProps) {
     try {
       setIsLoadingForm(true);
 
-      await axios.delete(`/api/${params.storeid}/banner/${params.bannerid}`);
+      await axios.delete(`/api/banner/${params.bannerid}`);
       toast.success("Banner deleted successfully");
       router.refresh();
       router.push("/");

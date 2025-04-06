@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import { ModalProvider } from "@/provider/modal-provider";
 import { Toaster } from "react-hot-toast";
 import NextTopLoader from "nextjs-toploader";
 import SessionProviderWrapper from "@/components/SessionProvider";
 import ReduxProvider from "@/provider/redux-provider";
+import ReactQueryProvider from "@/provider/query-provider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -29,28 +29,29 @@ export default function RootLayout({
         <ReduxProvider>
           <SessionProviderWrapper>
             <NextTopLoader color="#2C742F" />
-            <ModalProvider />
-            {children}
-            <Toaster
-              position="top-center"
-              gutter={12}
-              containerStyle={{ margin: "8px" }}
-              toastOptions={{
-                success: {
-                  duration: 3000,
-                },
-                error: {
-                  duration: 5000,
-                },
-                style: {
-                  fontSize: "16px",
-                  maxWidth: "500px",
-                  padding: "16px 24px",
-                  backgroundColor: "white",
-                  color: "black",
-                },
-              }}
-            />
+            <ReactQueryProvider>
+              {children}
+              <Toaster
+                position="top-center"
+                gutter={12}
+                containerStyle={{ margin: "8px" }}
+                toastOptions={{
+                  success: {
+                    duration: 3000,
+                  },
+                  error: {
+                    duration: 5000,
+                  },
+                  style: {
+                    fontSize: "16px",
+                    maxWidth: "500px",
+                    padding: "16px 24px",
+                    backgroundColor: "white",
+                    color: "black",
+                  },
+                }}
+              />
+            </ReactQueryProvider>
           </SessionProviderWrapper>
         </ReduxProvider>
       </body>

@@ -8,7 +8,6 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { CategoryColumn, Columns } from "./columns-category";
 import { DataTable } from "@/components/ui/data-table";
-import ApiList from "@/components/ui/api-list";
 
 interface CategoryProps {
   data: CategoryColumn[];
@@ -31,8 +30,6 @@ export default function ListCategories(data: CategoryProps) {
 
       <DataTable data={data.data} columns={Columns} searchKey="name" />
 
-      <Heading title="API" description="API calls for Categories"/> 
-      <ApiList idIndikator="categoryid" nameIndikator="categories"/>
     </>
   );
 }

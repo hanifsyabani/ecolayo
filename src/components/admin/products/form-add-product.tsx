@@ -22,11 +22,10 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Category, Images, Product, Tag } from "@prisma/client";
 import axios from "axios";
 import { MoveLeft, Trash, X } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
@@ -34,16 +33,12 @@ import UploadImage from "../banner/upload-image";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { DeleteProduct, GetProductById } from "@/service/products";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { GetCategories } from "@/service/categories";
 
 interface ProductFormProps {
-  products:
-    | (Omit<Product, "price"> & {
-        price: number; // Ganti Decimal jadi number
-        images: Images[];
-        tag: Tag[];
-      })
-    | null;
-  categories: Category[] | null;
+  id: string;
 }
 
 const schema = z.object({
@@ -71,20 +66,35 @@ const schema = z.object({
 });
 type FormFields = z.infer<typeof schema>;
 
-export default function FormAddProduct({
-  products,
-  categories,
-}: ProductFormProps) {
+export default function FormAddProduct({ id }: ProductFormProps) {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
-  const [tags, setTags] = useState<string[]>(
-    products?.tag.map((tag) => tag.name) || []
-  );
   const [tagInput, setTagInput] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [tags, setTags] = useState<string[]>([]);
   const params = useParams();
   const router = useRouter();
 
-  const isEditing = Boolean(products);
+  const {
+    data: product,
+    isLoading: isLoadingProduct,
+    isSuccess: isProductSuccess,
+  } = useQuery({
+    queryFn: () => GetProductById(id),
+    queryKey: ["dataProduct", id],
+    // enabled: !!id && id !== "new", // Only run query if id exists and isn't "new"
+    // staleTime: 0, // Force fresh data
+    // refetchOnMount: "always", // Always refetch when component mounts
+  });
+
+  const {
+    data: categories,
+    isLoading: isLoadingCategories,
+  } = useQuery({
+    queryFn: () => GetCategories(),
+    queryKey: ["dataCategories"],
+  });
+
+  const isEditing = Boolean(id) && id !== "new";
 
   const title = isEditing ? "Edit Product" : "Add Product";
   const toastMessage = isEditing
@@ -98,23 +108,56 @@ export default function FormAddProduct({
     setValue,
     watch,
     getValues,
+    reset,
     formState: { errors },
   } = useForm<FormFields>({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: products?.name || "",
-      images: products?.images || [],
-      price: parseFloat(String(products?.price)) || 0,
-      categoryid: products?.categoryid || "",
-      stars: products?.stars || 0,
-      shortDescription: products?.shortDescription || "",
-      description: products?.description || "",
-      tag: products?.tag.map((tag) => tag.name) || [],
-      isFeatured: products?.isFeatured || false,
-      isArchived: products?.isArchived || false,
-      stock: products?.stock || 0,
+      name: "",
+      images: [],
+      price: 0,
+      categoryid: "",
+      stars: 0,
+      shortDescription: "",
+      description: "",
+      tag: [],
+      isFeatured: false,
+      isArchived: false,
+      stock: 0,
     },
   });
+
+  // Reset form with product data when product data is loaded
+  useEffect(() => {
+    if (isProductSuccess && product) {
+      reset({
+        name: product.name || "",
+        images: product.images || [],
+        price: parseFloat(String(product.price)) || 0,
+        categoryid: product.categoryid || "",
+        stars: product.stars || 0,
+        shortDescription: product.shortDescription || "",
+        description: product.description || "",
+        tag: product.tag?.map((tag: any) => tag.name) || [],
+        isFeatured: product.isFeatured || false,
+        isArchived: product.isArchived || false,
+        stock: product.stock || 0,
+      });
+
+      // Update tags state
+      if (product.tag) {
+        const extractedTags = product.tag.map((tag: any) => tag.name);
+        setTags(extractedTags);
+      }
+    }
+  }, [isProductSuccess, product, reset]);
+
+  // Separately set the category value when needed
+  useEffect(() => {
+    if (isProductSuccess && product && product.categoryid) {
+      setValue("categoryid", product.categoryid);
+    }
+  }, [isProductSuccess, product, setValue]);
 
   const addTag = () => {
     if (tagInput.trim() && !tags.includes(tagInput.trim())) {
@@ -135,15 +178,12 @@ export default function FormAddProduct({
     try {
       setIsLoadingForm(true);
       if (isEditing) {
-        await axios.patch(
-          `/api/${params.storeid}/products/${params.productid}`,
-          data
-        );
+        await axios.patch(`/api/store/products/${params.productid}`, data);
       } else {
-        await axios.post(`/api/${params.storeid}/products`, data);
+        await axios.post(`/api/store/products`, data);
       }
       router.refresh();
-      router.push(`/admin/store/${params.storeid}/products`);
+      router.push(`/admin/products`);
       toast.success(toastMessage);
     } catch (error) {
       toast.error("Please check your data");
@@ -152,26 +192,33 @@ export default function FormAddProduct({
     }
   }
 
-  async function onDeleteBanner() {
-    try {
-      setIsLoadingForm(true);
-
-      await axios.delete(`/api/${params.storeid}/products/${params.productid}`);
-      toast.success("Product deleted successfully");
-      router.refresh();
-      router.push("/");
-    } catch (error) {
-      toast.error("Error deleting");
-    } finally {
+  const { mutate: deleteProduct } = useMutation({
+    mutationFn: (id: string) => DeleteProduct(id),
+    onSuccess: () => {
       setIsLoadingForm(false);
-    }
+      toast.success("Product deleted successfully");
+      setIsOpen(false);
+      router.push(`/admin/products`);
+    },
+    onError: () => {
+      setIsLoadingForm(false);
+      toast.error("Error deleting Product");
+    },
+  });
+
+  function onDelete(id: string) {
+    setIsLoadingForm(true);
+    deleteProduct(id);
   }
+
+  if (isLoadingProduct || isLoadingCategories)
+    return <div className="spinner"></div>;
 
   return (
     <>
       <Button
         className="bg-secondary text-white"
-        onClick={() => router.push(`/admin/store/${params.storeid}/products`)}
+        onClick={() => router.push(`/admin/products`)}
       >
         <MoveLeft />
       </Button>
@@ -189,7 +236,7 @@ export default function FormAddProduct({
       </div>
       <Separator />
       <form className="mt-10 space-y-4 " onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex  gap-10">
+        <div className="flex gap-10">
           <div className="w-1/2 space-y-4">
             <div>
               <Label htmlFor="name">Name Product</Label>
@@ -218,7 +265,7 @@ export default function FormAddProduct({
                 )}
               </div>
               <div className="w-1/2">
-              <Label htmlFor="stock">Stock Product</Label>
+                <Label htmlFor="stock">Stock Product</Label>
                 <Input
                   id="stock"
                   {...register("stock")}
@@ -235,13 +282,14 @@ export default function FormAddProduct({
               <div className="w-1/2">
                 <Label>Category</Label>
                 <Select
+                  value={watch("categoryid")}
                   onValueChange={(value) => setValue("categoryid", value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent className="bg-white">
-                    {categories?.map((category) => (
+                    {categories?.map((category: any) => (
                       <SelectItem
                         key={category.id}
                         value={category.id}
@@ -289,7 +337,7 @@ export default function FormAddProduct({
             <div className="flex items-center gap-10">
               <div>
                 <Label>Featured</Label>
-                <div className="flex  items-center gap-2">
+                <div className="flex items-center gap-2">
                   <Checkbox
                     checked={watch("isFeatured")}
                     onCheckedChange={(checked) =>
@@ -303,7 +351,7 @@ export default function FormAddProduct({
               </div>
               <div>
                 <Label>Archived</Label>
-                <div className="flex  items-center gap-2">
+                <div className="flex items-center gap-2">
                   <Checkbox
                     checked={watch("isArchived")}
                     onCheckedChange={(checked) =>
@@ -372,9 +420,7 @@ export default function FormAddProduct({
                     : []
                 }
                 onChange={(urls: any) => {
-                  // Pastikan `urls` selalu array
                   const urlArray = Array.isArray(urls) ? urls : [urls];
-
                   setValue(
                     "images",
                     urlArray.map((url: any) => ({ url }))
@@ -388,7 +434,9 @@ export default function FormAddProduct({
                 }
               />
               {errors.images && (
-                <p className="text-red-500 text-sm">{errors.images.message}</p>
+                <p className="text-red-500 text-sm">
+                  {errors.images?.message as string}
+                </p>
               )}
             </div>
           </div>
@@ -410,7 +458,7 @@ export default function FormAddProduct({
         <DialogContent className="bg-white">
           <DialogHeader>
             <DialogTitle>
-              Are you sure you want to delete the category?
+              Are you sure you want to delete the product?
             </DialogTitle>
             <DialogDescription>
               This action cannot be undone. This will permanently delete your
@@ -424,7 +472,7 @@ export default function FormAddProduct({
             </Button>
             <Button
               className="bg-red-500 text-white hover:bg-red-700"
-              onClick={() => onDeleteBanner()}
+              onClick={() => onDelete(id)}
               disabled={isLoadingForm}
             >
               {isLoadingForm ? (

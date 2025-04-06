@@ -15,7 +15,7 @@ export type ProductColumn = {
   tag : string
 };
 
-export const Columns: ColumnDef<ProductColumn>[] = [
+export const Columns = (refetchProducts: () => void): ColumnDef<ProductColumn>[] => [
   {
     accessorKey: "name",
     header: "Name",
@@ -47,6 +47,6 @@ export const Columns: ColumnDef<ProductColumn>[] = [
   {
     id: "actions",
     header: "Action",
-    cell: ({ row }) => <CellActionCategory data={row.original} />,
+    cell: ({ row }) => <CellActionCategory data={row.original} refetchProducts={refetchProducts} />,
   },
 ];

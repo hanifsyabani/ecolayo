@@ -8,7 +8,6 @@ export default async function SetupLayout({
   children,
 }: {
   children: React.ReactNode;
-  params: { storeId: string };
 }) {
   const session = await getServerSession(authOptions);
 
@@ -18,14 +17,5 @@ export default async function SetupLayout({
     redirect("/shop");
   }
 
-  const store = await db.store.findFirst({
-    where: {
-      userId: session?.user?.id,
-    },
-  });
-
-  if (store) redirect(`/admin/store/${store.id}`);
-  // Jika tidak ada store, layout akan tetap merender children
-
-  return <>{children}</>;
+  redirect("/admin");
 }

@@ -8,13 +8,12 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { BannerColumn, Columns } from "./columns-banner";
 import { DataTable } from "@/components/ui/data-table";
-import ApiList from "@/components/ui/api-list";
 
 interface BannerProps {
   data: BannerColumn[];
 }
 
-export default function ListBanner({data}: BannerProps) {
+export default function ListBanner({ data }: BannerProps) {
   const params = useParams();
 
   return (
@@ -30,9 +29,6 @@ export default function ListBanner({data}: BannerProps) {
       <Separator className="my-4 bg-gray-300" />
 
       <DataTable data={data} columns={Columns} searchKey="label" />
-
-      <Heading title="API" description="API calls for Banner"/> 
-      <ApiList idIndikator="bannerid" nameIndikator="banner"/>
     </>
   );
 }

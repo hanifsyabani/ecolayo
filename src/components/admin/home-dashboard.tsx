@@ -1,36 +1,31 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { authOptions } from "@/lib/auth";
-import db from "@/lib/db";
+"use client";
+
 import { commonStats } from "@/lib/item";
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
+import { GetBanners } from "@/service/banners";
+import { GetCategories } from "@/service/categories";
+import { GetProducts } from "@/service/products";
+import { useQuery } from "@tanstack/react-query";
+import { Card, CardContent } from "../ui/card";
 import { ImStatsBars2 } from "react-icons/im";
 
-interface PageProps {
-  params: {
-    storeid: string;
-  };
-}
 
-export default async function page(props: PageProps) {
-  const session = await getServerSession(authOptions);
-  const userId = session?.user.id;
-
-  if (!userId) redirect("/login");
-
-  const store = await db.store.findFirst({
-    where: {
-      id: props.params.storeid,
-      userId,
-    },
-    include:{
-      banners:true,
-      product: true,
-      categories: true
-    }
+export default function Statistics() {
+  const { data: banners, isLoading: isLoadingBanners } = useQuery({
+    queryFn: () => GetBanners(),
+    queryKey: ["dataBanners"],
+  });
+  const { data: categories, isLoading: isLoadingCategories } = useQuery({
+    queryFn: () => GetCategories(),
+    queryKey: ["dataCategories"],
+  });
+  const { data: products, isLoading: isLoadingProducts } = useQuery({
+    queryFn: () => GetProducts(),
+    queryKey: ["dataProducts"],
   });
 
-  if (!store) redirect("/");
+  // console.log(banners.length);
+  // console.log(products.length);
+  // console.log(categories.length);
 
   const colorClasses = {
     totalUsers: "bg-blue-500",
@@ -49,21 +44,22 @@ export default async function page(props: PageProps) {
     ...stat,
     value:
       stat.key === "totalUsers"
-        ? 1 
+        ? 1
         : stat.key === "totalStores"
-        ? store.banners.length
+        ? banners?.length
         : stat.key === "totalProducts"
-        ? store.product.length
+        ? products?.length
         : stat.key === "totalCategories"
-        ? store.categories.length
+        ? categories?.length
         : 0,
   }));
 
+  if (isLoadingBanners || isLoadingCategories || isLoadingProducts)
+    return <div className="spinner"></div>;
+
   return (
     <>
-      <h1 className="text-2xl font-semibold p-3">Admin Dashboard</h1>
-      <div className="flex justify-evenly flex-wrap items-center">
-        {statsWithValues.map((item, index) => (
+      {statsWithValues.map((item, index) => (
           <Card className="w-60 h-32" key={index}>
             <CardContent className="bg-white h-full py-4 rounded-xl">
               <div className="flex justify-between items-center">
@@ -90,7 +86,6 @@ export default async function page(props: PageProps) {
             </CardContent>
           </Card>
         ))}
-      </div>
     </>
   );
 }

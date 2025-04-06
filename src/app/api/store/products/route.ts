@@ -5,7 +5,6 @@ import { NextResponse } from "next/server";
 
 export async function POST(
   req: Request,
-  { params }: { params: { storeid: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -37,14 +36,7 @@ export async function POST(
     if (!shortDescription)
       throw new Error("Short Description must be provided");
 
-    const storeByUserId = await db.store.findFirst({
-      where: {
-        id: params.storeid,
-        userId,
-      },
-    });
 
-    if (!storeByUserId) throw new Error("Store not found");
 
     const product = await db.product.create({
       data: {
@@ -63,7 +55,6 @@ export async function POST(
             create: { name: tagName },
           })),
         },
-        storeid: params.storeid,
         images: {
           createMany: {
             data: [...images.map((image: { url: string }) => image)],
@@ -81,7 +72,6 @@ export async function POST(
 
 export async function GET(
   req: Request,
-  { params }: { params: { storeid: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -95,9 +85,6 @@ export async function GET(
     if (!userId) throw new Error("Unauthenticated");
 
     const product = await db.product.findMany({
-      where: {
-        storeid: params.storeid,
-      },
       include: {
         images: true,
         category: true,

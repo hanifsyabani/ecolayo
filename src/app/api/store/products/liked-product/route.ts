@@ -5,7 +5,6 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   req: Request,
-  { params }: { params: { storeid: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -20,7 +19,6 @@ export async function GET(
 
     const product = await db.product.findMany({
       where: {
-        storeid: params.storeid,
         isLike: true
       },
       include: {

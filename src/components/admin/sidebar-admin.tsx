@@ -10,48 +10,40 @@ import { Fullscreen, Home, Logs, Settings, ShoppingBasket } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import ButtonLogout from "../button-logout";
-import { useParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 
-interface SidebarAdminProps {
-  store_name: string;
-  store_id: string;
-}
 
-export default function SidebarAdmin({
-  store_name,
-  store_id,
-}: SidebarAdminProps) {
-  const params = useParams();
+export default function SidebarAdmin() {
   const pathname = usePathname();
   const items = [
     {
       title: "Home",
-      url: `/admin/store/${params.storeid}`,
+      url: `/admin`,
       icon: Home,
       // active: pathname === "/",
     },
     {
       title: "Products",
-      url: `/admin/store/${params.storeid}/products`,
+      url: `/admin/products`,
       icon: ShoppingBasket,
       // active: pathname === `/admin/store/${params.storeid}/products`,
     },
     {
       title: "Banners",
-      url: `/admin/store/${params.storeid}/banners`,
+      url: `/admin/banners`,
       icon: Fullscreen,
       // active: pathname === `/admin/store/${params.storeid}/banners`,
     },
     {
       title: "Categories",
-      url: `/admin/store/${params.storeid}/categories`,
+      url: `/admin/categories`,
       icon: Logs,
       // active: pathname === `/admin/store/${params.storeid}/categories`,
     },
 
     {
       title: "Settings",
-      url: `/admin/store/${store_id}/settings`,
+      url: `/admin/store/settings`,
       icon: Settings,
       // active: pathname === `/admin/store/${store_id}/settings`,
     },
@@ -61,7 +53,7 @@ export default function SidebarAdmin({
     <Sidebar className="bg-white" side="left">
       <SidebarContent className="py-5 px-2 h-full">
         <Link
-          href={`/admin/store/${store_id}`}
+          href={`/admin/store`}
           className="flex items-center gap-2"
         >
           <Image
@@ -71,7 +63,7 @@ export default function SidebarAdmin({
             alt="logo"
             className="w-10"
           />
-          <h1 className="text-xl font-bold">{store_name}</h1>
+          <h1 className="text-xl font-bold">EcoLayo</h1>
         </Link>
 
         <SidebarGroup className="flex-1">

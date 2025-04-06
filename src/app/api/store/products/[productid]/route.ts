@@ -33,7 +33,7 @@ export async function GET(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { productid: string; storeid: string } }
+  { params }: { params: { productid: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -64,15 +64,6 @@ export async function PATCH(
       throw new Error("Short Description must be provided");
     if (!stars) throw new Error("Rating must be provided");
 
-
-    const storeByUserId = await db.store.findFirst({
-      where: {
-        id: params.storeid,
-        userId,
-      },
-    });
-
-    if (!storeByUserId) throw new Error("Store not found");
 
     await db.product.update({
       where: {
@@ -123,31 +114,23 @@ export async function PATCH(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { storeid: string; productid: string } }
+  { params }: { params: { productid: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
     if (!userId) throw new Error("Unauthenticated");
 
-    const storeByUserId = await db.store.findFirst({
-      where: {
-        id: params.storeid,
-        userId,
-      },
-    });
-
-    if (!storeByUserId) throw new Error("Store not found");
-
     const product = await db.product.delete({
       where: {
-        storeid: params.storeid,
         id: params.productid,
       },
     });
 
     return NextResponse.json(product);
+
   } catch (error: any) {
     throw new Error(error);
   }
 }
+

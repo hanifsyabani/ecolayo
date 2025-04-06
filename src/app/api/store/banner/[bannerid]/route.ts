@@ -41,15 +41,6 @@ export async function PATCH(
     if (!imageUrl) throw new Error("Image URL must be provided");
     if (!categoryBanner) throw new Error("Category banner must be provided");
 
-    const storeByUserId = await db.store.findFirst({
-      where: {
-        id: params.storeid,
-        userId,
-      },
-    });
-
-    if (!storeByUserId) throw new Error("Store not found");
-
     const banner = await db.banner.update({
       where: {
         id: params.bannerid,
@@ -58,7 +49,7 @@ export async function PATCH(
       data: {
         label,
         imageUrl,
-        categoryBanner
+        categoryBanner,
       },
     });
 
@@ -70,44 +61,30 @@ export async function PATCH(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { storeid: string; bannerid: string } }
+  { params }: { params: { bannerid: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
     if (!userId) throw new Error("Unauthenticated");
 
-    console.log(params.storeid, " ", params.bannerid);
-
-    // if(!params.bannerid) throw new Error("Banner ID must be provided");
-
-    const storeByUserId = await db.store.findFirst({
-      where: {
-        id: params.storeid,
-        userId,
-      },
-    });
-
     const banner = await db.banner.findUnique({
       where: { id: params.bannerid },
     });
-    
+
     if (!banner) {
       return NextResponse.json({ error: "Banner not found" }, { status: 404 });
     }
 
-    if (!storeByUserId) throw new Error("Store not found");
-
     await db.banner.delete({
       where: {
-        // storeid: params.storeid,
         id: params.bannerid,
       },
     });
 
     return NextResponse.json({ message: "Banner deleted successfully" });
   } catch (error: any) {
-    console.log("error : ",error)
+    console.log("error : ", error);
     throw new Error(error);
   }
 }

@@ -2,10 +2,8 @@
 
 import toast from "react-hot-toast";
 import { Copy, Edit, Trash } from "lucide-react";
-import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import axios from "axios";
 import {
   Dialog,
   DialogContent,
@@ -16,15 +14,17 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ProductColumn } from "./columns-products";
+import { useMutation } from "@tanstack/react-query";
+import { DeleteProduct } from "@/service/products";
 
 interface CellActionProps {
   data: ProductColumn;
+  refetchProducts:() =>void
 }
 
-export default function CellActionCategory(data: CellActionProps) {
+export default function CellActionCategory({data, refetchProducts}: CellActionProps) {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const params = useParams();
   const router = useRouter();
 
   function onCopy(id: string) {
@@ -32,43 +32,49 @@ export default function CellActionCategory(data: CellActionProps) {
     toast.success("Product Successfully copied");
   }
 
-  async function onDeleteProduct(id: string) {
-    try {
-      setIsLoadingForm(true);
+  const {mutate: deleteProduct } = useMutation({
 
-      await axios.delete(`/api/${params.storeid}/products/${id}`);
-      toast.success("Product deleted successfully");
-      router.refresh();
-      router.push(`/admin/store/${params.storeid}/products`);
-    } catch (error) {
-      toast.error("Error deleting");
-    } finally {
-      setIsOpen(false)
+    mutationFn: (id:string) => DeleteProduct(id),
+    onSuccess: () => {
       setIsLoadingForm(false);
-    }
+      toast.success("Product deleted successfully");
+      setIsOpen(false)
+      refetchProducts()
+    },
+    onError: () => {
+      setIsLoadingForm(false);
+      toast.error("Error deleting Product");
+    },
+  })
+
+  function onDelete(id: string) {
+    setIsLoadingForm(true);
+    deleteProduct(id)
   }
+
 
   return (
     <>
       <div className="flex items-center gap-5">
-        <div
+        <Button
           className="bg-blue-500 p-1 text-white rounded-md cursor-pointer"
-          onClick={() => onCopy(data.data.id)}
+          onClick={() => onCopy(data.id)}
         >
           <Copy size={15} />
-        </div>
-        <Link
-          href={`/admin/store/${params.storeid}/products/${data.data.id}`}
+        </Button>
+        <Button
+          onClick={() => router.push(`/admin/products/${data.id}`)}
           className="bg-secondary p-1 text-white rounded-md cursor-pointer"
         >
           <Edit size={15} />
-        </Link>
-        <div
+        </Button>
+        <Button
           className="bg-red-500 p-1 text-white rounded-md cursor-pointer"
           onClick={() => setIsOpen(true)}
+          disabled={isLoadingForm}
         >
           <Trash size={15} />
-        </div>
+        </Button>
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -89,7 +95,7 @@ export default function CellActionCategory(data: CellActionProps) {
             </Button>
             <Button
               className="bg-red-500 text-white hover:bg-red-700"
-              onClick={() => onDeleteProduct(data.data.id)}
+              onClick={() => onDelete(data.id)}
               disabled={isLoadingForm}
             >
               {isLoadingForm ? (

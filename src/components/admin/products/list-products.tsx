@@ -5,23 +5,43 @@ import Heading from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import {  Columns, ProductColumn } from "./columns-products";
+import { Columns, ProductColumn } from "./columns-products";
 import { DataTable } from "@/components/ui/data-table";
-import ApiList from "@/components/ui/api-list";
+import { useQuery } from "@tanstack/react-query";
+import { GetProducts } from "@/service/products";
+import { formatter } from "@/lib/utils";
+import { format } from "date-fns";
 
-interface ProductProps {
-  data: ProductColumn[];
-}
+export default function ListProducts() {
 
-export default function ListProducts(data: ProductProps) {
-  const params = useParams();
+  const { data: products, isLoading: isLoadingProducts, refetch: refetchProducts } = useQuery({
+    queryFn: () => GetProducts(),
+    queryKey: ["dataProducts"],
+  });
 
+  // if(!products){
+  //   return <div>No Product Found</div>
+  // }
+
+  const formattedProducts: ProductColumn[] = (products ?? []).map((item: any) => ({
+    id: item.id,
+    name: item.name,
+    isFeatured: item.isFeatured,
+    isArchived: item.isArchived,
+    price: formatter.format(item.price),
+    category: item.category.name,
+    tag: item.tag.map((tag: any) => tag.name).join(", "),
+    createdAt: format(item.createdAt, "MMM do, yyyy"),
+  }));
+
+  if (isLoadingProducts) {
+    return <div className="spinner"/>
+  }
   return (
     <>
       <div className="flex items-center justify-between">
         <Heading title="Products" description="Set product for shop " />
-        <Link href={`/admin/store/${params.storeid}/products/new`}>
+        <Link href={`/admin/products/new`}>
           <Button className="text-white text-sm bg-secondary">
             <Plus /> Add New
           </Button>
@@ -29,10 +49,8 @@ export default function ListProducts(data: ProductProps) {
       </div>
       <Separator className="my-4 bg-gray-300" />
 
-      <DataTable data={data.data} columns={Columns} searchKey="name" />
+      <DataTable data={formattedProducts} columns={Columns(refetchProducts)} searchKey="name" />
 
-      <Heading title="API" description="API calls for Categories"/> 
-      <ApiList idIndikator="productid" nameIndikator="products"/>
     </>
   );
 }

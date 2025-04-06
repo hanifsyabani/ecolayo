@@ -28,7 +28,7 @@ export async function GET(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { categoryid: string; storeid: string } }
+  { params }: { params: { categoryid: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -40,14 +40,6 @@ export async function PATCH(
     if (!name) throw new Error("name must be provided");
     if (!bannerid) throw new Error("Banner id must be provided");
 
-    const storeByUserId = await db.store.findFirst({
-      where: {
-        id: params.storeid,
-        userId,
-      },
-    });
-
-    if (!storeByUserId) throw new Error("Store not found");
 
     const category = await db.category.update({
       where: {
@@ -68,29 +60,15 @@ export async function PATCH(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { storeid: string; categoryid: string } }
+  { params }: { params: {  categoryid: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
     if (!userId) throw new Error("Unauthenticated");
 
-    console.log("store id: ",params.storeid, " ","category id: ", params.categoryid);
-
-    // if(!params.bannerid) throw new Error("Banner ID must be provided");
-
-    const storeByUserId = await db.store.findFirst({
-      where: {
-        id: params.storeid,
-        userId,
-      },
-    });
-
-    if (!storeByUserId) throw new Error("Store not found");
-
     await db.category.delete({
       where: {
-        storeid: params.storeid,
         id: params.categoryid,
       },
     });
