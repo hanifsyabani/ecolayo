@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { ProductColumn } from "./columns-products";
 import { useMutation } from "@tanstack/react-query";
 import { DeleteProduct } from "@/service/products";
+import Link from "next/link";
 
 interface CellActionProps {
   data: ProductColumn;
@@ -57,19 +58,18 @@ export default function CellActionCategory({data, refetchProducts}: CellActionPr
     <>
       <div className="flex items-center gap-5">
         <Button
-          className="bg-blue-500 p-1 text-white rounded-md cursor-pointer"
+          className="bg-blue-500 w-7 h-7 text-white rounded-md cursor-pointer"
           onClick={() => onCopy(data.id)}
         >
-          <Copy size={15} />
+          <Copy size={10} />
         </Button>
-        <Button
-          onClick={() => router.push(`/admin/products/${data.id}`)}
-          className="bg-secondary p-1 text-white rounded-md cursor-pointer"
+        <Link href={`/admin/products/${data.id}`}
+          className="bg-secondary w-7 h-7 flex justify-center items-center text-white rounded-md cursor-pointer"
         >
           <Edit size={15} />
-        </Button>
+        </Link>
         <Button
-          className="bg-red-500 p-1 text-white rounded-md cursor-pointer"
+          className="bg-red-500 w-7 h-7 text-white rounded-md cursor-pointer"
           onClick={() => setIsOpen(true)}
           disabled={isLoadingForm}
         >

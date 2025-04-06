@@ -19,10 +19,6 @@ export default function ListProducts() {
     queryKey: ["dataProducts"],
   });
 
-  // if(!products){
-  //   return <div>No Product Found</div>
-  // }
-
   const formattedProducts: ProductColumn[] = (products ?? []).map((item: any) => ({
     id: item.id,
     name: item.name,

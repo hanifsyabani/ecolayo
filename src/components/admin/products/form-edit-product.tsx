@@ -36,7 +36,6 @@ import { Badge } from "@/components/ui/badge";
 import { DeleteProduct, GetProductById } from "@/service/products";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { GetCategories } from "@/service/categories";
-import Link from "next/link";
 
 interface ProductFormProps {
   id: string;
@@ -67,7 +66,7 @@ const schema = z.object({
 });
 type FormFields = z.infer<typeof schema>;
 
-export default function FormAddProduct() {
+export default function FormEditProduct({ id }: ProductFormProps) {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [tagInput, setTagInput] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -75,37 +74,56 @@ export default function FormAddProduct() {
   const params = useParams();
   const router = useRouter();
 
-  const { data: categories, isLoading: isLoadingCategories } = useQuery({
-    queryFn: () => GetCategories(),
-    queryKey: ["dataCategories"],
-  });
-
   const {
     handleSubmit,
     register,
     setValue,
     watch,
     getValues,
-    reset,
     formState: { errors },
   } = useForm<FormFields>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      name: "",
+      images: [],
+      price: 0,
+      categoryid: "",
+      stars: 0,
+      shortDescription: "",
+      description: "",
+      tag: [],
+      isFeatured: false,
+      isArchived: false,
+      stock: 0,
+    },
   });
 
-  async function onSubmit(data: FormFields) {
-    try {
-      setIsLoadingForm(true);
+  const { data: product, isLoading: isLoadingProduct } = useQuery({
+    queryFn: () => GetProductById(id),
+    queryKey: ["dataProduct", id],
+  });
 
-      await axios.post(`/api/store/products`, data);
-      router.refresh();
-      router.push(`/admin/products`);
-      toast.success("Product created successfully");
-    } catch (error) {
-      toast.error("Please check your data");
-    } finally {
-      setIsLoadingForm(false);
+  const { data: categories, isLoading: isLoadingCategories } = useQuery({
+    queryFn: () => GetCategories(),
+    queryKey: ["dataCategories"],
+  });
+
+  useEffect(() => {
+    if (product) {
+      setValue("name", product.name || "");
+      setValue("images", product.images || []);
+      setValue("price", parseFloat(String(product.price)) || 0);
+      setValue("categoryid", product.categoryid || "");
+      setValue("stars", product.stars || 0);
+      setValue("shortDescription", product.shortDescription || "");
+      setValue("description", product.description || "");
+      setValue("tag", product.tag?.map((tag: any) => tag.name) || []);
+      setValue("isFeatured", product.isFeatured || false);
+      setValue("isArchived", product.isArchived || false);
+      setValue("stock", product.stock || 0);
+      setTags(product.tag?.map((tag: any) => tag.name) || []);
     }
-  }
+  }, [product, setValue]);
 
   const addTag = () => {
     if (tagInput.trim() && !tags.includes(tagInput.trim())) {
@@ -122,17 +140,65 @@ export default function FormAddProduct() {
     setValue("tag", newTags);
   };
 
-  if (isLoadingCategories) return <div className="spinner"></div>;
+  async function onSubmit(data: FormFields) {
+    try {
+      setIsLoadingForm(true);
+      await axios.patch(`/api/store/products/${params.productid}`, data);
+
+      router.refresh();
+      router.push(`/admin/products`);
+      toast.success("Product updated successfully");
+    } catch (error) {
+      toast.error("Please check your data");
+    } finally {
+      setIsLoadingForm(false);
+    }
+  }
+
+  const { mutate: deleteProduct } = useMutation({
+    mutationFn: (id: string) => DeleteProduct(id),
+    onSuccess: () => {
+      setIsLoadingForm(false);
+      toast.success("Product deleted successfully");
+      setIsOpen(false);
+      router.push(`/admin/products`);
+    },
+    onError: () => {
+      setIsLoadingForm(false);
+      toast.error("Error deleting Product");
+    },
+  });
+
+  function onDelete(id: string) {
+    setIsLoadingForm(true);
+    deleteProduct(id);
+  }
+
+  if (isLoadingProduct || isLoadingCategories || !product || !categories)
+    return <div className="spinner"></div>;
 
   return (
     <>
-      <Link href={`/admin/products`} >
-        <MoveLeft className="bg-secondary text-white p-1 w-7 rounded mb-4" />
-      </Link>
-      <Heading
-        title={"Add Product"}
-        description="Manage products for your store"
-      />
+      <Button
+        className="bg-secondary text-white"
+        onClick={() => router.push(`/admin/products`)}
+      >
+        <MoveLeft />
+      </Button>
+      <div className="flex items-center justify-between mt-4">
+        <Heading
+          title={"Edit Product"}
+          description="Manage products for your store"
+        />
+
+        <Button
+          variant="destructive"
+          className="bg-red-500 text-white hover:bg-red-700"
+          onClick={() => setIsOpen(true)}
+        >
+          <Trash />
+        </Button>
+      </div>
       <Separator />
       <form className="mt-10 space-y-4 " onSubmit={handleSubmit(onSubmit)}>
         <div className="flex gap-10">
@@ -348,10 +414,44 @@ export default function FormAddProduct() {
             )}
             disabled={isLoadingForm}
           >
-            {isLoadingForm ? <span className="spinner"></span> : "Create"}
+            {isLoadingForm ? <span className="spinner"></span> : "Save"}
           </Button>
         </div>
       </form>
+
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="bg-white">
+          <DialogHeader>
+            <DialogTitle>
+              Are you sure you want to delete the product?
+            </DialogTitle>
+            <DialogDescription>
+              This action cannot be undone. This will permanently delete your
+              account and remove your data from our servers.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter>
+            <Button variant={"outline"} onClick={() => setIsOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              className="bg-red-500 text-white hover:bg-red-700"
+              onClick={() => onDelete(id)}
+              disabled={isLoadingForm}
+            >
+              {isLoadingForm ? (
+                <span className="spinner"></span>
+              ) : (
+                <>
+                  <Trash />
+                  Delete
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
