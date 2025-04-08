@@ -5,22 +5,37 @@ import Heading from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import { CategoryColumn, Columns } from "./columns-category";
 import { DataTable } from "@/components/ui/data-table";
+import { format } from "date-fns";
+import { useQuery } from "@tanstack/react-query";
+import { GetCategories } from "@/service/categories";
 
-interface CategoryProps {
-  data: CategoryColumn[];
-}
+export default function ListCategories() {
 
-export default function ListCategories(data: CategoryProps) {
-  const params = useParams();
+  const { data: categories, isLoading: isLoadingCategories, refetch: refetchCategories } = useQuery({
+    queryFn: () => GetCategories(),
+    queryKey: ["dataCategories"],
+  });
+
+  const formattedCategories: CategoryColumn[] = (categories ?? []).map(
+    (item: any) => ({
+      id: item.id,
+      name: item.name,
+      bannerLabel: item.banner.label,
+      createdAt: format(item.createdAt, "MMM do, yyyy"),
+    })
+  );
+
+  if (isLoadingCategories) {
+    return <div className="spinner" />;
+  }
 
   return (
     <>
       <div className="flex items-center justify-between">
         <Heading title="Categories" description="Set category for shop " />
-        <Link href={`/admin/store/${params.storeid}/categories/new`}>
+        <Link href={`/admin/categories/new`}>
           <Button className="text-white text-sm bg-secondary">
             <Plus /> Add New
           </Button>
@@ -28,8 +43,7 @@ export default function ListCategories(data: CategoryProps) {
       </div>
       <Separator className="my-4 bg-gray-300" />
 
-      <DataTable data={data.data} columns={Columns} searchKey="name" />
-
+      <DataTable data={formattedCategories} columns={Columns(refetchCategories)} searchKey="name" />
     </>
   );
 }

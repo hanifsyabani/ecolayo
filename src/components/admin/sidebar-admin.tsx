@@ -6,7 +6,7 @@ import {
   SidebarGroup,
   SidebarGroupContent,
 } from "../ui/sidebar";
-import { Fullscreen, Home, Logs, Settings, ShoppingBasket } from "lucide-react";
+import { Fullscreen, Home, Logs, Settings, ShoppingBasket, Users } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import ButtonLogout from "../button-logout";
@@ -38,9 +38,12 @@ export default function SidebarAdmin() {
       title: "Categories",
       url: `/admin/categories`,
       icon: Logs,
-      // active: pathname === `/admin/store/${params.storeid}/categories`,
     },
-
+    {
+      title: "Users",
+      url: `/admin/users`,
+      icon: Users,
+    },
     {
       title: "Settings",
       url: `/admin/store/settings`,

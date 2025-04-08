@@ -12,7 +12,7 @@ export type CategoryColumn = {
   createdAt: string
 }
 
-export const Columns: ColumnDef<CategoryColumn>[] = [
+export const Columns =  (refetchCategories: () => void): ColumnDef<CategoryColumn>[] => [
   {
     accessorKey: "name",
     header: "Name",
@@ -29,6 +29,6 @@ export const Columns: ColumnDef<CategoryColumn>[] = [
   {
     id : 'actions',
     header : 'Action',
-    cell:({row}) => <CellActionCategory data={row.original}/>
+    cell:({row}) => <CellActionCategory data={row.original} refetchCategories={refetchCategories}/>
   }
 ]

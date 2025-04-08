@@ -1,5 +1,5 @@
 
-import Statistics from "@/components/admin/home-dashboard";
+import Statistics from "@/components/admin/statistic";
 import { authOptions } from "@/lib/auth";
 
 import { getServerSession } from "next-auth";

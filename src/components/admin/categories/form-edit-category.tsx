@@ -1,6 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import Heading from "@/components/ui/heading";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,17 +21,26 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { GetBanners } from "@/service/banners";
-import { GetCategories } from "@/service/categories";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { MoveLeft} from "lucide-react";
-import {  useRouter } from "next/navigation";
-import { useState } from "react";
+import { MoveLeft, Trash, X } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
+import { GetProductById } from "@/service/products";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  DeleteCategory,
+  GetCategories,
+  GetCategoriesById,
+} from "@/service/categories";
+import { GetBanners } from "@/service/banners";
+
+interface CategoryFormProps {
+  id: string;
+}
 
 const schema = z.object({
   name: z.string().min(1),
@@ -31,48 +48,83 @@ const schema = z.object({
 });
 type FormFields = z.infer<typeof schema>;
 
-export default function FormAddCategory() {
+export default function FormEditCategory({ id }: CategoryFormProps) {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const params = useParams();
   const router = useRouter();
 
   const {
     handleSubmit,
     register,
     setValue,
+    reset,
+    watch,
     formState: { errors },
   } = useForm<FormFields>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      name: "",
+      bannerid: "",
+    },
   });
 
-  
   const { data: categories, isLoading: isLoadingCategories } = useQuery({
-    queryFn: () => GetCategories(),
-    queryKey: ["dataCategories"],
+    queryFn: () => GetCategoriesById(id),
+    queryKey: ["dataCategory"],
   });
 
   const { data: banners, isLoading: isLoadingBanners } = useQuery({
     queryFn: () => GetBanners(),
-    queryKey: ["dataBanners"],
+    queryKey: ["dataBanner", id],
   });
+
+  useEffect(() => {
+    if (categories) {
+      reset({
+        name: categories.name || "",
+        bannerid: categories.bannerid || "",
+      });
+    }
+  }, [categories, setValue, reset]);
 
   async function onSubmit(data: FormFields) {
     try {
       setIsLoadingForm(true);
-
-      await axios.post(`/api/store/categories`, data);
+      await axios.patch(`/api/store/categories/${id}`, data);
 
       router.refresh();
       router.push(`/admin/categories`);
-      toast.success("Category Successfully created");
+      toast.success("Product updated successfully");
     } catch (error) {
       toast.error("Please check your data");
     } finally {
       setIsLoadingForm(false);
     }
   }
-  
 
-  if(isLoadingBanners || isLoadingCategories ) return <div className="spinner"></div>
+  const { mutate: deleteCategory } = useMutation({
+    mutationFn: (id: string) => DeleteCategory(id),
+    onSuccess: () => {
+      setIsLoadingForm(false);
+      toast.success("Product deleted successfully");
+      setIsOpen(false);
+      router.push(`/admin/products`);
+    },
+    onError: () => {
+      setIsLoadingForm(false);
+      toast.error("Error deleting Product");
+    },
+  });
+
+  function onDelete(id: string) {
+    setIsLoadingForm(true);
+    deleteCategory(id);
+  }
+
+  if (isLoadingBanners || isLoadingCategories || !banners || !categories)
+    return <div className="spinner" />;
+
   return (
     <>
       <Button
@@ -83,7 +135,7 @@ export default function FormAddCategory() {
       </Button>
       <div className="flex items-center justify-between mt-4">
         <Heading
-          title={"Add Category"}
+          title={"Edit Category"}
           description="Manage Categories for your store"
         />
       </div>
@@ -106,13 +158,13 @@ export default function FormAddCategory() {
             <Label htmlFor="bannerid">Banner</Label>
             <Select
               onValueChange={(value) => setValue("bannerid", value)}
-              value={categories?.bannerid}
+              value={watch("bannerid")}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a banner" />
               </SelectTrigger>
               <SelectContent className="bg-white max-h-60">
-                {banners?.map((banner:any) => (
+                {banners?.map((banner: any) => (
                   <SelectItem
                     key={banner.id}
                     value={banner.id}
@@ -141,7 +193,39 @@ export default function FormAddCategory() {
         </div>
       </form>
 
-    
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="bg-white">
+          <DialogHeader>
+            <DialogTitle>
+              Are you sure you want to delete the product?
+            </DialogTitle>
+            <DialogDescription>
+              This action cannot be undone. This will permanently delete your
+              account and remove your data from our servers.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter>
+            <Button variant={"outline"} onClick={() => setIsOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              className="bg-red-500 text-white hover:bg-red-700"
+              onClick={() => onDelete(id)}
+              disabled={isLoadingForm}
+            >
+              {isLoadingForm ? (
+                <span className="spinner"></span>
+              ) : (
+                <>
+                  <Trash />
+                  Delete
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

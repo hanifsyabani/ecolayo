@@ -1,26 +1,16 @@
-import FormAddCategory from "@/components/admin/categories/form-add-category";
-import db from "@/lib/db";
+import FormEditCategory from "@/components/admin/categories/form-edit-category";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default async function page({
   params,
 }: {
-  params: { categoryid: string, storeid:string };
+  params: { categoryid: string };
 }) {
-  const category = await db.category.findUnique({
-    where: {
-      id: params.categoryid,
-    },
-  });
-
-  const banners = await db.banner.findMany({
-    where:{
-      storeid: params.storeid,
-    }
-  })
-
   return (
-    <div className="px-8 mt-6 ">
-      <FormAddCategory category={category} banners={banners} />
-    </div>
+    <Card className="px-3 py-8 ">
+      <CardContent className="bg-white py-4 rounded-xl">
+        <FormEditCategory id={params.categoryid} />
+      </CardContent>
+    </Card>
   );
 }

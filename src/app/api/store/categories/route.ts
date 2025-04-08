@@ -3,10 +3,7 @@ import db from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
-export async function POST(
-  req: Request,
-  { params }: { params: { storeid: string } }
-) {
+export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
@@ -26,7 +23,7 @@ export async function POST(
 
     return NextResponse.json(category);
   } catch (error: any) {
-    console.log("error category: ",error);
+    console.log("error category: ", error);
     throw new Error(error);
   }
 }
