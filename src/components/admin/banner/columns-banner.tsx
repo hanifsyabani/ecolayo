@@ -12,7 +12,7 @@ export type BannerColumn = {
   createdAt: string
 }
 
-export const Columns: ColumnDef<BannerColumn>[] = [
+export const Columns = (refetchBanners: () => void): ColumnDef<BannerColumn>[] => [
   {
     accessorKey: "label",
     header: "Label",
@@ -28,6 +28,6 @@ export const Columns: ColumnDef<BannerColumn>[] = [
   {
     id : 'actions',
     header : 'Action',
-    cell:({row}) => <CellAction data={row.original}/>
+    cell:({row}) => <CellAction data={row.original} refetchBanners={refetchBanners}/>
   }
 ]

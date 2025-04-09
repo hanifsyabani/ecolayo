@@ -16,6 +16,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useMutation } from "@tanstack/react-query";
+import { DeleteCategory } from "@/service/categories";
 
 interface CellActionProps {
   data: CategoryColumn;
@@ -32,19 +34,23 @@ export default function CellActionCategory({data, refetchCategories}: CellAction
     toast.success("Category Successfully copied");
   }
 
-  async function onDeleteCategory(id: string) {
-    try {
-      setIsLoadingForm(true);
-
-      await axios.delete(`/api/store/categories/${id}`);
-      toast.success("Category deleted successfully");
-      refetchCategories()
-    } catch (error) {
-      toast.error("Error deleting");
-    } finally {
-      setIsOpen(false)
+  const { mutate: deleteCategory } = useMutation({
+    mutationFn: (id: string) => DeleteCategory(id),
+    onSuccess: () => {
       setIsLoadingForm(false);
-    }
+      toast.success("Category deleted successfully");
+      setIsOpen(false);
+      router.push(`/admin/categories`);
+    },
+    onError: () => {
+      setIsLoadingForm(false);
+      toast.error("Error deleting Product");
+    },
+  });
+
+  function onDelete(id: string) {
+    setIsLoadingForm(true);
+    deleteCategory(id);
   }
 
   return (
@@ -88,7 +94,7 @@ export default function CellActionCategory({data, refetchCategories}: CellAction
             </Button>
             <Button
               className="bg-red-500 text-white hover:bg-red-700"
-              onClick={() => onDeleteCategory(data.id)}
+              onClick={() => onDelete(data.id)}
               disabled={isLoadingForm}
             >
               {isLoadingForm ? (

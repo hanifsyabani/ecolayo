@@ -51,7 +51,6 @@ type FormFields = z.infer<typeof schema>;
 export default function FormEditCategory({ id }: CategoryFormProps) {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const params = useParams();
   const router = useRouter();
 
   const {
@@ -76,7 +75,7 @@ export default function FormEditCategory({ id }: CategoryFormProps) {
 
   const { data: banners, isLoading: isLoadingBanners } = useQuery({
     queryFn: () => GetBanners(),
-    queryKey: ["dataBanner", id],
+    queryKey: ["dataBanner"],
   });
 
   useEffect(() => {
@@ -107,9 +106,9 @@ export default function FormEditCategory({ id }: CategoryFormProps) {
     mutationFn: (id: string) => DeleteCategory(id),
     onSuccess: () => {
       setIsLoadingForm(false);
-      toast.success("Product deleted successfully");
+      toast.success("Category deleted successfully");
       setIsOpen(false);
-      router.push(`/admin/products`);
+      router.push(`/admin/categories`);
     },
     onError: () => {
       setIsLoadingForm(false);
@@ -188,7 +187,7 @@ export default function FormEditCategory({ id }: CategoryFormProps) {
             )}
             disabled={isLoadingForm}
           >
-            {isLoadingForm ? <span className="spinner"></span> : "Create"}
+            {isLoadingForm ? <span className="spinner"></span> : "Save"}
           </Button>
         </div>
       </form>

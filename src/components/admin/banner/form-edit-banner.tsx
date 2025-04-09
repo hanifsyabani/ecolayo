@@ -19,7 +19,7 @@ import { Banner } from "@prisma/client";
 import axios from "axios";
 import { MoveLeft, Trash } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
@@ -31,7 +31,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { DeleteBanner, GetBannerById } from "@/service/banners";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
+interface BannerFormProps {
+  id: string;
+}
 
 const schema = z.object({
   label: z.string().min(1),
@@ -40,8 +45,9 @@ const schema = z.object({
 });
 type FormFields = z.infer<typeof schema>;
 
-export default function FormAddBanner() {
+export default function FormEditBanner({ id }: BannerFormProps) {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const params = useParams();
   const router = useRouter();
 
@@ -50,18 +56,40 @@ export default function FormAddBanner() {
     register,
     setValue,
     getValues,
+    reset,
+    watch,
     formState: { errors },
   } = useForm<FormFields>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      label: "",
+      imageUrl: "",
+      categoryBanner: "",
+    },
   });
+
+  const { data: banner, isLoading: isLoadingBanner } = useQuery({
+    queryFn: () => GetBannerById(id),
+    queryKey: ["dataCategory"],
+  });
+
+  useEffect(() => {
+    if (banner) {
+      reset({
+        label: banner.label || "",
+        imageUrl: banner.imageUrl || "",
+        categoryBanner: banner.categoryBanner || "",
+      });
+    }
+  }, [banner, setValue, reset]);
 
   async function onSubmit(data: FormFields) {
     try {
       setIsLoadingForm(true);
-        await axios.post(`/api/store/banner`, data);
+      await axios.patch(`/api/store/banner/${params.bannerid}`, data);
       router.refresh();
       router.push(`/admin/banners`);
-      toast.success("Banner created successfully");
+      toast.success("Banner Edited successfully");
     } catch (error) {
       toast.error("Please check your data");
     } finally {
@@ -69,6 +97,28 @@ export default function FormAddBanner() {
     }
   }
 
+  const { mutate: deleteBanner } = useMutation({
+    mutationFn: (id: string) => DeleteBanner(id),
+    onSuccess: () => {
+      setIsLoadingForm(false);
+      toast.success("Category deleted successfully");
+      setIsOpen(false);
+      router.push(`/admin/categories`);
+    },
+    onError: () => {
+      setIsLoadingForm(false);
+      toast.error("Error deleting Product");
+    },
+  });
+
+  function onDelete(id: string) {
+    setIsLoadingForm(true);
+    deleteBanner(id);
+  }
+
+  const categoryBanner = watch("categoryBanner");
+
+  if (isLoadingBanner) return <div className="spinner" />;
 
   return (
     <>
@@ -79,7 +129,17 @@ export default function FormAddBanner() {
         <MoveLeft />
       </Button>
       <div className="flex items-center justify-between mt-4">
-        <Heading title={"Add Banner"} description="Manage Banner for your store" />
+        <Heading
+          title={"Edit Banner"}
+          description="Manage Banner for your store"
+        />
+        <Button
+          variant="destructive"
+          className="bg-red-500 text-white hover:bg-red-700"
+          onClick={() => setIsOpen(true)}
+        >
+          <Trash />
+        </Button>
       </div>
       <Separator />
       <form className="mt-10 space-y-4 " onSubmit={handleSubmit(onSubmit)}>
@@ -100,6 +160,7 @@ export default function FormAddBanner() {
             <div>
               <Label htmlFor="label">Category Banner</Label>
               <Select
+                value={categoryBanner}
                 onValueChange={(value) => setValue("categoryBanner", value)}
               >
                 <SelectTrigger>
@@ -149,7 +210,7 @@ export default function FormAddBanner() {
             <Label htmlFor="imageUrl">Image</Label>
             <UploadImage
               value={getValues("imageUrl") ? [getValues("imageUrl")] : []}
-              onChange={(urls) => setValue("imageUrl", urls[0] || "")} // Ambil elemen pertama
+              onChange={(urls) => setValue("imageUrl", urls[0] || "")}
               onRemove={() => setValue("imageUrl", "")}
             />
 
@@ -166,11 +227,44 @@ export default function FormAddBanner() {
             )}
             disabled={isLoadingForm}
           >
-            {isLoadingForm ? <span className="spinner"></span> : "Create"}
+            {isLoadingForm ? <span className="spinner"></span> : "Save"}
           </Button>
         </div>
       </form>
 
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="bg-white">
+          <DialogHeader>
+            <DialogTitle>
+              Are you sure you want to delete the banner?
+            </DialogTitle>
+            <DialogDescription>
+              This action cannot be undone. This will permanently delete your
+              account and remove your data from our servers.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter>
+            <Button variant={"outline"} onClick={() => setIsOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              className="bg-red-500 text-white hover:bg-red-700"
+              onClick={() => onDelete(id)}
+              disabled={isLoadingForm}
+            >
+              {isLoadingForm ? (
+                <span className="spinner"></span>
+              ) : (
+                <>
+                  <Trash />
+                  Delete
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

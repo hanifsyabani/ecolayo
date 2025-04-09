@@ -23,7 +23,7 @@ interface CellActionProps {
   refetchProducts:() =>void
 }
 
-export default function CellActionCategory({data, refetchProducts}: CellActionProps) {
+export default function CellAction({data, refetchProducts}: CellActionProps) {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();

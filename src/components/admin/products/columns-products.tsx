@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import CellActionCategory from "./cell-actions";
+import CellAction from "./cell-actions";
 
 
 export type ProductColumn = {
@@ -47,6 +47,6 @@ export const Columns = (refetchProducts: () => void): ColumnDef<ProductColumn>[]
   {
     id: "actions",
     header: "Action",
-    cell: ({ row }) => <CellActionCategory data={row.original} refetchProducts={refetchProducts} />,
+    cell: ({ row }) => <CellAction data={row.original} refetchProducts={refetchProducts} />,
   },
 ];

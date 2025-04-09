@@ -16,36 +16,40 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { DeleteBanner } from "@/service/banners";
+import { useMutation } from "@tanstack/react-query";
 
 interface CellActionProps {
   data: BannerColumn;
+  refetchBanners : () => void
 }
 
-export default function CellAction(data: CellActionProps) {
+export default function CellAction({data, refetchBanners}: CellActionProps) {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const params = useParams();
-  const router = useRouter();
 
   function onCopy(id: string) {
     navigator.clipboard.writeText(id);
     toast.success("Banner Successfully copied");
   }
 
-  async function onDeleteBanner(id: string) {
-    try {
-      setIsLoadingForm(true);
-
-      await axios.delete(`/api/${params.storeid}/banner/${id}`);
-      toast.success("Banner deleted successfully");
-      router.refresh();
-      router.push(`/admin/store/${params.storeid}/banners`);
-    } catch (error) {
-      toast.error("Error deleting");
-    } finally {
-      setIsOpen(false)
+  const { mutate: deleteBanner } = useMutation({
+    mutationFn: (id: string) => DeleteBanner(id),
+    onSuccess: () => {
       setIsLoadingForm(false);
-    }
+      toast.success("Category deleted successfully");
+      setIsOpen(false);
+      refetchBanners()
+    },
+    onError: () => {
+      setIsLoadingForm(false);
+      toast.error("Error deleting Product");
+    },
+  });
+
+  function onDelete(id: string) {
+    setIsLoadingForm(true);
+    deleteBanner(id);
   }
 
   return (
@@ -53,12 +57,12 @@ export default function CellAction(data: CellActionProps) {
       <div className="flex items-center gap-5">
         <div
           className="bg-blue-500 p-1 text-white rounded-md cursor-pointer"
-          onClick={() => onCopy(data.data.id)}
+          onClick={() => onCopy(data.id)}
         >
           <Copy size={15} />
         </div>
         <Link
-          href={`/admin/store/${params.storeid}/banners/${data.data.id}`}
+          href={`/admin/banners/${data.id}`}
           className="bg-secondary p-1 text-white rounded-md cursor-pointer"
         >
           <Edit size={15} />
@@ -89,7 +93,7 @@ export default function CellAction(data: CellActionProps) {
             </Button>
             <Button
               className="bg-red-500 text-white hover:bg-red-700"
-              onClick={() => onDeleteBanner(data.data.id)}
+              onClick={() => onDelete(data.id)}
               disabled={isLoadingForm}
             >
               {isLoadingForm ? (

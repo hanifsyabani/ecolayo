@@ -41,7 +41,15 @@ export async function PATCH(
     if (!imageUrl) throw new Error("Image URL must be provided");
     if (!categoryBanner) throw new Error("Category banner must be provided");
 
-    const banner = await db.banner.update({
+    let banner = await db.banner.findUnique({
+      where: { id: params.bannerid },
+    });
+
+    if (!banner) {
+      return NextResponse.json({ error: "Banner not found" }, { status: 404 });
+    }
+
+    banner = await db.banner.update({
       where: {
         id: params.bannerid,
       },
