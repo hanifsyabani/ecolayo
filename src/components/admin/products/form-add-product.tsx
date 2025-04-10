@@ -1,14 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import Heading from "@/components/ui/heading";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,9 +15,9 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { MoveLeft, Trash, X } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { MoveLeft, X } from "lucide-react";
+import {  useRouter } from "next/navigation";
+import {  useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
@@ -33,8 +25,7 @@ import UploadImage from "../banner/upload-image";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { DeleteProduct, GetProductById } from "@/service/products";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {  useQuery } from "@tanstack/react-query";
 import { GetCategories } from "@/service/categories";
 import Link from "next/link";
 
@@ -70,9 +61,7 @@ type FormFields = z.infer<typeof schema>;
 export default function FormAddProduct() {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [tagInput, setTagInput] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
-  const params = useParams();
   const router = useRouter();
 
   const { data: categories, isLoading: isLoadingCategories } = useQuery({
@@ -86,7 +75,6 @@ export default function FormAddProduct() {
     setValue,
     watch,
     getValues,
-    reset,
     formState: { errors },
   } = useForm<FormFields>({
     resolver: zodResolver(schema),

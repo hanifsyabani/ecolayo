@@ -19,15 +19,15 @@ export default function ListProducts() {
     queryKey: ["dataProducts"],
   });
 
-  const formattedProducts: ProductColumn[] = (products ?? []).map((item: any) => ({
-    id: item.id,
-    name: item.name,
-    isFeatured: item.isFeatured,
-    isArchived: item.isArchived,
-    price: formatter.format(item.price),
-    category: item.category.name,
-    tag: item.tag.map((tag: any) => tag.name).join(", "),
-    createdAt: format(item.createdAt, "MMM do, yyyy"),
+  const formattedProducts: ProductColumn[] = (products ?? []).map((product: any) => ({
+    id: product.id,
+    name: product.name,
+    isFeatured: product.isFeatured,
+    isArchived: product.isArchived,
+    price: formatter.format(product.price),
+    category: product.category.name,
+    tag: product.tag.map((tag: any) => tag.name).join(", "),
+    createdAt: format(product.createdAt, "MMM do, yyyy"),
   }));
 
   if (isLoadingProducts) {

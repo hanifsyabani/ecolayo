@@ -19,11 +19,11 @@ export default function ListBanner() {
     queryKey: ['dataBanners']
   })
 
-  const formattedBanners: BannerColumn[] = (banners ?? []).map((item:any) => ({
-    id: item.id,
-    label: item.label,
-    categoryBanner: item.categoryBanner,
-    createdAt: format(item.createdAt, "MMM do, yyyy"),
+  const formattedBanners: BannerColumn[] = (banners ?? []).map((banner:any) => ({
+    id: banner.id,
+    label: banner.label,
+    categoryBanner: banner.categoryBanner,
+    createdAt: format(banner.createdAt, "MMM do, yyyy"),
   }));
 
   if(isLoadingBanners) return <div className="spinner"/>

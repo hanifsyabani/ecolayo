@@ -13,24 +13,19 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ProductColumn } from "./columns-products";
 import { useMutation } from "@tanstack/react-query";
 import { DeleteProduct } from "@/service/products";
 import Link from "next/link";
+import { UserColumn } from "./column-users";
 
 interface CellActionProps {
-  data: ProductColumn;
-  refetchProducts:() =>void
+  data: UserColumn;
+  refetchUsers:() =>void
 }
 
-export default function CellAction({data, refetchProducts}: CellActionProps) {
+export default function CellAction({data, refetchUsers}: CellActionProps) {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-
-  function onCopy(id: string) {
-    navigator.clipboard.writeText(id);
-    toast.success("Product Successfully copied");
-  }
 
   const {mutate: deleteProduct } = useMutation({
 
@@ -39,7 +34,7 @@ export default function CellAction({data, refetchProducts}: CellActionProps) {
       setIsLoadingForm(false);
       toast.success("Product deleted successfully");
       setIsOpen(false)
-      refetchProducts()
+      refetchUsers()
     },
     onError: () => {
       setIsLoadingForm(false);
@@ -56,12 +51,6 @@ export default function CellAction({data, refetchProducts}: CellActionProps) {
   return (
     <>
       <div className="flex items-center gap-5">
-        <Button
-          className="bg-blue-500 w-7 h-7 text-white rounded-md cursor-pointer"
-          onClick={() => onCopy(data.id)}
-        >
-          <Copy size={10} />
-        </Button>
         <Link href={`/admin/products/${data.id}`}
           className="bg-secondary w-7 h-7 flex justify-center items-center text-white rounded-md cursor-pointer"
         >

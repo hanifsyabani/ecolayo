@@ -19,11 +19,11 @@ export default function ListCategories() {
   });
 
   const formattedCategories: CategoryColumn[] = (categories ?? []).map(
-    (item: any) => ({
-      id: item.id,
-      name: item.name,
-      bannerLabel: item.banner.label,
-      createdAt: format(item.createdAt, "MMM do, yyyy"),
+    (category: any) => ({
+      id: category.id,
+      name: category.name,
+      bannerLabel: category.banner.label,
+      createdAt: format(category.createdAt, "MMM do, yyyy"),
     })
   );
 

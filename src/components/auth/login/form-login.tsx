@@ -85,7 +85,7 @@ export default function FormLogin() {
 
       <Button
         type="submit"
-        className="w-full p-2 text-white bg-secondary rounded"
+        className="w-full p-2 text-white bg-secondary hover:bg-green-900 rounded"
       >
         {isLoadingForm ? <span className="spinner"></span> : "Login"}
       </Button>

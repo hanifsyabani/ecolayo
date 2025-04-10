@@ -1,15 +1,11 @@
-import ListBanner from "@/components/admin/banner/list-banners";
+import ListUsers from "@/components/admin/users/list-users";
 import { Card, CardContent } from "@/components/ui/card";
 
-export default async function page() {
-
-
- 
-
+export default function page() {
   return (
-    <Card className="px-3 py-8">
+    <Card className="px-3 py-8 ">
       <CardContent className="bg-white py-4 rounded-xl">
-        <ListBanner />
+        <ListUsers />
       </CardContent>
     </Card>
   );

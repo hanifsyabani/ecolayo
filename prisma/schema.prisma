@@ -8,15 +8,18 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  name      String?
-  email     String    @unique
-  password  String
-  role      String    @default("user")
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  cart      Cart?     @relation("UserToCart")
-  Checkout  Checkout? @relation("UserToCheckout")
+  id       String    @id @default(uuid())
+  name     String
+  email    String    @unique
+  password String
+  role     String    @default("user")
+  status   String    @default("active")
+  imageUrl String?
+  cart     Cart?     @relation("UserToCart")
+  Checkout Checkout? @relation("UserToCheckout")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Banner {
@@ -27,7 +30,6 @@ model Banner {
   categories     Category[] @relation("BannerToCategory")
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
-
 }
 
 model Category {
@@ -125,7 +127,6 @@ model Checkout {
 
 model Payment {
   id String @id @default(uuid())
-  
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
