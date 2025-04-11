@@ -3,9 +3,7 @@ import db from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
-export async function POST(
-  req: Request,
-) {
+export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
@@ -21,22 +19,56 @@ export async function POST(
       description,
       shortDescription,
       tag,
-      stock
+      stock,
     } = await req.json();
 
-    if (!userId) throw new Error("Unauthenticated");
-    if (!name) throw new Error("Name must be provided");
-    if (!stars) throw new Error("Stars must be provided");
-    if (!categoryid) throw new Error("category must be provided");
-    if (!price) throw new Error("Price must be provided");
-    if (!images || !images.length) throw new Error("Images must be provided");
-    if (!tag) throw new Error("Tag must be provided");
-    if (!description) throw new Error("Description must be provided");
-    if (!stock) throw new Error("Stock must be provided");
+    if (!userId)
+      return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
+    if (!name)
+      return NextResponse.json(
+        { error: "Name must be provided" },
+        { status: 500 }
+      );
+    if (!stars)
+      return NextResponse.json(
+        { error: "Rating must be provided" },
+        { status: 500 }
+      );
+    if (!categoryid)
+      return NextResponse.json(
+        { error: "Category ID must be provided" },
+        { status: 500 }
+      );
+    if (!price)
+      return NextResponse.json(
+        { error: "Price must be provided" },
+        { status: 500 }
+      );
+    if (!images || !images.length)
+      return NextResponse.json(
+        { error: "Images must be provided" },
+        { status: 500 }
+      );
+    if (!tag)
+      return NextResponse.json(
+        { error: "Tag must be provided" },
+        { status: 500 }
+      );
+    if (!description)
+      return NextResponse.json(
+        { error: "Description must be provided" },
+        { status: 500 }
+      );
+    if (!stock)
+      return NextResponse.json(
+        { error: "Stock must be provided" },
+        { status: 500 }
+      );
     if (!shortDescription)
-      throw new Error("Short Description must be provided");
-
-
+      return NextResponse.json(
+        { error: "Short description must be provided" },
+        { status: 500 }
+      );
 
     const product = await db.product.create({
       data: {
@@ -65,14 +97,11 @@ export async function POST(
 
     return NextResponse.json(product);
   } catch (error: any) {
-    console.log("Error detected:  ", error);
-    throw new Error(error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
-export async function GET(
-  req: Request,
-) {
+export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
@@ -82,7 +111,8 @@ export async function GET(
     // const categoryid = searchParams.get("categoryid") || undefined;
     // const isFeatured = searchParams.get("isFeatured");
 
-    if (!userId) throw new Error("Unauthenticated");
+    if (!userId)
+      return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
     const product = await db.product.findMany({
       include: {
@@ -97,8 +127,6 @@ export async function GET(
 
     return NextResponse.json(product);
   } catch (error: any) {
-    console.log(error);
-    // console.log(error.message);
-    throw new Error(error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

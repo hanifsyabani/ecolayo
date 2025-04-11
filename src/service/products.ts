@@ -1,4 +1,5 @@
 import axios from "axios";
+import { NextResponse } from "next/server";
 
 export async function GetProducts() {
   try {
@@ -11,7 +12,8 @@ export async function GetProducts() {
 
     return response.data;
   } catch (err: any) {
-    throw new Error(err);
+    throw err.response?.data || { error: "Something went wrong" };
+
   }
 }
 
@@ -26,7 +28,9 @@ export async function GetProductById(productid: string) {
 
     return response.data
   } catch (error:any) {
-    throw new Error(error);
+    
+    throw error.response?.data || { error: "Something went wrong" };
+
   }
 }
 
@@ -39,6 +43,6 @@ export async function DeleteProduct(productid: string) {
       },
     });
   } catch (error: any) {
-    throw new Error(error);
+    throw error.response?.data || { error: "Something went wrong" };
   }
 }

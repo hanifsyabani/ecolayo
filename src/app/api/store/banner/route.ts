@@ -7,13 +7,26 @@ export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
+    if (!userId)
+      return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
     const { label, imageUrl, categoryBanner } = await req.json();
 
-    if (!userId) throw new Error("Unauthenticated");
-    if (!label) throw new Error("Label must be provided");
-    if (!imageUrl) throw new Error("Image URL must be provided");
-    if (!categoryBanner) throw new Error("Category banner must be provided");
+    if (!label)
+      return NextResponse.json(
+        { error: "Label must be provided" },
+        { status: 500 }
+      );
+    if (!imageUrl)
+      return NextResponse.json(
+        { error: "Image URL must be provided" },
+        { status: 500 }
+      );
+    if (!categoryBanner)
+      return NextResponse.json(
+        { error: "Category banner must be provided" },
+        { status: 500 }
+      );
 
     const banner = await db.banner.create({
       data: {
@@ -25,24 +38,21 @@ export async function POST(req: Request) {
 
     return NextResponse.json(banner);
   } catch (error: any) {
-    throw new Error(error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
-export async function GET(
-  req: Request,
-) {
+export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
 
-    if (!userId) throw new Error("Unauthenticated");
+    if (!userId) return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
     const banner = await db.banner.findMany();
 
     return NextResponse.json(banner);
   } catch (error: any) {
-    console.log(error);
-    throw new Error(error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

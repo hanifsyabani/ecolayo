@@ -1,44 +1,37 @@
 import axios from "axios";
+import { NextResponse } from "next/server";
 
 export async function GetCategories() {
-
   try {
-    const response = await axios.get(
-      "/api/store/categories",
-      {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/json",
-        },
+    const response = await axios.get("/api/store/categories", {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+    });
 
     return response.data;
   } catch (err: any) {
-    throw new Error(err);
+    throw err.response?.data || { error: "Something went wrong" };
+
   }
 }
 
 export async function GetCategoriesById(categoryid: string) {
-
   try {
-    const response = await axios.get(
-      `/api/store/categories/${categoryid}`,
-      {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/json",
-        },
+    const response = await axios.get(`/api/store/categories/${categoryid}`, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+    });
 
     return response.data;
   } catch (err: any) {
-    throw new Error(err);
+    throw err.response?.data || { error: "Something went wrong" };
+
   }
 }
-
-
 
 export async function DeleteCategory(categoryid: string) {
   try {
@@ -49,6 +42,7 @@ export async function DeleteCategory(categoryid: string) {
       },
     });
   } catch (error: any) {
-    throw new Error(error);
+    throw error.response?.data || { error: "Something went wrong" };
+
   }
 }

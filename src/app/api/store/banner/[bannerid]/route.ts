@@ -10,9 +10,9 @@ export async function GET(
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
-    if (!userId) throw new Error("Unauthenticated");
+    if (!userId) return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
-    if (!params.bannerid) throw new Error("Banner ID must be provided");
+    if (!params.bannerid) return NextResponse.json({ error: "Banner ID must be provided" }, { status: 500 });
 
     const banner = await db.banner.findUnique({
       where: {
@@ -22,7 +22,7 @@ export async function GET(
 
     return NextResponse.json(banner);
   } catch (error: any) {
-    throw new Error(error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
@@ -33,13 +33,13 @@ export async function PATCH(
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
-    if (!userId) throw new Error("Unauthenticated");
+    if (!userId) return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
     const { label, imageUrl, categoryBanner } = await req.json();
 
-    if (!label) throw new Error("Label must be provided");
-    if (!imageUrl) throw new Error("Image URL must be provided");
-    if (!categoryBanner) throw new Error("Category banner must be provided");
+    if (!label) return NextResponse.json({ error: "Label must be provided" }, { status: 500 });
+    if (!imageUrl) return NextResponse.json({ error: "Image URL must be provided" }, { status: 500 });
+    if (!categoryBanner) return NextResponse.json({ error: "Category banner must be provided" }, { status: 500 });
 
     let banner = await db.banner.findUnique({
       where: { id: params.bannerid },
@@ -61,9 +61,9 @@ export async function PATCH(
       },
     });
 
-    return NextResponse.json(banner);
+    return NextResponse.json({message: "Banner updated successfully"});
   } catch (error: any) {
-    throw new Error(error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
@@ -74,7 +74,7 @@ export async function DELETE(
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
-    if (!userId) throw new Error("Unauthenticated");
+    if (!userId) return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
     const banner = await db.banner.findUnique({
       where: { id: params.bannerid },
@@ -92,7 +92,6 @@ export async function DELETE(
 
     return NextResponse.json({ message: "Banner deleted successfully" });
   } catch (error: any) {
-    console.log("error : ", error);
-    throw new Error(error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

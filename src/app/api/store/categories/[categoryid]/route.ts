@@ -33,12 +33,12 @@ export async function PATCH(
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
-    if (!userId) throw new Error("Unauthenticated");
+    if (!userId) return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
     const { name, bannerid } = await req.json();
 
-    if (!name) throw new Error("name must be provided");
-    if (!bannerid) throw new Error("Banner id must be provided");
+    if (!name) return NextResponse.json({ error: "Name must be provided" }, { status: 500 });
+    if (!bannerid) return NextResponse.json({ error: "Banner id must be provided" }, { status: 500 });
 
 
     const category = await db.category.update({
@@ -54,7 +54,7 @@ export async function PATCH(
 
     return NextResponse.json(category);
   } catch (error: any) {
-    throw new Error(error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
@@ -74,6 +74,6 @@ export async function DELETE(
     });
     return NextResponse.json({ message: "Category deleted successfully" });
   } catch (error: any) {
-    throw new Error(error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

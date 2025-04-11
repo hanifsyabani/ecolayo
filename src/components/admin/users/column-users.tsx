@@ -31,7 +31,7 @@ export const Columns = (refetchUsers: () => void): ColumnDef<UserColumn>[] => [
     cell: ({ row }) => (
       <Badge
         className={`${
-          row.original.status === "active" ? "bg-green-500" : "bg-red-500"
+          row.original.status === "active" ? "bg-primary" : "bg-red-500"
         } text-white`}
       >
         {row.original.status}

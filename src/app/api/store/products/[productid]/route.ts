@@ -10,9 +10,14 @@ export async function GET(
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
-    if (!userId) throw new Error("Unauthenticated");
+    if (!userId)
+      return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
-    if (!params.productid) throw new Error("Product ID must be provided");
+    if (!params.productid)
+      return NextResponse.json(
+        { error: "Product ID must be provided" },
+        { status: 500 }
+      );
 
     const product = await db.product.findUnique({
       where: {
@@ -21,13 +26,13 @@ export async function GET(
       include: {
         images: true,
         tag: true,
-        category: true,  
+        category: true,
       },
     });
 
     return NextResponse.json(product);
   } catch (error: any) {
-    throw new Error(error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
@@ -38,7 +43,8 @@ export async function PATCH(
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
-    if (!userId) throw new Error("Unauthenticated");
+    if (!userId)
+      return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
     const {
       name,
@@ -54,16 +60,46 @@ export async function PATCH(
       tag,
     } = await req.json();
 
-    if (!name) throw new Error("Name must be provided");
-    if (!categoryid) throw new Error("Image URL must be provided");
-    if (!price) throw new Error("Price must be provided");
-    if (!images || !images.length) throw new Error("Images must be provided");
-    if (!tag) throw new Error("Tag must be provided");
-    if (!description) throw new Error("Description must be provided");
+    if (!name)
+      return NextResponse.json(
+        { error: "Name must be provided" },
+        { status: 400 }
+      );
+    if (!categoryid)
+      return NextResponse.json(
+        { error: "Category ID must be provided" },
+        { status: 400 }
+      );
+    if (!price)
+      return NextResponse.json(
+        { error: "Price must be provided" },
+        { status: 400 }
+      );
+    if (!images || images.length === 0)
+      return NextResponse.json(
+        { error: "Images must be provided" },
+        { status: 400 }
+      );
+    if (!tag)
+      return NextResponse.json(
+        { error: "Tag must be provided" },
+        { status: 400 }
+      );
+    if (!description)
+      return NextResponse.json(
+        { error: "Description must be provided" },
+        { status: 400 }
+      );
     if (!shortDescription)
-      throw new Error("Short Description must be provided");
-    if (!stars) throw new Error("Rating must be provided");
-
+      return NextResponse.json(
+        { error: "Short Description must be provided" },
+        { status: 400 }
+      );
+    if (!stars)
+      return NextResponse.json(
+        { error: "Rating must be provided" },
+        { status: 400 }
+      );
 
     await db.product.update({
       where: {
@@ -84,7 +120,7 @@ export async function PATCH(
         stock,
         description,
         tag: {
-          set: [], 
+          set: [],
           connectOrCreate: tag.map((tagName: string) => ({
             where: { name: tagName },
             create: { name: tagName },
@@ -108,7 +144,7 @@ export async function PATCH(
 
     return NextResponse.json(product);
   } catch (error: any) {
-    throw new Error(error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
@@ -119,7 +155,7 @@ export async function DELETE(
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
-    if (!userId) throw new Error("Unauthenticated");
+    if (!userId) return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
     const product = await db.product.delete({
       where: {
@@ -128,9 +164,7 @@ export async function DELETE(
     });
 
     return NextResponse.json(product);
-
   } catch (error: any) {
-    throw new Error(error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-

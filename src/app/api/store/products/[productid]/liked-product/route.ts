@@ -10,14 +10,17 @@ export async function PATCH(
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
-    if (!userId) throw new Error("Unauthenticated");
+    if (!userId) return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
     const {
       isLiked
     } = await req.json();
 
     if (typeof isLiked !== "boolean") {
-      throw new Error("isLiked must be a boolean");
+      return NextResponse.json(
+        { error: "isLiked must be a boolean" },
+        { status: 400 }
+      );
     }
 
     const product = await db.product.update({
@@ -35,7 +38,6 @@ export async function PATCH(
 
     return NextResponse.json(product);
   } catch (error: any) {
-    console.log(error);
-    throw new Error(error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

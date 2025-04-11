@@ -15,7 +15,7 @@ export async function GET(
     // const categoryid = searchParams.get("categoryid") || undefined;
     // const isFeatured = searchParams.get("isFeatured");
 
-    if (!userId) throw new Error("Unauthenticated");
+    if (!userId) return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
     const product = await db.product.findMany({
       where: {
@@ -33,8 +33,6 @@ export async function GET(
 
     return NextResponse.json(product);
   } catch (error: any) {
-    console.log(error);
-    // console.log(error.message);
-    throw new Error(error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

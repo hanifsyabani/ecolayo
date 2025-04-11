@@ -10,9 +10,14 @@ export async function GET(
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
-    if (!userId) throw new Error("Unauthenticated");
+    if (!userId)
+      return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
-    if (!params.categoryid) throw new Error("Category ID must be provided");
+    if (!params.categoryid)
+      return NextResponse.json(
+        { error: "Category ID must be provided" },
+        { status: 500 }
+      );
 
     const product = await db.product.findMany({
       where: {
@@ -21,12 +26,12 @@ export async function GET(
       include: {
         images: true,
         category: true,
-        tag:true
+        tag: true,
       },
     });
 
     return NextResponse.json(product);
   } catch (error: any) {
-    throw new Error(error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
