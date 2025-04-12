@@ -35,6 +35,7 @@ import {
   DeleteCategory,
   GetCategories,
   GetCategoriesById,
+  PatchCategory,
 } from "@/service/categories";
 import { GetBanners } from "@/service/banners";
 
@@ -87,20 +88,24 @@ export default function FormEditCategory({ id }: CategoryFormProps) {
     }
   }, [categories, setValue, reset]);
 
-  async function onSubmit(data: FormFields) {
-    try {
+   const { mutate: patchCategory } = useMutation({
+      mutationFn: (data: FormFields) => PatchCategory(id, data),
+      onSuccess: () => {
+        setIsLoadingForm(false);
+        toast.success("Category updated successfully");
+        router.push("/admin/categories");
+      },
+      onError: (error: any) => {
+        setIsLoadingForm(false);
+        const message = error?.error || error?.message || "Error creating user";
+        toast.error(message);
+      },
+    });
+  
+    function onSubmit(data: FormFields) {
       setIsLoadingForm(true);
-      await axios.patch(`/api/store/categories/${id}`, data);
-
-      router.refresh();
-      router.push(`/admin/categories`);
-      toast.success("Product updated successfully");
-    } catch (error) {
-      toast.error("Please check your data");
-    } finally {
-      setIsLoadingForm(false);
+      patchCategory(data);
     }
-  }
 
   const { mutate: deleteCategory } = useMutation({
     mutationFn: (id: string) => DeleteCategory(id),

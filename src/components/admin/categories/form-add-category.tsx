@@ -13,11 +13,10 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { GetBanners } from "@/service/banners";
-import { GetCategories } from "@/service/categories";
+import { GetBanners, PostBanner } from "@/service/banners";
+import { GetCategories, PostCategory } from "@/service/categories";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { MoveLeft} from "lucide-react";
 import {  useRouter } from "next/navigation";
 import { useState } from "react";
@@ -55,20 +54,23 @@ export default function FormAddCategory() {
     queryKey: ["dataBanners"],
   });
 
-  async function onSubmit(data: FormFields) {
-    try {
-      setIsLoadingForm(true);
-
-      await axios.post(`/api/store/categories`, data);
-
-      router.refresh();
-      router.push(`/admin/categories`);
-      toast.success("Category Successfully created");
-    } catch (error) {
-      toast.error("Please check your data");
-    } finally {
+  const { mutate: postCategory } = useMutation({
+    mutationFn: (data: FormFields) => PostCategory(data),
+    onSuccess: () => {
       setIsLoadingForm(false);
-    }
+      toast.success("Category created successfully");
+      router.push("/admin/categories");
+    },
+    onError: (error: any) => {
+      setIsLoadingForm(false);
+      const message = error?.error || error?.message || "Error creating user";
+      toast.error(message);
+    },
+  });
+
+  function onSubmit(data: FormFields) {
+    setIsLoadingForm(true);
+    postCategory(data);
   }
   
 
@@ -106,7 +108,6 @@ export default function FormAddCategory() {
             <Label htmlFor="bannerid">Banner</Label>
             <Select
               onValueChange={(value) => setValue("bannerid", value)}
-              value={categories?.bannerid}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a banner" />

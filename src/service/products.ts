@@ -46,3 +46,30 @@ export async function DeleteProduct(productid: string) {
     throw error.response?.data || { error: "Something went wrong" };
   }
 }
+
+
+export async function PostProduct(data: any) {
+  try {
+    await axios.post("/api/store/products", data, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+  } catch (error:any) {
+    throw error.response?.data || { error: "Something went wrong" };
+  }
+}
+
+export async function PatchProduct(productid: string, data: any) {
+  try {
+    await axios.patch(`/api/store/products/${productid}`, data, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+  } catch (error:any) {
+    throw error.response?.data || { error: "Something went wrong" };
+  }
+}

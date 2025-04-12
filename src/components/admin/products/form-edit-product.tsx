@@ -33,7 +33,7 @@ import UploadImage from "../banner/upload-image";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { DeleteProduct, GetProductById } from "@/service/products";
+import { DeleteProduct, GetProductById, PatchProduct } from "@/service/products";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { GetCategories } from "@/service/categories";
 
@@ -71,7 +71,6 @@ export default function FormEditProduct({ id }: ProductFormProps) {
   const [tagInput, setTagInput] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
-  const params = useParams();
   const router = useRouter();
 
   const {
@@ -140,19 +139,23 @@ export default function FormEditProduct({ id }: ProductFormProps) {
     setValue("tag", newTags);
   };
 
-  async function onSubmit(data: FormFields) {
-    try {
-      setIsLoadingForm(true);
-      await axios.patch(`/api/store/products/${params.productid}`, data);
-
-      router.refresh();
-      router.push(`/admin/products`);
-      toast.success("Product updated successfully");
-    } catch (error) {
-      toast.error("Please check your data");
-    } finally {
+  const { mutate: editProduct } = useMutation({
+    mutationFn: (data: FormFields) => PatchProduct(id, data),
+    onSuccess: () => {
       setIsLoadingForm(false);
-    }
+      toast.success("Product updated successfully");
+      router.push("/admin/products");
+    },
+    onError: (error: any) => {
+      setIsLoadingForm(false);
+      const message = error?.error || error?.message || "Error creating user";
+      toast.error(message);
+    },
+  });
+
+  function onSubmit(data: FormFields) {
+    setIsLoadingForm(true);
+    editProduct(data);
   }
 
   const { mutate: deleteProduct } = useMutation({

@@ -31,7 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { DeleteBanner, GetBannerById } from "@/service/banners";
+import { DeleteBanner, GetBannerById, PatchBanner } from "@/service/banners";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 interface BannerFormProps {
@@ -83,19 +83,24 @@ export default function FormEditBanner({ id }: BannerFormProps) {
     }
   }, [banner, setValue, reset]);
 
-  async function onSubmit(data: FormFields) {
-    try {
-      setIsLoadingForm(true);
-      await axios.patch(`/api/store/banner/${params.bannerid}`, data);
-      router.refresh();
-      router.push(`/admin/banners`);
-      toast.success("Banner Edited successfully");
-    } catch (error) {
-      toast.error("Please check your data");
-    } finally {
-      setIsLoadingForm(false);
-    }
-  }
+  const { mutate: patchBanner } = useMutation({
+     mutationFn: (data: FormFields) => PatchBanner(id, data),
+     onSuccess: () => {
+       setIsLoadingForm(false);
+       toast.success("Banner created successfully");
+       router.push("/admin/banners");
+     },
+     onError: (error: any) => {
+       setIsLoadingForm(false);
+       const message = error?.error || error?.message || "Error creating user";
+       toast.error(message);
+     },
+   });
+ 
+   function onSubmit(data: FormFields) {
+     setIsLoadingForm(true);
+     patchBanner(data);
+   }
 
   const { mutate: deleteBanner } = useMutation({
     mutationFn: (id: string) => DeleteBanner(id),

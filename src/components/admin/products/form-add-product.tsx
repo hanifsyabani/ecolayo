@@ -25,9 +25,10 @@ import UploadImage from "../banner/upload-image";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import {  useQuery } from "@tanstack/react-query";
+import {  useMutation, useQuery } from "@tanstack/react-query";
 import { GetCategories } from "@/service/categories";
 import Link from "next/link";
+import { PostProduct } from "@/service/products";
 
 interface ProductFormProps {
   id: string;
@@ -80,20 +81,8 @@ export default function FormAddProduct() {
     resolver: zodResolver(schema),
   });
 
-  async function onSubmit(data: FormFields) {
-    try {
-      setIsLoadingForm(true);
 
-      await axios.post(`/api/store/products`, data);
-      router.refresh();
-      router.push(`/admin/products`);
-      toast.success("Product created successfully");
-    } catch (error) {
-      toast.error("Please check your data");
-    } finally {
-      setIsLoadingForm(false);
-    }
-  }
+  
 
   const addTag = () => {
     if (tagInput.trim() && !tags.includes(tagInput.trim())) {
@@ -109,6 +98,25 @@ export default function FormAddProduct() {
     setTags(newTags);
     setValue("tag", newTags);
   };
+
+  const { mutate: postProduct } = useMutation({
+    mutationFn: (data: FormFields) => PostProduct(data),
+    onSuccess: () => {
+      setIsLoadingForm(false);
+      toast.success("Product created successfully");
+      router.push("/admin/products");
+    },
+    onError: (error: any) => {
+      setIsLoadingForm(false);
+      const message = error?.error || error?.message || "Error creating user";
+      toast.error(message);
+    },
+  });
+
+  function onSubmit(data: FormFields) {
+    setIsLoadingForm(true);
+    postProduct(data);
+  }
 
   if (isLoadingCategories) return <div className="spinner"></div>;
 

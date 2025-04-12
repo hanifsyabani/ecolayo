@@ -22,6 +22,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useMutation } from "@tanstack/react-query";
+import { PostBanner } from "@/service/banners";
 
 
 const schema = z.object({
@@ -46,20 +48,24 @@ export default function FormAddBanner() {
     resolver: zodResolver(schema),
   });
 
-  async function onSubmit(data: FormFields) {
-    try {
-      setIsLoadingForm(true);
-        await axios.post(`/api/store/banner`, data);
-      router.refresh();
-      router.push(`/admin/banners`);
-      toast.success("Banner created successfully");
-    } catch (error) {
-      toast.error("Please check your data");
-    } finally {
+  const { mutate: postBanner } = useMutation({
+    mutationFn: (data: FormFields) => PostBanner(data),
+    onSuccess: () => {
       setIsLoadingForm(false);
-    }
-  }
+      toast.success("Banner created successfully");
+      router.push("/admin/banners");
+    },
+    onError: (error: any) => {
+      setIsLoadingForm(false);
+      const message = error?.error || error?.message || "Error creating user";
+      toast.error(message);
+    },
+  });
 
+  function onSubmit(data: FormFields) {
+    setIsLoadingForm(true);
+    postBanner(data);
+  }
 
   return (
     <>

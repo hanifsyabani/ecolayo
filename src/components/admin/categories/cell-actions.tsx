@@ -40,7 +40,7 @@ export default function CellActionCategory({data, refetchCategories}: CellAction
       setIsLoadingForm(false);
       toast.success("Category deleted successfully");
       setIsOpen(false);
-      router.push(`/admin/categories`);
+      refetchCategories()
     },
     onError: () => {
       setIsLoadingForm(false);

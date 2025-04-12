@@ -1,5 +1,4 @@
 import axios from "axios";
-import { NextResponse } from "next/server";
 
 export async function GetCategories() {
   try {
@@ -46,3 +45,30 @@ export async function DeleteCategory(categoryid: string) {
 
   }
 }
+
+
+export async function PostCategory(data: any) {
+  try {
+    await axios.post("/api/store/categories", data, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  } catch (error: any) {
+    throw error.response?.data || { error: "Something went wrong" };
+  }
+}
+
+export async function PatchCategory(categoryid: string, data: any) {
+  try {
+    await axios.patch(`/api/store/categories/${categoryid}`, data, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  } catch (error: any) {
+    throw error.response?.data || { error: "Something went wrong" };
+  }
+} 

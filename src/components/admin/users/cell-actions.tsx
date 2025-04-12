@@ -17,6 +17,7 @@ import { useMutation } from "@tanstack/react-query";
 import { DeleteProduct } from "@/service/products";
 import Link from "next/link";
 import { UserColumn } from "./column-users";
+import { DeleteUser } from "@/service/users";
 
 interface CellActionProps {
   data: UserColumn;
@@ -27,24 +28,25 @@ export default function CellAction({data, refetchUsers}: CellActionProps) {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  const {mutate: deleteProduct } = useMutation({
+  const {mutate: deleteUser } = useMutation({
 
-    mutationFn: (id:string) => DeleteProduct(id),
+    mutationFn: (id:string) => DeleteUser(id),
     onSuccess: () => {
       setIsLoadingForm(false);
-      toast.success("Product deleted successfully");
+      toast.success("User deleted successfully");
       setIsOpen(false)
       refetchUsers()
     },
-    onError: () => {
+    onError: (error:any) => {
       setIsLoadingForm(false);
-      toast.error("Error deleting Product");
+      const message = error?.error || error?.message || "Error creating user";
+      toast.error(message);
     },
   })
 
   function onDelete(id: string) {
     setIsLoadingForm(true);
-    deleteProduct(id)
+    deleteUser(id)
   }
 
 
@@ -57,7 +59,7 @@ export default function CellAction({data, refetchUsers}: CellActionProps) {
           <Edit size={15} />
         </Link>
         <Button
-          className="bg-red-500 w-7 h-7 text-white rounded-md cursor-pointer"
+          className="bg-red-500 w-7 h-7 hover:bg-red-800 text-white rounded-md cursor-pointer"
           onClick={() => setIsOpen(true)}
           disabled={isLoadingForm}
         >
