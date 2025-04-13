@@ -7,6 +7,7 @@ import { GetProducts } from "@/service/products";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "../ui/card";
 import { ImStatsBars2 } from "react-icons/im";
+import { GetUsers } from "@/service/users";
 
 
 export default function Statistics() {
@@ -22,6 +23,11 @@ export default function Statistics() {
     queryFn: () => GetProducts(),
     queryKey: ["dataProducts"],
   });
+
+  const {data: users, isLoading: isLoadingUsers} = useQuery({
+    queryFn: () => GetUsers(),
+    queryKey: ["dataUsers"],
+  })
 
   // console.log(banners.length);
   // console.log(products.length);
@@ -44,7 +50,7 @@ export default function Statistics() {
     ...stat,
     value:
       stat.key === "totalUsers"
-        ? 1
+        ? users?.length
         : stat.key === "totalStores"
         ? banners?.length
         : stat.key === "totalProducts"
@@ -54,7 +60,7 @@ export default function Statistics() {
         : 0,
   }));
 
-  if (isLoadingBanners || isLoadingCategories || isLoadingProducts)
+  if (isLoadingBanners || isLoadingCategories || isLoadingProducts || isLoadingUsers)
     return <div className="spinner"></div>;
 
   return (

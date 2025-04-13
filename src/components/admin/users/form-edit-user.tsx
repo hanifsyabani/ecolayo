@@ -20,21 +20,15 @@ import toast from "react-hot-toast";
 import { z } from "zod";
 import UploadImage from "../banner/upload-image";
 import { MoveLeft, Trash } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import DialogDeleteUser from "./dialog-delete-user";
 
 interface FormEditUserProps {
   userId: string;
 }
 
 const schema = z.object({
-  name: z.string().min(1, { message: "Name is required" }),
+  username: z.string().min(1, { message: "Name is required" }),
   imageUrl: z.string().optional(),
   role: z.string().min(1, { message: "Role is required" }),
   status: z.string().min(1, { message: "Status is required" }),
@@ -42,6 +36,10 @@ const schema = z.object({
   password: z
     .string()
     .min(8, { message: "Password must be at least 8 characters" }),
+  address: z.string().optional(),
+  phone: z.string().optional(),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
 });
 
 type FormFields = z.infer<typeof schema>;
@@ -56,7 +54,6 @@ export default function FormEditUser({ userId }: FormEditUserProps) {
     handleSubmit,
     setValue,
     getValues,
-    watch,
     formState: { errors },
   } = useForm<FormFields>({
     resolver: zodResolver(schema),
@@ -67,15 +64,19 @@ export default function FormEditUser({ userId }: FormEditUserProps) {
     queryKey: ["dataUser"],
   });
 
-  // ...
   useEffect(() => {
     if (user) {
-      setValue("name", user.name);
+      setValue("username", user.username);
       setValue("email", user.email);
       setValue("role", user.role);
       setValue("status", user.status);
-      setValue("password", user.password)
-      setValue("imageUrl", user.imageUrl || "");
+      setValue("password", user.password);
+      setValue("address", user.address);
+      setValue("firstName", user.firstName);
+      setValue("lastName", user.lastName);
+      setValue("phone", user.phone);
+
+      setValue("imageUrl", user.imageUrl);
     }
   }, [user, setValue]);
 
@@ -102,9 +103,9 @@ export default function FormEditUser({ userId }: FormEditUserProps) {
     mutationFn: (id: string) => DeleteUser(id),
     onSuccess: () => {
       setIsLoading(false);
-      toast.success("Product deleted successfully");
+      toast.success("User deleted successfully");
       setIsOpen(false);
-      router.push(`/admin/products`);
+      router.push(`/admin/users`);
     },
 
     onError: (error: any) => {
@@ -143,14 +144,42 @@ export default function FormEditUser({ userId }: FormEditUserProps) {
         <div className="flex gap-8">
           <div className="w-1/2 space-y-4">
             <div>
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">Username</Label>
               <Input
                 id="name"
-                {...register("name")}
+                {...register("username")}
                 placeholder="Add name user"
               />
-              {errors.name && (
-                <p className="text-sm text-red-500">{errors.name.message}</p>
+              {errors.username && (
+                <p className="text-sm text-red-500">
+                  {errors.username.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <Label htmlFor="firstName">First Name</Label>
+              <Input
+                id="firstName"
+                {...register("firstName")}
+                placeholder="Add name user"
+              />
+              {errors.firstName && (
+                <p className="text-sm text-red-500">
+                  {errors.firstName.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <Label htmlFor="lastName">Last Name</Label>
+              <Input
+                id="lastName"
+                {...register("lastName")}
+                placeholder="Add name user"
+              />
+              {errors.lastName && (
+                <p className="text-sm text-red-500">
+                  {errors.lastName.message}
+                </p>
               )}
             </div>
 
@@ -162,6 +191,7 @@ export default function FormEditUser({ userId }: FormEditUserProps) {
                 {...register("email")}
                 autoComplete="off"
                 placeholder="example@gmail.com"
+                readOnly
               />
               {errors.email && (
                 <p className="text-sm text-red-500">{errors.email.message}</p>
@@ -184,10 +214,31 @@ export default function FormEditUser({ userId }: FormEditUserProps) {
                 </p>
               )}
             </div>
+          </div>
 
+          <div className="w-1/2 space-y-4">
+            <div>
+              <Label htmlFor="phone">Phone Number</Label>
+              <div className="flex items-center">
+                <span className="text-sm text-white rounded-tl rounded-bl py-2 px-4 bg-primary">
+                  +62
+                </span>
+                <Input
+                  id="phone"
+                  {...register("phone")}
+                  placeholder="8xxxxxxxxxxx"
+                />
+              </div>
+              {errors.phone && (
+                <p className="text-sm text-red-500">{errors.phone.message}</p>
+              )}
+            </div>
             <div>
               <Label htmlFor="role">Role</Label>
-              <Select onValueChange={(value) => setValue("role", value)} value={watch("role")}>
+              <Select
+                onValueChange={(value) => setValue("role", value)}
+                value={user?.role}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select role" />
                 </SelectTrigger>
@@ -207,12 +258,12 @@ export default function FormEditUser({ userId }: FormEditUserProps) {
                 </SelectContent>
               </Select>
             </div>
-          </div>
-
-          <div className="w-1/2 space-y-4">
             <div>
               <Label htmlFor="status">Status</Label>
-              <Select onValueChange={(value) => setValue("status", value)} value={watch("status")}>
+              <Select
+                onValueChange={(value) => setValue("status", value)}
+                value={user?.status}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
@@ -232,11 +283,24 @@ export default function FormEditUser({ userId }: FormEditUserProps) {
                 </SelectContent>
               </Select>
             </div>
+
+            <div>
+              <Label htmlFor="address">Address</Label>
+              <Textarea
+                id="address"
+                {...register("address")}
+                placeholder="Enter adress"
+              />
+              {errors.address && (
+                <p className="text-sm text-red-500">{errors.address.message}</p>
+              )}
+            </div>
+
             <div>
               <Label htmlFor="imageUrl">Image</Label>
               <UploadImage
                 value={[getValues("imageUrl") ?? ""].filter(Boolean)}
-                onChange={(urls) => setValue("imageUrl", urls[0] || "")}
+                onChange={(urls) => setValue("imageUrl", urls[0] || "")} // Ambil elemen pertama
                 onRemove={() => setValue("imageUrl", "")}
               />
 
@@ -254,39 +318,13 @@ export default function FormEditUser({ userId }: FormEditUserProps) {
         </Button>
       </form>
 
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="bg-white">
-          <DialogHeader>
-            <DialogTitle>
-              Are you sure you want to delete this user?
-            </DialogTitle>
-            <DialogDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove your data from our servers.
-            </DialogDescription>
-          </DialogHeader>
-
-          <DialogFooter>
-            <Button variant={"outline"} onClick={() => setIsOpen(false)}>
-              Cancel
-            </Button>
-            <Button
-              className="bg-red-500 text-white hover:bg-red-700"
-              onClick={() => onDelete(userId)}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <span className="spinner"></span>
-              ) : (
-                <>
-                  <Trash />
-                  Delete
-                </>
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DialogDeleteUser
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        userId={userId}
+        onDelete={onDelete}
+        isLoading={isLoading}
+      />
     </>
   );
 }

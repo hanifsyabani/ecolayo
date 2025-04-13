@@ -54,7 +54,7 @@ export default function CellAction({data, refetchUsers}: CellActionProps) {
     <>
       <div className="flex items-center gap-5">
         <Link href={`/admin/users/${data.id}`}
-          className="bg-secondary w-7 h-7 flex justify-center items-center text-white rounded-md cursor-pointer"
+          className="bg-secondary hover:bg-primary/90 w-7 h-7 flex justify-center items-center text-white rounded-md cursor-pointer"
         >
           <Edit size={15} />
         </Link>

@@ -1,5 +1,6 @@
 import { authOptions } from "@/lib/auth";
 import db from "@/lib/db";
+import bcrypt from "bcryptjs";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -7,11 +8,13 @@ export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
-    if (!userId) return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
+    if (!userId)
+      return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
     const users = await db.user.findMany();
 
-    if (!users) return NextResponse.json({ error: "No users found" }, { status: 500 });
+    if (!users)
+      return NextResponse.json({ error: "No users found" }, { status: 500 });
 
     return NextResponse.json(users);
   } catch (error: any) {
@@ -25,9 +28,20 @@ export async function POST(req: Request) {
     const userId = session?.user.id;
     if (!userId) throw new Error("Unauthenticated");
 
-    const { name, email, password, status, role, imageUrl } = await req.json();
+    const {
+      username,
+      email,
+      password,
+      status,
+      role,
+      imageUrl,
+      firstName,
+      lastName,
+      address,
+      phone,
+    } = await req.json();
 
-    if (!name) throw new Error("Name must be provided");
+    if (!username) throw new Error("Name must be provided");
 
     if (!email) throw new Error("Email must be provided");
     const userEmail = await db.user.findUnique({
@@ -47,6 +61,7 @@ export async function POST(req: Request) {
         { error: "Password must be provided" },
         { status: 500 }
       );
+
     if (!status)
       return NextResponse.json(
         { error: "Status must be provided" },
@@ -58,14 +73,20 @@ export async function POST(req: Request) {
         { status: 500 }
       );
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const user = await db.user.create({
       data: {
-        name,
+        username,
         email,
-        password,
+        password: hashedPassword,
         status,
         role,
         imageUrl: imageUrl || "",
+        firstName,
+        lastName,
+        address,
+        phone,
       },
     });
 

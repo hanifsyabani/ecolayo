@@ -32,9 +32,20 @@ export async function PATCH(
     const userId = session?.user.id;
     if (!userId) throw new Error("Unauthenticated");
 
-    const { name, email, password, status, role, imageUrl } = await req.json();
+    const {
+      username,
+      email,
+      password,
+      status,
+      role,
+      imageUrl,
+      firstName,
+      lastName,
+      address,
+      phone,
+    } = await req.json();
 
-    if (!name) throw new Error("Name must be provided");
+    if (!username) throw new Error("Name must be provided");
 
     if (!email) throw new Error("Email must be provided");
     const userEmail = await db.user.findUnique({
@@ -66,16 +77,20 @@ export async function PATCH(
       );
 
     const user = await db.user.update({
-      where:{
-        id:params.userid
+      where: {
+        id: params.userid,
       },
       data: {
-        name,
+        username,
         email,
         password,
         status,
         role,
         imageUrl,
+        firstName,
+        lastName,
+        address,
+        phone,
       },
     });
 
@@ -85,7 +100,6 @@ export async function PATCH(
   }
 }
 
-
 export async function DELETE(
   req: Request,
   { params }: { params: { userid: string } }
@@ -93,12 +107,16 @@ export async function DELETE(
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
-    if (!userId) return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
+    if (!userId)
+      return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
-    const user = await db.user.delete({
+    const user = await db.user.update({
       where: {
         id: params.userid,
       },
+      data:{
+        isDeleted: true
+      }
     });
 
     return NextResponse.json(user);

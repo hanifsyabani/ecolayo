@@ -20,15 +20,17 @@ export default function ListUsers() {
     queryKey: ["dataUsers"],
   });
 
-  if (isLoadingUsers) return <div className="spinner" />;
 
   const formattedUsers: UserColumn[] = (users ?? []).map((user: any) => ({
     id: user.id,
-    name: user.name,
+    username: user.username,
     email: user.email,
     role: user.role,
     status: user.status,
   }));
+
+  if (isLoadingUsers) return <div className="spinner" />;
+
 
   return (
     <>
@@ -45,7 +47,7 @@ export default function ListUsers() {
       <DataTable
         data={formattedUsers}
         columns={Columns(refetchUsers)}
-        searchKey="name"
+        searchKey="username"
       />
     </>
   );

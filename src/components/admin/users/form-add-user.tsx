@@ -20,9 +20,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { MoveLeft } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 
 const schema = z.object({
-  name: z.string().min(1, { message: "Name is required" }),
+  username: z.string().min(1, { message: "Name is required" }),
   imageUrl: z.string().optional(),
   role: z.string().min(1, { message: "Role is required" }),
   status: z.string().min(1, { message: "Status is required" }),
@@ -30,6 +31,10 @@ const schema = z.object({
   password: z
     .string()
     .min(8, { message: "Password must be at least 8 characters" }),
+  address: z.string().optional(),
+  phone: z.string().optional(),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
 });
 
 type FormFields = z.infer<typeof schema>;
@@ -79,14 +84,42 @@ export default function FormAddUser() {
         <div className="flex gap-8">
           <div className="w-1/2 space-y-4">
             <div>
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">Username</Label>
               <Input
                 id="name"
-                {...register("name")}
+                {...register("username")}
                 placeholder="Add name user"
               />
-              {errors.name && (
-                <p className="text-sm text-red-500">{errors.name.message}</p>
+              {errors.username && (
+                <p className="text-sm text-red-500">
+                  {errors.username.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <Label htmlFor="firstName">First Name</Label>
+              <Input
+                id="firstName"
+                {...register("firstName")}
+                placeholder="Add name user"
+              />
+              {errors.firstName && (
+                <p className="text-sm text-red-500">
+                  {errors.firstName.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <Label htmlFor="lastName">Last Name</Label>
+              <Input
+                id="lastName"
+                {...register("lastName")}
+                placeholder="Add name user"
+              />
+              {errors.lastName && (
+                <p className="text-sm text-red-500">
+                  {errors.lastName.message}
+                </p>
               )}
             </div>
 
@@ -119,7 +152,23 @@ export default function FormAddUser() {
                 </p>
               )}
             </div>
+          </div>
 
+          <div className="w-1/2 space-y-4">
+            <div>
+              <Label htmlFor="phone">Phone Number</Label>
+              <div className="flex items-center">
+                <span className="text-sm text-white rounded-tl rounded-bl py-2 px-4 bg-primary">+62</span>
+                <Input
+                  id="phone"
+                  {...register("phone")}
+                  placeholder="8xxxxxxxxxxx"
+                />
+              </div>
+              {errors.phone && (
+                <p className="text-sm text-red-500">{errors.phone.message}</p>
+              )}
+            </div>
             <div>
               <Label htmlFor="role">Role</Label>
               <Select onValueChange={(value) => setValue("role", value)}>
@@ -142,9 +191,6 @@ export default function FormAddUser() {
                 </SelectContent>
               </Select>
             </div>
-          </div>
-
-          <div className="w-1/2 space-y-4">
             <div>
               <Label htmlFor="status">Status</Label>
               <Select onValueChange={(value) => setValue("status", value)}>
@@ -167,6 +213,19 @@ export default function FormAddUser() {
                 </SelectContent>
               </Select>
             </div>
+
+            <div>
+              <Label htmlFor="address">Address</Label>
+              <Textarea
+                id="address"
+                {...register("address")}
+                placeholder="Enter adress"
+              />
+              {errors.address && (
+                <p className="text-sm text-red-500">{errors.address.message}</p>
+              )}
+            </div>
+
             <div>
               <Label htmlFor="imageUrl">Image</Label>
               <UploadImage

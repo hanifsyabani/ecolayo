@@ -10,7 +10,11 @@ export const authOptions: AuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "text", placeholder: "email@example.com" },
+        email: {
+          label: "Email",
+          type: "text",
+          placeholder: "email@example.com",
+        },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
@@ -18,25 +22,42 @@ export const authOptions: AuthOptions = {
           throw new Error("Invalid credentials");
         }
 
-        const user = await prisma.user.findUnique({ where: { email: credentials.email } });
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
+        });
         if (!user) {
           throw new Error("No user found");
         }
 
-        const isValid = await bcrypt.compare(credentials.password, user.password);
+        const isValid = await bcrypt.compare(
+          credentials.password,
+          user.password
+        );
         if (!isValid) {
           throw new Error("Invalid password");
         }
 
-        return { id: user.id, name: user.name, email: user.email, role: user.role };
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            lastLogin: new Date(),
+          },
+        });
+
+        return {
+          id: user.id,
+          name: user.username,
+          email: user.email,
+          role: user.role,
+        };
       },
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
-  session: { 
-    strategy: "jwt" as const, 
-    maxAge: 3600, 
-    updateAge: 900
+  session: {
+    strategy: "jwt" as const,
+    maxAge: 3600,
+    updateAge: 900,
   },
   callbacks: {
     async session({ session, token }) {

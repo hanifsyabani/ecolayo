@@ -63,7 +63,7 @@ export default function FormAddCategory() {
     },
     onError: (error: any) => {
       setIsLoadingForm(false);
-      const message = error?.error || error?.message || "Error creating user";
+      const message = error?.error || error?.message || "Error creating category";
       toast.error(message);
     },
   });

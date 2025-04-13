@@ -87,12 +87,12 @@ export default function FormEditBanner({ id }: BannerFormProps) {
      mutationFn: (data: FormFields) => PatchBanner(id, data),
      onSuccess: () => {
        setIsLoadingForm(false);
-       toast.success("Banner created successfully");
+       toast.success("Banner update successfully");
        router.push("/admin/banners");
      },
      onError: (error: any) => {
        setIsLoadingForm(false);
-       const message = error?.error || error?.message || "Error creating user";
+       const message = error?.error || error?.message || "Error updating user";
        toast.error(message);
      },
    });
@@ -106,13 +106,14 @@ export default function FormEditBanner({ id }: BannerFormProps) {
     mutationFn: (id: string) => DeleteBanner(id),
     onSuccess: () => {
       setIsLoadingForm(false);
-      toast.success("Category deleted successfully");
+      toast.success("Banner deleted successfully");
       setIsOpen(false);
-      router.push(`/admin/categories`);
+      router.push(`/admin/banners`);
     },
-    onError: () => {
+    onError: (error:any) => {
       setIsLoadingForm(false);
-      toast.error("Error deleting Product");
+      const message = error?.error || error?.message || "Error deleting user";
+        toast.error(message);
     },
   });
 

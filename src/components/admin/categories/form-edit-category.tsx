@@ -97,7 +97,7 @@ export default function FormEditCategory({ id }: CategoryFormProps) {
       },
       onError: (error: any) => {
         setIsLoadingForm(false);
-        const message = error?.error || error?.message || "Error creating user";
+        const message = error?.error || error?.message || "Error updating category";
         toast.error(message);
       },
     });
@@ -115,9 +115,10 @@ export default function FormEditCategory({ id }: CategoryFormProps) {
       setIsOpen(false);
       router.push(`/admin/categories`);
     },
-    onError: () => {
+    onError: (error:any) => {
       setIsLoadingForm(false);
-      toast.error("Error deleting Product");
+      const message = error?.error || error?.message || "Error deleting category";
+        toast.error(message);
     },
   });
 

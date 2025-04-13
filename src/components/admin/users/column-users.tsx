@@ -3,10 +3,12 @@
 import { ColumnDef } from "@tanstack/react-table";
 import CellAction from "./cell-actions";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+import { Eye } from "lucide-react";
 
 export type UserColumn = {
   id: string;
-  name: string;
+  username: string;
   email: string;
   role: string;
   status: string;
@@ -14,8 +16,16 @@ export type UserColumn = {
 
 export const Columns = (refetchUsers: () => void): ColumnDef<UserColumn>[] => [
   {
-    accessorKey: "name",
-    header: "Name",
+    id: "eye",
+    cell: ({ row }) => (
+      <Link href={`/admin/users/${row.original.id}/profile`}>
+        <Eye className="bg-gray-400 hover:bg-gray-600 p-1 text-white rounded" size={25}  />
+      </Link>
+    ),
+  },
+  {
+    accessorKey: "username",
+    header: "Username",
   },
   {
     accessorKey: "email",

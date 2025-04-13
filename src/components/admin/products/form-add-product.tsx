@@ -16,8 +16,8 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { MoveLeft, X } from "lucide-react";
-import {  useRouter } from "next/navigation";
-import {  useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
@@ -25,7 +25,7 @@ import UploadImage from "../banner/upload-image";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import {  useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { GetCategories } from "@/service/categories";
 import Link from "next/link";
 import { PostProduct } from "@/service/products";
@@ -81,9 +81,6 @@ export default function FormAddProduct() {
     resolver: zodResolver(schema),
   });
 
-
-  
-
   const addTag = () => {
     if (tagInput.trim() && !tags.includes(tagInput.trim())) {
       const newTags = [...tags, tagInput.trim()];
@@ -108,7 +105,7 @@ export default function FormAddProduct() {
     },
     onError: (error: any) => {
       setIsLoadingForm(false);
-      const message = error?.error || error?.message || "Error creating user";
+      const message = error?.error || error?.message || "Error creating product";
       toast.error(message);
     },
   });
@@ -122,7 +119,7 @@ export default function FormAddProduct() {
 
   return (
     <>
-      <Link href={`/admin/products`} >
+      <Link href={`/admin/products`}>
         <MoveLeft className="bg-secondary text-white p-1 w-7 rounded mb-4" />
       </Link>
       <Heading

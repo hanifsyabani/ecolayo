@@ -57,7 +57,7 @@ export default function FormAddBanner() {
     },
     onError: (error: any) => {
       setIsLoadingForm(false);
-      const message = error?.error || error?.message || "Error creating user";
+      const message = error?.error || error?.message || "Error creating banner";
       toast.error(message);
     },
   });

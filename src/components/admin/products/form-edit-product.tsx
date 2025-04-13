@@ -148,7 +148,7 @@ export default function FormEditProduct({ id }: ProductFormProps) {
     },
     onError: (error: any) => {
       setIsLoadingForm(false);
-      const message = error?.error || error?.message || "Error creating user";
+      const message = error?.error || error?.message || "Error updating product";
       toast.error(message);
     },
   });
@@ -166,9 +166,10 @@ export default function FormEditProduct({ id }: ProductFormProps) {
       setIsOpen(false);
       router.push(`/admin/products`);
     },
-    onError: () => {
+    onError: (error:any) => {
       setIsLoadingForm(false);
-      toast.error("Error deleting Product");
+      const message = error?.error || error?.message || "Error deleting user";
+        toast.error(message);
     },
   });
 
