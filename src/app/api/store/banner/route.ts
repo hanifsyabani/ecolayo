@@ -32,7 +32,7 @@ export async function POST(req: Request) {
       data: {
         label,
         imageUrl,
-        categoryBanner,
+        categoryBanner
       },
     });
 

@@ -197,12 +197,6 @@ export default function FormEditBanner({ id }: BannerFormProps) {
                   >
                     Promote
                   </SelectItem>
-                  <SelectItem
-                    value="category"
-                    className="hover:bg-gray-200 cursor-pointer "
-                  >
-                    Category
-                  </SelectItem>
                 </SelectContent>
               </Select>
               {errors.categoryBanner && (

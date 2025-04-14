@@ -22,6 +22,7 @@ export default function ListBanner() {
   const formattedBanners: BannerColumn[] = (banners ?? []).map((banner:any) => ({
     id: banner.id,
     label: banner.label,
+    imageUrl : banner.imageUrl,
     categoryBanner: banner.categoryBanner,
     createdAt: format(banner.createdAt, "MMM do, yyyy"),
   }));

@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import CellAction from "./cell-actions";
-
+import Image from "next/image";
 
 export type ProductColumn = {
   id: string;
@@ -11,14 +11,30 @@ export type ProductColumn = {
   isArchived: Boolean;
   price: string;
   category: string;
-  createdAt: string;
-  tag : string
+  image : string  
+  tag: string;
 };
 
-export const Columns = (refetchProducts: () => void): ColumnDef<ProductColumn>[] => [
+export const Columns = (
+  refetchProducts: () => void
+): ColumnDef<ProductColumn>[] => [
   {
     accessorKey: "name",
     header: "Name",
+    cell: ({ row }) => (
+      <div className="flex items-center gap-2">
+        {row.original.image&& (
+          <Image
+            src={row.original.image}
+            width={50}
+            height={50}
+            alt={row.original.name}
+            className="rounded"
+          />
+        )}
+        <div className="font-medium">{row.original.name}</div>
+      </div>
+    ),
   },
   {
     accessorKey: "isFeatured",
@@ -41,12 +57,10 @@ export const Columns = (refetchProducts: () => void): ColumnDef<ProductColumn>[]
     header: "Tags",
   },
   {
-    accessorKey: "createdAt",
-    header: "Date",
-  },
-  {
     id: "actions",
     header: "Action",
-    cell: ({ row }) => <CellAction data={row.original} refetchProducts={refetchProducts} />,
+    cell: ({ row }) => (
+      <CellAction data={row.original} refetchProducts={refetchProducts} />
+    ),
   },
 ];

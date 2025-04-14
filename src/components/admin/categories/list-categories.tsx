@@ -22,7 +22,7 @@ export default function ListCategories() {
     (category: any) => ({
       id: category.id,
       name: category.name,
-      bannerLabel: category.banner.label,
+      imageUrl: category.imageUrl,
       createdAt: format(category.createdAt, "MMM do, yyyy"),
     })
   );

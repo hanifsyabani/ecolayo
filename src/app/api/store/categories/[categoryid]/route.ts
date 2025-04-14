@@ -35,10 +35,10 @@ export async function PATCH(
     const userId = session?.user.id;
     if (!userId) return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
-    const { name, bannerid } = await req.json();
+    const { name, imageUrl } = await req.json();
 
     if (!name) return NextResponse.json({ error: "Name must be provided" }, { status: 500 });
-    if (!bannerid) return NextResponse.json({ error: "Banner id must be provided" }, { status: 500 });
+    if (!imageUrl) return NextResponse.json({ error: "Banner id must be provided" }, { status: 500 });
 
 
     const category = await db.category.update({
@@ -48,7 +48,7 @@ export async function PATCH(
 
       data: {
         name,
-        bannerid,
+        imageUrl,
       },
     });
 

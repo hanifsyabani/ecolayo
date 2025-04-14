@@ -230,7 +230,7 @@ export default function FormAddUser() {
               <Label htmlFor="imageUrl">Image</Label>
               <UploadImage
                 value={[getValues("imageUrl") ?? ""].filter(Boolean)}
-                onChange={(urls) => setValue("imageUrl", urls[0] || "")} // Ambil elemen pertama
+                onChange={(urls) => setValue("imageUrl", urls[0] || "")} 
                 onRemove={() => setValue("imageUrl", "")}
               />
 

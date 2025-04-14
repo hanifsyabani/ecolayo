@@ -27,6 +27,7 @@ export default function ListUsers() {
     email: user.email,
     role: user.role,
     status: user.status,
+    image : user.imageUrl
   }));
 
   if (isLoadingUsers) return <div className="spinner" />;

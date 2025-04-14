@@ -57,7 +57,7 @@ export async function PATCH(
       data: {
         label,
         imageUrl,
-        categoryBanner,
+        categoryBanner
       },
     });
 

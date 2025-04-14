@@ -10,7 +10,6 @@ import { DataTable } from "@/components/ui/data-table";
 import { useQuery } from "@tanstack/react-query";
 import { GetProducts } from "@/service/products";
 import { formatter } from "@/lib/utils";
-import { format } from "date-fns";
 
 export default function ListProducts() {
 
@@ -25,9 +24,9 @@ export default function ListProducts() {
     isFeatured: product.isFeatured,
     isArchived: product.isArchived,
     price: formatter.format(product.price),
+    image : product.images[0].url,
     category: product.category.name,
     tag: product.tag.map((tag: any) => tag.name).join(", "),
-    createdAt: format(product.createdAt, "MMM do, yyyy"),
   }));
 
   if (isLoadingProducts) {

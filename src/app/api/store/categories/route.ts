@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     if (!userId)
       return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
-    const { name, bannerid } = await req.json();
+    const { name, imageUrl } = await req.json();
 
    
     if (!name)
@@ -19,7 +19,7 @@ export async function POST(req: Request) {
         { error: "Name must be provided" },
         { status: 500 }
       );
-    if (!bannerid)
+    if (!imageUrl)
       return NextResponse.json(
         { error: "Banner id must be provided" },
         { status: 500 }
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     const category = await db.category.create({
       data: {
         name,
-        bannerid,
+        imageUrl
       },
     });
 
@@ -46,11 +46,7 @@ export async function GET(req: Request) {
     // console.log("user id", userId);
     if (!userId) return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
-    const category = await db.category.findMany({
-      include: {
-        banner: true,
-      },
-    });
+    const category = await db.category.findMany();
 
     return NextResponse.json(category);
   } catch (error: any) {

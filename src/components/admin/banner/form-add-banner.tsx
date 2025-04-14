@@ -7,9 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import { MoveLeft} from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import {  useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -28,14 +27,13 @@ import { PostBanner } from "@/service/banners";
 
 const schema = z.object({
   label: z.string().min(1),
-  imageUrl: z.string().min(5),
+  imageUrl: z.string().min(1),
   categoryBanner: z.string().min(1),
 });
 type FormFields = z.infer<typeof schema>;
 
 export default function FormAddBanner() {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
-  const params = useParams();
   const router = useRouter();
 
   const {
@@ -126,12 +124,6 @@ export default function FormAddBanner() {
                     className="hover:bg-gray-200 cursor-pointer "
                   >
                     Promote
-                  </SelectItem>
-                  <SelectItem
-                    value="category"
-                    className="hover:bg-gray-200 cursor-pointer "
-                  >
-                    Category
                   </SelectItem>
                 </SelectContent>
               </Select>

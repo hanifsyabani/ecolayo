@@ -38,6 +38,7 @@ import {
   PatchCategory,
 } from "@/service/categories";
 import { GetBanners } from "@/service/banners";
+import UploadImage from "../banner/upload-image";
 
 interface CategoryFormProps {
   id: string;
@@ -45,7 +46,7 @@ interface CategoryFormProps {
 
 const schema = z.object({
   name: z.string().min(1),
-  bannerid: z.string().min(5),
+  imageUrl: z.string().min(1),
 });
 type FormFields = z.infer<typeof schema>;
 
@@ -59,13 +60,13 @@ export default function FormEditCategory({ id }: CategoryFormProps) {
     register,
     setValue,
     reset,
-    watch,
+    getValues,
     formState: { errors },
   } = useForm<FormFields>({
     resolver: zodResolver(schema),
     defaultValues: {
       name: "",
-      bannerid: "",
+      imageUrl: "",
     },
   });
 
@@ -74,38 +75,34 @@ export default function FormEditCategory({ id }: CategoryFormProps) {
     queryKey: ["dataCategory"],
   });
 
-  const { data: banners, isLoading: isLoadingBanners } = useQuery({
-    queryFn: () => GetBanners(),
-    queryKey: ["dataBanner"],
-  });
-
   useEffect(() => {
     if (categories) {
       reset({
         name: categories.name || "",
-        bannerid: categories.bannerid || "",
+        imageUrl: categories.imageUrl || "",
       });
     }
   }, [categories, setValue, reset]);
 
-   const { mutate: patchCategory } = useMutation({
-      mutationFn: (data: FormFields) => PatchCategory(id, data),
-      onSuccess: () => {
-        setIsLoadingForm(false);
-        toast.success("Category updated successfully");
-        router.push("/admin/categories");
-      },
-      onError: (error: any) => {
-        setIsLoadingForm(false);
-        const message = error?.error || error?.message || "Error updating category";
-        toast.error(message);
-      },
-    });
-  
-    function onSubmit(data: FormFields) {
-      setIsLoadingForm(true);
-      patchCategory(data);
-    }
+  const { mutate: patchCategory } = useMutation({
+    mutationFn: (data: FormFields) => PatchCategory(id, data),
+    onSuccess: () => {
+      setIsLoadingForm(false);
+      toast.success("Category updated successfully");
+      router.push("/admin/categories");
+    },
+    onError: (error: any) => {
+      setIsLoadingForm(false);
+      const message =
+        error?.error || error?.message || "Error updating category";
+      toast.error(message);
+    },
+  });
+
+  function onSubmit(data: FormFields) {
+    setIsLoadingForm(true);
+    patchCategory(data);
+  }
 
   const { mutate: deleteCategory } = useMutation({
     mutationFn: (id: string) => DeleteCategory(id),
@@ -115,10 +112,11 @@ export default function FormEditCategory({ id }: CategoryFormProps) {
       setIsOpen(false);
       router.push(`/admin/categories`);
     },
-    onError: (error:any) => {
+    onError: (error: any) => {
       setIsLoadingForm(false);
-      const message = error?.error || error?.message || "Error deleting category";
-        toast.error(message);
+      const message =
+        error?.error || error?.message || "Error deleting category";
+      toast.error(message);
     },
   });
 
@@ -127,8 +125,7 @@ export default function FormEditCategory({ id }: CategoryFormProps) {
     deleteCategory(id);
   }
 
-  if (isLoadingBanners || isLoadingCategories || !banners || !categories)
-    return <div className="spinner" />;
+  if (isLoadingCategories || !categories) return <div className="spinner" />;
 
   return (
     <>
@@ -160,28 +157,15 @@ export default function FormEditCategory({ id }: CategoryFormProps) {
             )}
           </div>
           <div>
-            <Label htmlFor="bannerid">Banner</Label>
-            <Select
-              onValueChange={(value) => setValue("bannerid", value)}
-              value={watch("bannerid")}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select a banner" />
-              </SelectTrigger>
-              <SelectContent className="bg-white max-h-60">
-                {banners?.map((banner: any) => (
-                  <SelectItem
-                    key={banner.id}
-                    value={banner.id}
-                    className="hover:bg-gray-200 cursor-pointer"
-                  >
-                    {banner.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {errors.bannerid && (
-              <p className="text-red-500 text-sm">{errors.bannerid.message}</p>
+            <Label htmlFor="imageUrl">Image</Label>
+            <UploadImage
+              value={[getValues("imageUrl") ?? ""].filter(Boolean)}
+              onChange={(urls) => setValue("imageUrl", urls[0] || "")}
+              onRemove={() => setValue("imageUrl", "")}
+            />
+
+            {errors.imageUrl && (
+              <p className="text-red-500 text-sm">{errors.imageUrl.message}</p>
             )}
           </div>
         </div>

@@ -27,7 +27,6 @@ interface CellActionProps {
 export default function CellActionCategory({data, refetchCategories}: CellActionProps) {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
 
   function onCopy(id: string) {
     navigator.clipboard.writeText(id);

@@ -29,28 +29,24 @@ model User {
 }
 
 model Banner {
-  id             String     @id @default(uuid())
+  id             String   @id @default(uuid())
   label          String
   imageUrl       String
-  categoryBanner String?
-  categories     Category[] @relation("BannerToCategory")
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
-  isDeleted      Boolean    @default(false)
+  categoryBanner String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  isDeleted      Boolean  @default(false)
 }
 
 model Category {
   id       String    @id @default(uuid())
-  bannerid String
-  banner   Banner    @relation("BannerToCategory", fields: [bannerid], references: [id], onDelete: Cascade)
   name     String
   product  Product[] @relation("CategoryToProduct")
+  imageUrl String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   isDeleted Boolean  @default(false)
-
-  @@index([bannerid])
 }
 
 model Product {
