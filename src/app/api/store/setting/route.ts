@@ -3,40 +3,50 @@ import db from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request) {
+export async function PATCH(req: Request) {
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
-    if (!userId)
-      return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
+    if (!userId) throw new Error("Unauthenticated");
 
-    const { label, imageUrl, categoryBanner } = await req.json();
+    const { store_name, logo, phone, address } = await req.json();
 
-    if (!label)
+    if (!store_name)
       return NextResponse.json(
-        { error: "Label must be provided" },
-        { status: 500 }
-      );
-    if (!imageUrl)
-      return NextResponse.json(
-        { error: "Image URL must be provided" },
-        { status: 500 }
-      );
-    if (!categoryBanner)
-      return NextResponse.json(
-        { error: "Category banner must be provided" },
+        { error: "Store name must be provided" },
         { status: 500 }
       );
 
-    const banner = await db.banner.create({
+    if (!logo)
+      return NextResponse.json(
+        { error: "logo must be provided" },
+        { status: 500 }
+      );
+    if (!phone)
+      return NextResponse.json(
+        { error: "phone must be provided" },
+        { status: 500 }
+      );
+
+    if (!address)
+      return NextResponse.json(
+        { error: "address must be provided" },
+        { status: 500 }
+      );
+
+    const store = await db.store.update({
+      where: {
+        id: "1",
+      },
       data: {
-        label,
-        imageUrl,
-        categoryBanner
+        store_name,
+        logo,
+        address,
+        phone,
       },
     });
 
-    return NextResponse.json(banner);
+    return NextResponse.json(store);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -46,16 +56,11 @@ export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
+    if (!userId) throw new Error("Unauthenticated");
 
-    if (!userId) return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
+    const store = await db.store.findMany();
 
-    const banner = await db.banner.findMany({
-      where: {
-        isDeleted: false  
-      }
-    });
-
-    return NextResponse.json(banner);
+    return NextResponse.json(store);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

@@ -115,6 +115,9 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
     const product = await db.product.findMany({
+      where: {
+        isDeleted:false
+      },
       include: {
         images: true,
         category: true,

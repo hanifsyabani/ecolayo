@@ -84,10 +84,13 @@ export async function DELETE(
       return NextResponse.json({ error: "Banner not found" }, { status: 404 });
     }
 
-    await db.banner.delete({
+    await db.banner.update({
       where: {
         id: params.bannerid,
       },
+      data: {
+        isDeleted: true
+      }
     });
 
     return NextResponse.json({ message: "Banner deleted successfully" });

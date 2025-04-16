@@ -155,15 +155,20 @@ export async function DELETE(
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
-    if (!userId) return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
+    if (!userId)
+      return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
-    const product = await db.product.delete({
+    await db.product.update({
       where: {
         id: params.productid,
       },
+      data: {
+        isDeleted: true,
+      },
     });
 
-    return NextResponse.json(product);
+        return NextResponse.json({ message: "Category deleted successfully" });
+    
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

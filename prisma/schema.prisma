@@ -7,6 +7,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Store {
+  id         String @id @default(uuid())
+  store_name String @default("EcoLayo")
+  logo       String @default("")
+  address    String @default("")
+  phone      String @default("")
+}
+
 model User {
   id        String    @id @default(uuid())
   username  String?
@@ -20,6 +28,7 @@ model User {
   imageUrl  String?
   cart      Cart?     @relation("UserToCart")
   Checkout  Checkout? @relation("UserToCheckout")
+
   address   String?
   lastLogin DateTime?
 
@@ -93,7 +102,7 @@ model Images {
 
 model Cart {
   id        String     @id @default(uuid())
-  userId    String?    @unique // Opsional, karena user bisa saja belum memiliki cart
+  userId    String?    @unique
   user      User?      @relation("UserToCart", fields: [userId], references: [id], onDelete: Cascade)
   items     CartItem[]
   createdAt DateTime   @default(now())
@@ -131,7 +140,8 @@ model Checkout {
 }
 
 model Payment {
-  id String @id @default(uuid())
+  id     String @id @default(uuid())
+  method String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

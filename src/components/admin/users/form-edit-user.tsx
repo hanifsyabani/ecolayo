@@ -54,6 +54,7 @@ export default function FormEditUser({ userId }: FormEditUserProps) {
     handleSubmit,
     setValue,
     getValues,
+    watch,
     formState: { errors },
   } = useForm<FormFields>({
     resolver: zodResolver(schema),
@@ -79,6 +80,8 @@ export default function FormEditUser({ userId }: FormEditUserProps) {
       setValue("imageUrl", user.imageUrl);
     }
   }, [user, setValue]);
+
+  const imageUrl= watch("imageUrl");
 
   const { mutate: editUser } = useMutation({
     mutationFn: (data: FormFields) => PatchUser(userId, data),
@@ -299,8 +302,8 @@ export default function FormEditUser({ userId }: FormEditUserProps) {
             <div>
               <Label htmlFor="imageUrl">Image</Label>
               <UploadImage
-                value={[getValues("imageUrl") ?? ""].filter(Boolean)}
-                onChange={(urls) => setValue("imageUrl", urls[0] || "")} // Ambil elemen pertama
+                value={imageUrl ? [imageUrl] : []}
+                onChange={(urls) => setValue("imageUrl", urls[0] || "")}
                 onRemove={() => setValue("imageUrl", "")}
               />
 

@@ -48,7 +48,6 @@ type FormFields = z.infer<typeof schema>;
 export default function FormEditBanner({ id }: BannerFormProps) {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const params = useParams();
   const router = useRouter();
 
   const {
@@ -70,7 +69,7 @@ export default function FormEditBanner({ id }: BannerFormProps) {
 
   const { data: banner, isLoading: isLoadingBanner } = useQuery({
     queryFn: () => GetBannerById(id),
-    queryKey: ["dataCategory"],
+    queryKey: ["dataBanner"],
   });
 
   useEffect(() => {

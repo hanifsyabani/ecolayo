@@ -1,6 +1,5 @@
 "use client";
 
-import ApiAlert from "@/components/ui/api-alert";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,20 +13,24 @@ import Heading from "@/components/ui/heading";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import useOrigin from "@/hooks/use-origin";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { MoveLeft, Save, Trash } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
-
+import UploadImage from "../banner/upload-image";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { GetStore, PatchStore } from "@/service/store";
 
 const schema = z.object({
-  name: z.string().min(5),
+  store_name: z.string().min(5),
+  logo: z.string().min(1),
+  address: z.string().min(1),
+  phone: z.string().min(1),
 });
 type FormFields = z.infer<typeof schema>;
 
@@ -36,30 +39,60 @@ export default function SettingForm() {
   const [isOpen, setIsOpen] = useState(false);
   const params = useParams();
   const router = useRouter();
-  const origin = useOrigin()
 
   const {
     handleSubmit,
     register,
+    setValue,
+    reset,
+    watch,
     formState: { errors },
   } = useForm<FormFields>({
     resolver: zodResolver(schema),
-
+    defaultValues: {
+      store_name: "",
+      logo: "",
+      address: "",
+      phone: "",
+    },
   });
 
-  async function onSubmit(data: FormFields) {
-    try {
-      setIsLoadingForm(true);
+  const {
+    data: store,
+    isLoading: isLoadingStore,
+    refetch,
+  } = useQuery({
+    queryFn: () => GetStore(),
+    queryKey: ["dataStore"],
+  });
 
-      await axios.patch(`/api/store`, data);
-
-      router.refresh();
-      toast.success("Store updated successfully");
-    } catch (error) {
-      toast.error("Error updating");
-    } finally {
-      setIsLoadingForm(false);
+  useEffect(() => {
+    if (store) {
+      setValue("store_name", store.store_name);
+      setValue("logo", store.logo || "");
+      setValue("address", store.address);
+      setValue("phone", store.phone);
     }
+  }, [store, reset, setValue]);
+
+  const logo = watch("logo");
+
+  const { mutate: updateStore } = useMutation({
+    mutationFn: (data: FormFields) => PatchStore(data),
+    onSuccess: () => {
+      setIsLoadingForm(false);
+      toast.success("Store updated successfully");
+      refetch();
+    },
+    onError(error: any) {
+      setIsLoadingForm(false);
+      const message = error?.error || error?.message || "Error creating user";
+      toast.error(message);
+    },
+  });
+  async function onSubmit(data: FormFields) {
+    setIsLoadingForm(true);
+    updateStore(data);
   }
 
   async function onDeleteStore() {
@@ -77,14 +110,12 @@ export default function SettingForm() {
     }
   }
 
+  if (isLoadingStore) return <div className="spinner" />;
+
   return (
     <>
-      <Button className="bg-secondary text-white" onClick={() => router.back()}>
-        <MoveLeft />
-      </Button>
       <div className="flex items-center justify-between mt-4">
         <Heading title="Settings" description="Manage store preferences" />
-
         <Button
           variant="destructive"
           className="bg-red-500 text-white hover:bg-red-700"
@@ -94,17 +125,59 @@ export default function SettingForm() {
         </Button>
       </div>
       <Separator />
-      <form className="mt-10" onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <Label htmlFor="name">Name Store</Label>
-          <Input
-            id="name"
-            {...register("name")}
-            className="border border-gray-800"
-          />
-          {errors.name && (
-            <p className="text-red-500 text-sm">{errors.name.message}</p>
-          )}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className=" flex gap-8 mt-10">
+          <div className="w-1/2 space-y-4">
+            <div>
+              <Label htmlFor="name">Name Store</Label>
+              <Input
+                id="name"
+                {...register("store_name")}
+                className="border border-gray-800"
+              />
+              {errors.store_name && (
+                <p className="text-red-500 text-sm">
+                  {errors.store_name.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <Label htmlFor="address">Address</Label>
+              <Input
+                id="address"
+                {...register("address")}
+                className="border border-gray-800"
+              />
+              {errors.address && (
+                <p className="text-red-500 text-sm">{errors.address.message}</p>
+              )}
+            </div>
+            <div>
+              <Label htmlFor="phone">Phone</Label>
+              <Input
+                id="phone"
+                {...register("phone")}
+                className="border border-gray-800"
+              />
+              {errors.phone && (
+                <p className="text-red-500 text-sm">{errors.phone.message}</p>
+              )}
+            </div>
+          </div>
+          <div className="w-1/2">
+            <div>
+              <Label htmlFor="logo">Logo Store</Label>
+              <UploadImage
+                value={logo ? [logo] : []}
+                onChange={(urls) => setValue("logo", urls[0] || "")}
+                onRemove={() => setValue("logo", "")}
+              />
+
+              {errors.logo && (
+                <p className="text-red-500 text-sm">{errors.logo.message}</p>
+              )}
+            </div>
+          </div>
         </div>
 
         <Button
@@ -125,14 +198,6 @@ export default function SettingForm() {
         </Button>
       </form>
 
-      <div className="mt-10">
-        <ApiAlert
-          title="PUBLIC_API_URL"
-          description={`${origin}/api/${params.storeid}`}
-          variant="public"
-        />
-      </div>
-
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="bg-white">
           <DialogHeader>
@@ -146,7 +211,9 @@ export default function SettingForm() {
           </DialogHeader>
 
           <DialogFooter>
-            <Button variant={"outline"} onClick={() => setIsOpen(false)}>Cancel</Button>
+            <Button variant={"outline"} onClick={() => setIsOpen(false)}>
+              Cancel
+            </Button>
             <Button
               className="bg-red-500 text-white hover:bg-red-700"
               onClick={() => onDeleteStore()}

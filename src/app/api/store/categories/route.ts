@@ -46,7 +46,11 @@ export async function GET(req: Request) {
     // console.log("user id", userId);
     if (!userId) return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
-    const category = await db.category.findMany();
+    const category = await db.category.findMany({
+      where: {
+        isDeleted:false
+      }
+    });
 
     return NextResponse.json(category);
   } catch (error: any) {

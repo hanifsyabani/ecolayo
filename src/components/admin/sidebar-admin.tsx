@@ -11,10 +11,22 @@ import Link from "next/link";
 import Image from "next/image";
 import ButtonLogout from "../button-logout";
 import { usePathname } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { GetStore } from "@/service/store";
 
 
 export default function SidebarAdmin() {
   const pathname = usePathname();
+
+   const {
+      data: store,
+      isLoading: isLoadingStore,
+      refetch,
+    } = useQuery({
+      queryFn: () => GetStore(),
+      queryKey: ["dataStoreSidebar"],
+    });
+  
   const items = [
     {
       title: "Home",
@@ -46,12 +58,13 @@ export default function SidebarAdmin() {
     },
     {
       title: "Settings",
-      url: `/admin/store/settings`,
+      url: `/admin/settings`,
       icon: Settings,
       // active: pathname === `/admin/store/${store_id}/settings`,
     },
   ];
 
+  if(isLoadingStore) return <div className="spinner"></div>
   return (
     <Sidebar className="bg-white" side="left">
       <SidebarContent className="py-5 px-2 h-full">
@@ -60,13 +73,13 @@ export default function SidebarAdmin() {
           className="flex items-center gap-2"
         >
           <Image
-            src={"/logo.png"}
+            src={store?.logo}
             width={100}
             height={100}
             alt="logo"
             className="w-10"
           />
-          <h1 className="text-xl font-bold">EcoLayo</h1>
+          <h1 className="text-xl font-bold">{store?.store_name}</h1>
         </Link>
 
         <SidebarGroup className="flex-1">

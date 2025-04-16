@@ -67,10 +67,13 @@ export async function DELETE(
     const userId = session?.user.id;
     if (!userId) throw new Error("Unauthenticated");
 
-    await db.category.delete({
+    await db.category.update({
       where: {
         id: params.categoryid,
       },
+      data: {
+        isDeleted: true
+      }
     });
     return NextResponse.json({ message: "Category deleted successfully" });
   } catch (error: any) {
