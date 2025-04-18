@@ -43,6 +43,7 @@ export async function PATCH(
       lastName,
       address,
       phone,
+      gender
     } = await req.json();
 
     if (!username) throw new Error("Name must be provided");
@@ -75,6 +76,7 @@ export async function PATCH(
         { error: "Role must be provided" },
         { status: 500 }
       );
+     
 
     const user = await db.user.update({
       where: {
@@ -91,6 +93,7 @@ export async function PATCH(
         lastName,
         address,
         phone,
+        gender
       },
     });
 

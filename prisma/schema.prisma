@@ -25,6 +25,7 @@ model User {
   password  String
   role      String    @default("user")
   status    String    @default("active")
+  gender    String    @default("male")
   imageUrl  String?
   cart      Cart?     @relation("UserToCart")
   Checkout  Checkout? @relation("UserToCheckout")

@@ -39,6 +39,7 @@ export async function POST(req: Request) {
       lastName,
       address,
       phone,
+      gender
     } = await req.json();
 
     if (!username) throw new Error("Name must be provided");
@@ -87,6 +88,7 @@ export async function POST(req: Request) {
         lastName,
         address,
         phone,
+        gender
       },
     });
 

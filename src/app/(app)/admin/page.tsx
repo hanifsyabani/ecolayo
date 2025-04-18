@@ -1,4 +1,6 @@
 
+import ChartDashboard from "@/components/admin/chart-dashboard";
+import ChartProduct from "@/components/admin/chart-dashboard";
 import Statistics from "@/components/admin/statistic";
 import { Card, CardContent } from "@/components/ui/card";
 import { authOptions } from "@/lib/auth";
@@ -22,6 +24,10 @@ export default async function page() {
       </Card>
       <div className="flex justify-evenly flex-wrap items-center">
         <Statistics />
+      </div>
+
+      <div className="mt-10 px-3 ">
+        <ChartDashboard/>
       </div>
     </>
   );

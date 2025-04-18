@@ -40,6 +40,7 @@ const schema = z.object({
   phone: z.string().optional(),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
+  gender: z.string().optional(),
 });
 
 type FormFields = z.infer<typeof schema>;
@@ -53,7 +54,6 @@ export default function FormEditUser({ userId }: FormEditUserProps) {
     register,
     handleSubmit,
     setValue,
-    getValues,
     watch,
     formState: { errors },
   } = useForm<FormFields>({
@@ -76,12 +76,13 @@ export default function FormEditUser({ userId }: FormEditUserProps) {
       setValue("firstName", user.firstName);
       setValue("lastName", user.lastName);
       setValue("phone", user.phone);
+      setValue("gender", user.gender);
 
       setValue("imageUrl", user.imageUrl);
     }
   }, [user, setValue]);
 
-  const imageUrl= watch("imageUrl");
+  const imageUrl = watch("imageUrl");
 
   const { mutate: editUser } = useMutation({
     mutationFn: (data: FormFields) => PatchUser(userId, data),
@@ -217,6 +218,31 @@ export default function FormEditUser({ userId }: FormEditUserProps) {
                 </p>
               )}
             </div>
+            <div>
+              <Label htmlFor="gender">Gender</Label>
+              <Select onValueChange={(value) => setValue("gender", value)} value={user.gender}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Gender" />
+                </SelectTrigger>
+                <SelectContent className="bg-white">
+                  <SelectItem
+                    value="male"
+                    className="hover:bg-gray-200 cursor-pointer"
+                  >
+                    Male
+                  </SelectItem>
+                  <SelectItem
+                    value="admin"
+                    className="hover:bg-gray-200 cursor-pointer"
+                  >
+                    Female
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.gender && (
+                <p className="text-sm text-red-500">{errors.gender.message}</p>
+              )}
+            </div>
           </div>
 
           <div className="w-1/2 space-y-4">
@@ -317,7 +343,7 @@ export default function FormEditUser({ userId }: FormEditUserProps) {
         </div>
 
         <Button disabled={isLoading} className="text-white mt-8">
-          {isLoading ? <span className="spinner" /> : "Add User"}
+          {isLoading ? <span className="spinner" /> : "Save"}
         </Button>
       </form>
 

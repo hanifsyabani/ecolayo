@@ -35,6 +35,7 @@ const schema = z.object({
   phone: z.string().optional(),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
+  gender: z.string().optional(),
 });
 
 type FormFields = z.infer<typeof schema>;
@@ -152,13 +153,42 @@ export default function FormAddUser() {
                 </p>
               )}
             </div>
+            <div>
+              <Label htmlFor="gender">Gender</Label>
+              <Select onValueChange={(value) => setValue("gender", value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Gender" />
+                </SelectTrigger>
+                <SelectContent className="bg-white">
+                  <SelectItem
+                    value="male"
+                    className="hover:bg-gray-200 cursor-pointer"
+                  >
+                    Male
+                  </SelectItem>
+                  <SelectItem
+                    value="admin"
+                    className="hover:bg-gray-200 cursor-pointer"
+                  >
+                    Female
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.gender && (
+                <p className="text-sm text-red-500">
+                  {errors.gender.message}
+                </p>
+              )}
+            </div>
           </div>
 
           <div className="w-1/2 space-y-4">
             <div>
               <Label htmlFor="phone">Phone Number</Label>
               <div className="flex items-center">
-                <span className="text-sm text-white rounded-tl rounded-bl py-2 px-4 bg-primary">+62</span>
+                <span className="text-sm text-white rounded-tl rounded-bl py-2 px-4 bg-primary">
+                  +62
+                </span>
                 <Input
                   id="phone"
                   {...register("phone")}
@@ -230,7 +260,7 @@ export default function FormAddUser() {
               <Label htmlFor="imageUrl">Image</Label>
               <UploadImage
                 value={[getValues("imageUrl") ?? ""].filter(Boolean)}
-                onChange={(urls) => setValue("imageUrl", urls[0] || "")} 
+                onChange={(urls) => setValue("imageUrl", urls[0] || "")}
                 onRemove={() => setValue("imageUrl", "")}
               />
 

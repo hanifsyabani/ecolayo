@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   Sidebar,
@@ -6,7 +6,14 @@ import {
   SidebarGroup,
   SidebarGroupContent,
 } from "../ui/sidebar";
-import { Fullscreen, Home, Logs, Settings, ShoppingBasket, Users } from "lucide-react";
+import {
+  Fullscreen,
+  Home,
+  Logs,
+  Settings,
+  ShoppingBasket,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import ButtonLogout from "../button-logout";
@@ -14,19 +21,18 @@ import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { GetStore } from "@/service/store";
 
-
 export default function SidebarAdmin() {
   const pathname = usePathname();
 
-   const {
-      data: store,
-      isLoading: isLoadingStore,
-      refetch,
-    } = useQuery({
-      queryFn: () => GetStore(),
-      queryKey: ["dataStoreSidebar"],
-    });
-  
+  const {
+    data: store,
+    isLoading: isLoadingStore,
+    refetch,
+  } = useQuery({
+    queryFn: () => GetStore(),
+    queryKey: ["dataStoreSidebar"],
+  });
+
   const items = [
     {
       title: "Home",
@@ -64,41 +70,45 @@ export default function SidebarAdmin() {
     },
   ];
 
-  if(isLoadingStore) return <div className="spinner"></div>
   return (
     <Sidebar className="bg-white" side="left">
       <SidebarContent className="py-5 px-2 h-full">
-        <Link
-          href={`/admin/store`}
-          className="flex items-center gap-2"
-        >
-          <Image
-            src={store?.logo}
-            width={100}
-            height={100}
-            alt="logo"
-            className="w-10"
-          />
-          <h1 className="text-xl font-bold">{store?.store_name}</h1>
-        </Link>
+        {isLoadingStore ? (
+          <p>Loading...</p>
+        ) : (
+          <Link href={`/admin/store`} className="flex items-center gap-2">
+            <Image
+              src={store?.logo}
+              width={100}
+              height={100}
+              alt="logo"
+              className="w-10"
+            />
+            <h1 className="text-xl font-bold">{store?.store_name}</h1>
+          </Link>
+        )}
 
         <SidebarGroup className="flex-1">
           <SidebarGroupContent className="space-y-4">
             {items.map((item) => {
-              const isActive = pathname === item.url;
-              return(
-
-              <Link
-                href={item.url}
-                key={item.title}
-                className={`${
-                  isActive ? "bg-primary text-white" : "bg-white hover:bg-gray-200"
-                }  py-2 rounded-full px-3 cursor-pointer flex items-center gap-4`}
-              >
-                <item.icon size={25} />
-                <span>{item.title}</span>
-              </Link>
-              )
+               const isActive =
+               item.url === "/admin"
+                 ? pathname === "/admin"
+                 : pathname.startsWith(item.url);
+              return (
+                <Link
+                  href={item.url}
+                  key={item.title}
+                  className={`${
+                    isActive
+                      ? "bg-primary text-white"
+                      : "bg-white hover:bg-gray-200"
+                  }  py-2 rounded-full px-3 cursor-pointer flex items-center gap-4`}
+                >
+                  <item.icon size={25} />
+                  <span>{item.title}</span>
+                </Link>
+              );
             })}
           </SidebarGroupContent>
         </SidebarGroup>
