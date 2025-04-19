@@ -5,38 +5,80 @@ import { NextResponse } from "next/server";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { productid: string} }
+  { params }: { params: { productid: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
-    if (!userId) return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
+    if (!userId)
+      return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
-    const {
-      isLiked
-    } = await req.json();
+    const { isLiked } = await req.json();
 
     if (typeof isLiked !== "boolean") {
       return NextResponse.json(
-        { error: "isLiked must be a boolean" },
+        { error: "IsLiked must be a boolean" },
         { status: 400 }
       );
     }
 
-    const product = await db.product.update({
-      where: {
-        id: params.productid,
-        
-      },
+    if (isLiked) {
+      await db.likedProduct.create({
+        data: {
+          userId,
+          productId: params.productid,
+        },
+      });
+    } else{
+      await db.likedProduct.deleteMany({
+        where: {
+          userId,
+          productId: params.productid,
+        },
+      });
+    }
 
-      data: {
-        isLike: isLiked
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+
+
+export async function GET(
+  req: Request,
+  { params }: { params: {productid: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    const userId = session?.user.id;
+
+    const product = await db.product.findUnique({
+      where: { id: params.productid },
+      include: {
+        images: true,
+        tag: true,
+        category: true,
       },
     });
 
- 
+    if (!product) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
 
-    return NextResponse.json(product);
+    let isLike = false;
+    if (userId) {
+      const liked = await db.likedProduct.findFirst({
+        where: {
+          userId,
+          productId: product.id,
+        },
+      });
+      isLike = !!liked;
+    }
+
+    return NextResponse.json({ ...product, isLike });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

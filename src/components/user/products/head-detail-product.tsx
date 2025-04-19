@@ -1,6 +1,6 @@
 "use client";
 
-import {  addToCartAsync } from "@/app/redux/cart-slice";
+import { addToCartAsync } from "@/app/redux/cart-slice";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Category, Images, Product, Tag } from "@prisma/client";
@@ -9,10 +9,10 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { FaHeart, FaMinus, FaPlus, FaStar } from "react-icons/fa";
 import Sosmed from "../sosmed";
-import axios from "axios";
-import { useParams } from "next/navigation";
 import { useAppDispatch } from "@/hooks/use-app-dispatch";
 import { useSession } from "next-auth/react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { GetLikedProducts, PatchLikedProduct } from "@/service/shop/products";
 
 interface ProductProps {
   setDialog?: (open: boolean) => void;
@@ -34,7 +34,6 @@ export default function HeadDetailProduct({
   const dispatch = useAppDispatch();
   const [quantity, setQuantity] = useState(1);
   const [isLoadingForm, setIsLoadingForm] = useState(false);
-  const [isLiked, setIsLiked] = useState(product?.isLike || false);
   const { data: session } = useSession();
 
   const formatter = new Intl.NumberFormat("id-ID", {
@@ -50,33 +49,37 @@ export default function HeadDetailProduct({
     setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
   }
 
-  async function handleLiked() {
-    try {
-      setIsLoadingForm(true);
-      await axios.patch(
-        `/api/af990241-e9fd-458c-9612-47ea908df21f/products/${product?.id}/liked-product`,
-        {
-          isLiked: !isLiked,
-        }
-      );
+  const {
+    data: liked,
+    isLoading: isLoadingLiked,
+    refetch,
+  } = useQuery({
+    queryFn: () => GetLikedProducts(product?.id || ""),
+    queryKey: ["liked", product?.id],
+    enabled: !!product?.id,
+  });
 
-      setIsLiked((prev) => !prev);
+  if (!product?.id) return null;
+  const toastMessage = liked?.isLike ? "Product removed from wishlist" : "Product added to wishlist";
 
-      if (product) {
-        product.isLike = !isLiked;
-      }
-
-      toast.success(isLiked ? "Product Unliked" : "Product Liked");
-    } catch (error) {
-      toast.error("Failed Liked Product");
-    } finally {
+  const { mutate: toggleLike } = useMutation({
+    mutationFn: (isLiked: boolean) => PatchLikedProduct(product?.id, isLiked),
+    onSuccess: () => {
       setIsLoadingForm(false);
-    }
-  }
+      toast.success(toastMessage);
+      refetch();
+    },
+    onError: (error: any) => {
+      setIsLoadingForm(false);
+      const message = error?.error || error?.message || "Cannot like product";
+      toast.error(message);
+    },
+  });
 
-  useEffect(() => {
-    setIsLiked(product?.isLike || false);
-  }, [product?.isLike]);
+  async function handleToggleLike(isLiked: boolean) {
+    setIsLoadingForm(true);
+    toggleLike(!isLiked);
+  }
 
   async function handleAddtoCart() {
     if (!product?.stock) {
@@ -162,9 +165,9 @@ export default function HeadDetailProduct({
           className={`bg-gray-200 rounded-full p-2 cursor-pointer ${
             isLoadingForm && "cursor-not-allowed"
           }`}
-          onClick={handleLiked}
+          onClick={() => handleToggleLike(liked?.isLike || false)}
         >
-          {isLiked ? (
+          {liked?.isLike ? (
             <FaHeart size={20} className="text-primary" />
           ) : (
             <Heart size={20} className="text-primary" />

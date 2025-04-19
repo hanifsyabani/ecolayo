@@ -16,19 +16,20 @@ model Store {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  username  String?
-  firstName String?
-  lastName  String?
-  email     String    @unique
-  phone     String?
-  password  String
-  role      String    @default("user")
-  status    String    @default("active")
-  gender    String    @default("male")
-  imageUrl  String?
-  cart      Cart?     @relation("UserToCart")
-  Checkout  Checkout? @relation("UserToCheckout")
+  id           String         @id @default(uuid())
+  username     String?
+  firstName    String?
+  lastName     String?
+  email        String         @unique
+  phone        String?
+  password     String
+  role         String         @default("user")
+  status       String         @default("active")
+  gender       String         @default("male")
+  imageUrl     String?
+  cart         Cart?          @relation("UserToCart")
+  Checkout     Checkout?      @relation("UserToCheckout")
+  LikedProduct LikedProduct[] @relation("UserToLikedProduct")
 
   address   String?
   lastLogin DateTime?
@@ -60,27 +61,38 @@ model Category {
 }
 
 model Product {
-  id               String     @id @default(uuid())
+  id               String         @id @default(uuid())
   categoryid       String
-  category         Category   @relation("CategoryToProduct", fields: [categoryid], references: [id], onDelete: Cascade)
+  category         Category       @relation("CategoryToProduct", fields: [categoryid], references: [id], onDelete: Cascade)
   name             String
   price            Decimal
   description      String?
   shortDescription String?
-  tag              Tag[]      @relation("ProductToTag")
-  isLike           Boolean    @default(false)
-  isFeatured       Boolean    @default(false)
-  isArchived       Boolean    @default(false)
-  stars            Float      @default(0.0)
-  stock            Int?       @default(0)
-  images           Images[]   @relation("ProductToImages")
-  cartItems        CartItem[] @relation("ProductToCartItem")
+  tag              Tag[]          @relation("ProductToTag")
+  isLike           Boolean        @default(false)
+  isFeatured       Boolean        @default(false)
+  isArchived       Boolean        @default(false)
+  stars            Float          @default(0.0)
+  stock            Int?           @default(0)
+  images           Images[]       @relation("ProductToImages")
+  cartItems        CartItem[]     @relation("ProductToCartItem")
+  LikedProduct     LikedProduct[] @relation("ProductToLikedProduct")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   isDeleted Boolean  @default(false)
 
   @@index([categoryid])
+}
+
+model LikedProduct {
+  id        String  @id @default(uuid())
+  user      User    @relation("UserToLikedProduct", fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  product   Product @relation("ProductToLikedProduct", fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+
+  @@index([userId, productId])
 }
 
 model Tag {
