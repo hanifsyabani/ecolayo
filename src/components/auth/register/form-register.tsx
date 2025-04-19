@@ -9,13 +9,17 @@ import Link from "next/link";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
+import { useMutation } from "@tanstack/react-query";
+import { Register } from "@/service/auth";
 
 const schema = z.object({
   email: z.string().email(),
   password: z
     .string()
     .min(8, { message: "Password must be at least 8 characters" }),
-  name: z.string().min(5, { message: "Name must be at least 5 characters" }),
+  username: z
+    .string()
+    .min(5, { message: "Name must be at least 5 characters" }),
 });
 type FormFields = z.infer<typeof schema>;
 
@@ -31,48 +35,43 @@ export default function FormRegister() {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = async (data: any) => {
-    setIsLoadingForm(true);
-    try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      if (!res.ok) {
-        toast.error("Failed to register");
-        setIsLoadingForm(false);
-      }
-    } catch (error) {
-    } finally {
+  const { mutate: registerUser } = useMutation({
+    mutationFn: (data: FormFields) => Register(data),
+    onSuccess: () => {
       setIsLoadingForm(false);
-    }
+      toast.success("Register success");
+      router.push("/login");
+    },
+    onError: (error: any) => {
+      setIsLoadingForm(false);
+      const message = error?.error || error?.message || "Error creating user";
+      toast.error(message);
+    },
+  });
 
-    router.push("/login");
-  };
+  async function onSubmit(data: FormFields) {
+    setIsLoadingForm(true);
+    registerUser(data);
+  }
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="space-y-4"
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <h2 className="text-2xl font-bold text-center text-secondary">
         Register
       </h2>
 
       <Input
-        {...register("name", { required: "Nama wajib diisi" })}
+        {...register("username")}
         type="text"
         placeholder="Name"
         className="w-full p-2 border rounded"
       />
-      {errors.name && (
-        <p className="text-red-500">{errors.name.message as string}</p>
+      {errors.username && (
+        <p className="text-red-500">{errors.username.message as string}</p>
       )}
 
       <Input
-        {...register("email", { required: "Email wajib diisi" })}
+        {...register("email")}
         type="email"
         placeholder="Email"
         className="w-full p-2 border rounded"
@@ -82,7 +81,7 @@ export default function FormRegister() {
       )}
 
       <Input
-        {...register("password", { required: "Password wajib diisi" })}
+        {...register("password")}
         type="password"
         placeholder="Password"
         className="w-full p-2 border rounded"
@@ -94,8 +93,9 @@ export default function FormRegister() {
       <Button
         type="submit"
         className="w-full p-2 text-white bg-secondary rounded"
+        disabled={isLoadingForm}
       >
-        Register
+        {isLoadingForm ? <p className="spinner" /> : "Register"}
       </Button>
       <p className="text-center text-sm">
         Have an account?{" "}

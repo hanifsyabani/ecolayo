@@ -1,37 +1,24 @@
 "use client";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { Banner, Category } from "@prisma/client";
-import axios from "axios";
-import { ArrowRight } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
 import TitleHome from "./title-home";
+import { useQuery } from "@tanstack/react-query";
+import { GetCategories } from "@/service/categories";
 
-interface CategoryWithBanner extends Category {
-  banner: Banner;
+interface CategoriesProps{
+  id:string
+  name:string,
+  imageUrl :string
 }
 
 export default function ProductCategories() {
-  const [category, setCategory] = useState<CategoryWithBanner[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get<CategoryWithBanner[]>(
-          "/api/af990241-e9fd-458c-9612-47ea908df21f/categories"
-        );
-        setCategory(response.data);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const {data: categories, isLoading:isLoadingCategories} = useQuery({
+    queryFn: () => GetCategories(),
+    queryKey: ["dataCategories"],
+  })
 
-    fetchCategories();
-  }, []);
 
   return (
     <div className="px-4 pb-8 overflow-hidden">
@@ -39,17 +26,17 @@ export default function ProductCategories() {
 
       <div className="flex justify-evenly items-center mt-4">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-y-14">
-          {isLoading
+          {isLoadingCategories
             ? Array.from({ length: 6 }).map((_, index) => (
                 <Skeleton key={index} className="w-52 h-20 rounded-xl" />
               ))
-            : category.map((item) => (
+            : categories.map((item: CategoriesProps) => (
                 <div
                   key={item.id}
                   className="w-52 h-20 flex flex-col items-center"
                 >
-                  <Image
-                    src={item?.banner?.imageUrl}
+                  <Image  
+                    src={item?.imageUrl}
                     width={100}
                     height={100}
                     alt="categoryimg"

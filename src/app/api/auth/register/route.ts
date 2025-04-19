@@ -6,13 +6,23 @@ const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
-    const { username, email, password } =
-      await req.json();
+    const { username, email, password } = await req.json();
 
     if (!email || !password) {
       return NextResponse.json(
         { message: "Email and password are required" },
         { status: 400 }
+      );
+    }
+
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        { message: "User already exists" },
+        { status: 500 }
       );
     }
 
@@ -25,7 +35,7 @@ export async function POST(req: Request) {
     return NextResponse.json(user, { status: 201 });
   } catch (error) {
     return NextResponse.json(
-      { message: "User already exists" },
+      { message: "Something went wrong" },
       { status: 500 }
     );
   }

@@ -28,7 +28,6 @@ export default function ProductCard({ product }: ProductCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
 
-  const { data: session } = useSession();
 
   const formatter = new Intl.NumberFormat("id-ID", {
     minimumFractionDigits: 0,
@@ -45,11 +44,6 @@ export default function ProductCard({ product }: ProductCardProps) {
     if (!product.stock) {
       toast.error("Product out of stock");
       return; 
-    }
-
-    if (!session || !session.user?.id) {
-      toast.error("Please login first");
-      return;
     }
 
     setIsLoading(true);

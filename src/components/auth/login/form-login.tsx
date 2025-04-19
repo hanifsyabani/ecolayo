@@ -43,20 +43,17 @@ export default function FormLogin() {
       if (res?.error) {
         toast.error(res.error);
       }
+
+      router.push("/");
     } catch (error: any) {
       toast.error(error.message);
     } finally {
       setIsLoadingForm(false);
     }
-
-    router.push("/");
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="space-y-4"
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <h2 className="text-2xl text-secondary font-bold text-center">Login</h2>
 
       <div>

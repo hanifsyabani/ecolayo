@@ -1,36 +1,15 @@
-'use client'
+"use client";
 
-import { Category } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Heart } from "lucide-react";
-import ButtonLogout from "../button-logout";
 import NavBottomUser from "./nav-bottom-user";
 import CartTrigger from "./cart-trigger";
-import { useEffect, useState } from "react";
 import NavTopUser from "./nav-top-user";
 
 export default function NavUser() {
-  const [category, setCategory] = useState<Category[]>([]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch(
-          "/api/af990241-e9fd-458c-9612-47ea908df21f/categories"
-        );
-        const data = await response.json();
-        setCategory(data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
   return (
     <nav>
       <div className="fixed w-full bg-white z-40">
@@ -55,7 +34,10 @@ export default function NavUser() {
           </div>
           <div className="flex items-center gap-6">
             <Link href={`/shop/wishlist`}>
-              <Heart size={20} className="text-gray-800  hover:text-primary cursor-pointer" />
+              <Heart
+                size={20}
+                className="text-gray-800  hover:text-primary cursor-pointer"
+              />
             </Link>
 
             <CartTrigger />
@@ -63,7 +45,7 @@ export default function NavUser() {
         </div>
       </div>
 
-      <NavBottomUser category={category} />
+      <NavBottomUser />
     </nav>
   );
 }

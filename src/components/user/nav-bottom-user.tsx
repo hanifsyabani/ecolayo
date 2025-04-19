@@ -1,6 +1,5 @@
 "use client";
 
-import { Category } from "@prisma/client";
 import { useParams, usePathname } from "next/navigation";
 import {
   Select,
@@ -10,16 +9,19 @@ import {
   SelectValue,
 } from "../ui/select";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { GetCategories } from "@/service/categories";
 
-interface NavUserProps {
-  category: Category[];
-}
-
-export default function NavBottomUser({ category }: NavUserProps) {
+export default function NavBottomUser() {
   const pathname = usePathname();
   const params = useParams();
   const [scrolled, setScrolled] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+
+  const {data: categories, isLoading: isLoadingCategories} = useQuery({
+    queryFn: () => GetCategories(),
+    queryKey:['dataCategories']
+  })
 
   useEffect(() => {
     const handleScroll = () => {
@@ -27,7 +29,7 @@ export default function NavBottomUser({ category }: NavUserProps) {
 
       if (scrollTop > lastScrollY) {
         setScrolled(true);
-      } else  {
+      } else {
         setScrolled(false);
       }
       setLastScrollY(scrollTop);
@@ -61,6 +63,8 @@ export default function NavBottomUser({ category }: NavUserProps) {
       active: pathname === `/admin/store/${params.storeid}/products`,
     },
   ];
+
+  if(isLoadingCategories) return <div></div>
   return (
     <nav
       className={`bg-gray-800 z-10 mt-24 w-full flex items-center gap-8 transition-transform duration-300 fixed py-2 px-3 ${
@@ -73,7 +77,7 @@ export default function NavBottomUser({ category }: NavUserProps) {
             <SelectValue placeholder="All Categories" />
           </SelectTrigger>
           <SelectContent className="bg-white">
-            {category.map((item) => (
+            {categories.map((item:any) => (
               <SelectItem
                 value={item.id}
                 key={item.id}
