@@ -5,7 +5,7 @@ import { Columns, WishlistColumn } from "./column-wishlist";
 
 import Sosmed from "../sosmed";
 import { useQuery } from "@tanstack/react-query";
-import { GetLikedProducts } from "@/service/shop/products";
+import { GetAllWishlist } from "@/service/shop/products";
 
 export default function TableWishlist() {
   const {
@@ -13,7 +13,7 @@ export default function TableWishlist() {
     isLoading: isLoadingLiked,
     refetch,
   } = useQuery({
-    queryFn: () => GetLikedProducts(),
+    queryFn: () => GetAllWishlist(),
     queryKey: ["listLikedProducts"],
   });
 

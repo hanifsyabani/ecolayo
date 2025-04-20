@@ -34,8 +34,7 @@ export async function GetLikedProduct(productid: string) {
   }
 }
 
-export async function GetLikedProducts() {
-
+export async function GetAllWishlist() {
   try {
     const response = await axios.get(`/api/store/products/liked-products`, {
       withCredentials: true,
@@ -49,3 +48,20 @@ export async function GetLikedProducts() {
   }
 }
 
+export async function GetRelatedProductByCategory(categoryid: string, productid: string) {
+  try {
+    const response = await axios.get(
+      `/api/store/products/related-products/${categoryid}?productid=${productid}`,
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error: any) {
+    throw error.response?.data || { error: "Something went wrong" };
+  }
+}

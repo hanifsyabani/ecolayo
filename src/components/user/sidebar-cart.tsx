@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
 import {
   clearCart,
+  deleteAllCartAsync,
   deleteCartAsync,
   fetchCartAsync,
 } from "@/app/redux/cart-slice";
@@ -61,8 +62,8 @@ export function SidebarCart() {
     if (!cart?.id) return;
 
     try {
-      await axios.delete(`/api/cart/`);
-      dispatch(clearCart());
+      await dispatch(deleteAllCartAsync());
+      await dispatch(fetchCartAsync());
       toast.success("Cart cleared");
     } catch (error) {
       toast.error("Failed to clear cart");

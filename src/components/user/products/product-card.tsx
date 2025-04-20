@@ -93,7 +93,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <Link href={`/user/product/${product?.id}`}>
+          <Link href={`/shop/product/${product?.id}`}>
             <div className="mt-2 space-y-1">
               <h1 className="text-sm font-extralight">{product?.name}</h1>
               <p className="text-sm">{formatter.format(product?.price || 0)}</p>

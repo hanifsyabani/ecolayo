@@ -164,10 +164,10 @@ export async function PATCH(req: Request) {
 
     const cartItem = await db.cartItem.findFirst({
       where: {
-        cart:{
-          userId
+        cart: {
+          userId,
         },
-        
+
         id,
       },
     });
@@ -188,11 +188,30 @@ export async function PATCH(req: Request) {
       message: "Cart updated successfully",
       cartItem: updatedCartItem,
     });
-  } catch (error) {
-    console.error("Error updating cart:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    const userId = session?.user?.id;
+
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    await db.cartItem.deleteMany({
+      where: {
+        cart: {
+          userId: userId
+        }
+      }
+    })
+
+    return NextResponse.json({ message: "Cart cleared successfully" });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

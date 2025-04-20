@@ -1,8 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Product, Images, Tag, Category } from "@prisma/client";
-import { ShopCartColumn } from "@/components/user/shop-cart/columns-shopping-cart";
-import { string } from "zod";
 
 // Define types
 interface CartItem {
@@ -83,6 +81,13 @@ export const deleteCartAsync = createAsyncThunk(
   "cart/deleteCart",
   async ({itemid}: {itemid: string}) => {
      await axios.delete(`/api/cart/${itemid}`) 
+  }
+)
+
+export const deleteAllCartAsync = createAsyncThunk(
+  "cart/deleteAllCart",
+  async () => {
+     await axios.delete(`/api/cart`)
   }
 )
 

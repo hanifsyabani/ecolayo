@@ -13,15 +13,23 @@ export async function GET(
     if (!userId)
       return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
-    if (!params.categoryid)
+   
+
+    const {searchParams} = new URL(req.url); 
+    const productid = searchParams.get("productid");
+
+    if (!params.categoryid || !productid)
       return NextResponse.json(
-        { error: "Category ID must be provided" },
+        { error: "Category ID and Product ID must be provided" },
         { status: 500 }
       );
 
-    const product = await db.product.findMany({
+    const relatedProduct = await db.product.findMany({
       where: {
         categoryid: params.categoryid,
+        id: {
+          not: productid,
+        },
       },
       include: {
         images: true,
@@ -30,7 +38,7 @@ export async function GET(
       },
     });
 
-    return NextResponse.json(product);
+    return NextResponse.json(relatedProduct);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
