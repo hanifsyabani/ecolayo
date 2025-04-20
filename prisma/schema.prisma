@@ -69,7 +69,6 @@ model Product {
   description      String?
   shortDescription String?
   tag              Tag[]          @relation("ProductToTag")
-  isLike           Boolean        @default(false)
   isFeatured       Boolean        @default(false)
   isArchived       Boolean        @default(false)
   stars            Float          @default(0.0)

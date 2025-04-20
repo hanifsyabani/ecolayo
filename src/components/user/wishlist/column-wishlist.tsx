@@ -9,19 +9,19 @@ import Image from "next/image";
 export type WishlistColumn = {
   id: string;
   name:string,
-  images: Images[]
+  images: string
   stock: number;
   price: number;
 }
 
-export const Columns = (onRefresh: () => void): ColumnDef<WishlistColumn>[] => [
+export const Columns = (refetch: () => void): ColumnDef<WishlistColumn>[] => [
   {
     accessorKey: "name",
     header: "Product",
     cell: ({ row }) => (
       <div className="flex items-center gap-2">
         <Image
-          src={row.original.images[0].url}
+          src={row.original.images}
           width={80}
           height={80}
           alt={row.original.name}
@@ -60,7 +60,7 @@ export const Columns = (onRefresh: () => void): ColumnDef<WishlistColumn>[] => [
   },
   {
     id: "actions",
-    cell: ({ row }) => <Action product={row.original} onRefresh={onRefresh} />,
+    cell: ({ row }) => <Action product={row.original} refetch={refetch} />,
   },
 ];
 

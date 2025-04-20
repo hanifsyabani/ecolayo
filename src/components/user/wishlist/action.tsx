@@ -17,13 +17,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useMutation } from "@tanstack/react-query";
+import { PatchLikedProduct } from "@/service/shop/products";
 
 interface ActionProps {
   product: WishlistColumn;
-  onRefresh : () => void
+  refetch: () => void;
 }
 
-export default function Action({ product, onRefresh }: ActionProps) {
+export default function Action({ product, refetch }: ActionProps) {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
   const [openDialog, setOpenDialog] = useState(false);
@@ -40,7 +42,6 @@ export default function Action({ product, onRefresh }: ActionProps) {
         })
       );
 
-
       toast.success("Product added to cart");
     } catch (error) {
       toast.error("Error adding to cart");
@@ -49,27 +50,45 @@ export default function Action({ product, onRefresh }: ActionProps) {
     }
   }
 
-  async function handleRemoveItem() {
-    setIsLoading(true);
-    try {
-      await axios.patch(
-        `/api/af990241-e9fd-458c-9612-47ea908df21f/products/${product.id}/liked-product`,
-        {
-          isLiked: false,
-        }
-      );
+  // async function handleRemoveItem() {
+  //   setIsLoading(true);
+  //   try {
+  //     await axios.patch(
+  //       `/api/af990241-e9fd-458c-9612-47ea908df21f/products/${product.id}/liked-product`,
+  //       {
+  //         isLiked: false,
+  //       }
+  //     );
 
-    
+  //     setOpenDialog(false);
+  //     toast.success("Product removed from wishlist");
+  //     onRefresh();
+  //   } catch (error) {
+  //     toast.error("Failed to remove product from wishlist");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // }
+
+  const {mutate: removeFromWishlist} = useMutation({
+    mutationFn: () => PatchLikedProduct(product.id, false),
+    onSuccess: () => {
+      setIsLoading(false);
       setOpenDialog(false);
       toast.success("Product removed from wishlist");
-      onRefresh()
-    } catch (error) {
-      toast.error("Failed to remove product from wishlist");
-    } finally {
+      refetch();
+    },
+    onError: (error: any) => {
       setIsLoading(false);
-    }
-  }
+      const message = error?.error || error?.message || "Cannot like product";
+      toast.error(message);
+    },
+  });
 
+  async function handleRemoveItem() {
+    setIsLoading(true);
+    removeFromWishlist();
+  }
 
   return (
     <>
@@ -108,7 +127,7 @@ export default function Action({ product, onRefresh }: ActionProps) {
               className="text-white bg-red-500 hover:bg-red-900"
               disabled={isLoading}
             >
-              {isLoading ? <p className="spinner"/> : "Remove"}
+              {isLoading ? <p className="spinner" /> : "Remove"}
             </Button>
           </DialogFooter>
         </DialogContent>

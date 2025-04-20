@@ -22,6 +22,7 @@ export async function PATCH(
       );
     }
 
+    // jika true maka buat ke daftar suka, jika false maka hapus dari daftar suka
     if (isLiked) {
       await db.likedProduct.create({
         data: {
@@ -29,7 +30,7 @@ export async function PATCH(
           productId: params.productid,
         },
       });
-    } else{
+    } else {
       await db.likedProduct.deleteMany({
         where: {
           userId,
@@ -44,18 +45,18 @@ export async function PATCH(
   }
 }
 
-
-
 export async function GET(
   req: Request,
-  { params }: { params: {productid: string } }
+  { params }: { params: { productid: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
 
     const product = await db.product.findUnique({
-      where: { id: params.productid },
+      where: {
+        id: params.productid,
+      },
       include: {
         images: true,
         tag: true,
@@ -75,9 +76,12 @@ export async function GET(
           productId: product.id,
         },
       });
+      // true jika liked adalah objek (artinya user pernah like)
+      // false jika liked adalah null
       isLike = !!liked;
     }
 
+    // isLike bakal nimpa yg di product.
     return NextResponse.json({ ...product, isLike });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

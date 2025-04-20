@@ -5,14 +5,16 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Category, Images, Product, Tag } from "@prisma/client";
 import { Heart, ShoppingCart } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import toast from "react-hot-toast";
 import { FaHeart, FaMinus, FaPlus, FaStar } from "react-icons/fa";
 import Sosmed from "../sosmed";
 import { useAppDispatch } from "@/hooks/use-app-dispatch";
-import { useSession } from "next-auth/react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { GetLikedProducts, PatchLikedProduct } from "@/service/shop/products";
+import {
+  useMutation,
+  useQuery,
+} from "@tanstack/react-query";
+import { GetLikedProduct, PatchLikedProduct } from "@/service/shop/products";
 
 interface ProductProps {
   setDialog?: (open: boolean) => void;
@@ -34,7 +36,6 @@ export default function HeadDetailProduct({
   const dispatch = useAppDispatch();
   const [quantity, setQuantity] = useState(1);
   const [isLoadingForm, setIsLoadingForm] = useState(false);
-  const { data: session } = useSession();
 
   const formatter = new Intl.NumberFormat("id-ID", {
     minimumFractionDigits: 0,
@@ -54,16 +55,19 @@ export default function HeadDetailProduct({
     isLoading: isLoadingLiked,
     refetch,
   } = useQuery({
-    queryFn: () => GetLikedProducts(product?.id || ""),
+    queryFn: () => GetLikedProduct(product?.id || ""),
     queryKey: ["liked", product?.id],
     enabled: !!product?.id,
   });
 
-  if (!product?.id) return null;
-  const toastMessage = liked?.isLike ? "Product removed from wishlist" : "Product added to wishlist";
+  const productId = product?.id;
+  const toastMessage = liked?.isLike
+    ? "Product removed from wishlist"
+    : "Product added to wishlist";
 
   const { mutate: toggleLike } = useMutation({
-    mutationFn: (isLiked: boolean) => PatchLikedProduct(product?.id, isLiked),
+    // pakai non-null assertion karena kita udah cek
+    mutationFn: (isLiked: boolean) => PatchLikedProduct(productId!, isLiked),
     onSuccess: () => {
       setIsLoadingForm(false);
       toast.success(toastMessage);
@@ -86,8 +90,6 @@ export default function HeadDetailProduct({
       toast.error("Product out of stock");
       return;
     }
-
-    if (!session) return toast.error("Please login first");
 
     try {
       await dispatch(

@@ -1,12 +1,9 @@
 "use client";
 
-import React, { useEffect } from "react";
 import { SidebarTrigger } from "../ui/sidebar";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
-import { useSession } from "next-auth/react";
-import { useAppDispatch } from "@/hooks/use-app-dispatch";
-import { fetchCartAsync } from "@/app/redux/cart-slice";
+
 
 export default function CartTrigger() {
   const { cart } = useSelector((state: RootState) => state.cart);
