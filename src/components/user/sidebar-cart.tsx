@@ -20,7 +20,6 @@ import { Button } from "../ui/button";
 import Link from "next/link";
 import { useAppDispatch } from "@/hooks/use-app-dispatch";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import toast from "react-hot-toast";
 
 export function SidebarCart() {
@@ -147,9 +146,11 @@ export function SidebarCart() {
                     {formatter.format(totalPrice || 0)}
                   </h1>
                 </div>
-                <Button className="w-full bg-primary text-white py-1 rounded-full mb-2">
-                  Checkout
-                </Button>
+                <Link href={"/shop/checkout"}>
+                  <Button className="w-full bg-primary text-white py-1 rounded-full mb-2">
+                    Checkout
+                  </Button>
+                </Link>
                 <Link href="/shop/shop-cart" className="block mb-2">
                   <Button
                     variant="outline"

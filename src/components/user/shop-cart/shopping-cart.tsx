@@ -7,11 +7,7 @@ import CartTotal from "./cart-total";
 import Newsletter from "../products/newsletter";
 import { useAppDispatch } from "@/hooks/use-app-dispatch";
 import { useEffect, useState } from "react";
-import {
-  deleteCartAsync,
-  fetchCartAsync,
-  updateCartAsync,
-} from "@/app/redux/cart-slice";
+import { fetchCartAsync, updateCartAsync } from "@/app/redux/cart-slice";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
 import { Button } from "@/components/ui/button";
@@ -41,9 +37,7 @@ export default function ShoppingCart() {
     price: item.product.price,
     images: item.product.images || [],
     quantity:
-      cartUpdates[item.id] !== undefined
-        ? cartUpdates[item.id]
-        : item.quantity,
+      cartUpdates[item.id] !== undefined ? cartUpdates[item.id] : item.quantity,
     totalPrice: formatter.format(
       item.product.price *
         (cartUpdates[item.id] !== undefined
@@ -51,7 +45,6 @@ export default function ShoppingCart() {
           : item.quantity)
     ),
   }));
-
 
   function handleQuantityChange(id: string, quantity: number) {
     setCartUpdates((prev) => ({
