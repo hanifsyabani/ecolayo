@@ -90,7 +90,6 @@ export default function ShoppingCart() {
     0
   );
 
-  // console.log(cart);
   return (
     <>
       <div className="flex px-8 py-10 justify-center gap-6">

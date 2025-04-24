@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function page() {
   return (
-    <div >
+    <div className="py-4" >
       <Image
         src="/Breadcrumbs.png"
         alt="Breadcrumb"

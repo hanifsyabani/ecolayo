@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 // app/api/provinces/route.ts
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { provinceid: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -15,10 +15,9 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    console.log("provinsi: ", params.id);
 
     const res = await fetch(
-      `https://wilayah.id/api/regencies/${params.id}.json`,
+      `https://wilayah.id/api/regencies/${params.provinceid}.json`,
       {
         headers: {
           Accept: "application/json",
@@ -34,9 +33,9 @@ export async function GET(
       );
     }
 
-    const district = await res.json();
+    const kabupaten = await res.json();
 
-    return NextResponse.json(district);
+    return NextResponse.json(kabupaten);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

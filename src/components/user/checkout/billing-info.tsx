@@ -9,45 +9,65 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { GetDistrictByProvince, GetProvinces } from "@/service/shop/provinces";
-import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  GetKabupatenByProvince,
+  GetKecamatan,
+  GetKelurahan,
+  GetProvinces,
+} from "@/service/shop/provinces";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { FieldErrors,  UseFormRegister, UseFormSetValue } from "react-hook-form";
 
-const schema = z.object({
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
-  companyName: z.string().optional(),
-  streetAddress: z.string().min(1),
-  province: z.string().min(1),
-  district: z.string().min(1),
-  postalCode: z.string().min(1),
-  email: z.string().email(),
-  phone: z.string().min(1),
-});
-type FormFields = z.infer<typeof schema>;
 
-export default function BillingInfo() {
+interface FormFields {
+  firstName: string;
+  lastName: string;
+  companyName?: string;
+  streetAddress: string;
+  province: string;
+  kabupaten: string;
+  kecamatan: string;
+  kelurahan: string;
+  postalCode: string;
+  email: string;
+  phone: string;
+  orderNotes?: string;
+  paymentMethod: string; // Added this field to match parent component
+}
+
+interface BillingProps {
+  register: UseFormRegister<FormFields>;
+  setValue: UseFormSetValue<FormFields>;
+  errors: FieldErrors<FormFields>;
+}
+
+export default function BillingInfo({register, setValue, errors}: BillingProps) {
   const [selectedProvince, setSelectedProvince] = useState("");
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<FormFields>({
-    resolver: zodResolver(schema),
-  });
+  const [selectedKabupaten, setSelectedKabupaten] = useState("");
+  const [selectedKecamatan, setSelectedKecamatan] = useState("");
+  const [selectedKelurahan, setSelectedKelurahan] = useState("");
+
+
 
   const { data: provinces, isLoading: isLoadingProvinces } = useQuery({
     queryFn: () => GetProvinces(),
     queryKey: ["dataProvinces"],
   });
-  const { data: districks, isLoading: isLoadingDistricts } = useQuery({
-    queryFn: () => GetDistrictByProvince(selectedProvince),
-    queryKey: ["dataDistricts", selectedProvince],
+  const { data: kabupaten, isLoading: isLoadingKabupaten } = useQuery({
+    queryFn: () => GetKabupatenByProvince(selectedProvince),
+    queryKey: ["dataKabupaten", selectedProvince],
     enabled: !!selectedProvince,
+  });
+  const { data: kecamatan, isLoading: isLoadingKecamatan } = useQuery({
+    queryFn: () => GetKecamatan(selectedKabupaten),
+    queryKey: ["dataKecamatan", selectedKabupaten],
+    enabled: !!selectedKabupaten,
+  });
+  const { data: kelurahan, isLoading: isLoadingKelurahan } = useQuery({
+    queryFn: () => GetKelurahan(selectedKecamatan),
+    queryKey: ["dataKelurahan", selectedKecamatan],
+    enabled: !!selectedKecamatan,
   });
 
   if (isLoadingProvinces) return <div className="spinner"></div>;
@@ -62,6 +82,7 @@ export default function BillingInfo() {
             {...register("firstName")}
             placeholder="Your first name"
           />
+          {errors.firstName && <p className="text-red-500">{errors.firstName.message}</p>}
         </div>
         <div className="w-1/2">
           <Label>Last Name</Label>
@@ -70,6 +91,7 @@ export default function BillingInfo() {
             {...register("lastName")}
             placeholder="Your last name"
           />
+          {errors.lastName && <p className="text-red-500">{errors.lastName.message}</p>}
         </div>
         <div className="w-1/2">
           <Label>Company Name (optional)</Label>
@@ -78,6 +100,7 @@ export default function BillingInfo() {
             {...register("companyName")}
             placeholder="Your company name"
           />
+          {errors.companyName && <p className="text-red-500">{errors.companyName.message}</p>}
         </div>
       </div>
 
@@ -88,6 +111,7 @@ export default function BillingInfo() {
           {...register("streetAddress")}
           placeholder="Your street address"
         />
+        {errors.streetAddress && <p className="text-red-500">{errors.streetAddress.message}</p>}
       </div>
       <div className="flex items-center gap-4">
         <div className="w-1/2">
@@ -116,33 +140,121 @@ export default function BillingInfo() {
               ))}
             </SelectContent>
           </Select>
+          {errors.province && <p className="text-red-500">{errors.province.message}</p>}
         </div>
         <div className="w-1/2">
-          <Label>District</Label>
-          <Select onValueChange={(e) => setValue("district", e)}>
+          <Label>Kabupaten/Kota</Label>
+          <Select
+            onValueChange={(selected) => {
+              const selectedKabupaten = kabupaten.find(
+                (kab: any) => kab.name === selected
+              );
+              setSelectedKabupaten(selectedKabupaten?.code);
+              setValue("kabupaten", selected);
+            }}
+          >
             <SelectTrigger>
-              <SelectValue placeholder="Select a states" />
+              <SelectValue placeholder="Select kabupaten" />
             </SelectTrigger>
             <SelectContent className="bg-white">
-              {districks?.map((district: any) => (
+              {isLoadingKabupaten ? (
+                <span className="spinner" />
+              ) : (
+                kabupaten?.map((district: any) => (
+                  <SelectItem
+                    value={district.name}
+                    key={district.code}
+                    className="hover:bg-gray-200 cursor-pointer"
+                  >
+                    {district.name}
+                  </SelectItem>
+                ))
+              )}
+            </SelectContent>
+          </Select>
+          {errors.kabupaten && <p className="text-red-500">{errors.kabupaten.message}</p>}
+        </div>
+        <div className="w-1/2">
+          <Label>Kecamatan</Label>
+          <Select
+            onValueChange={(selected) => {
+              const selectedKecamatan = kecamatan.find(
+                (kec: any) => kec.name === selected
+              );
+              setSelectedKecamatan(selectedKecamatan?.code);
+              setValue("kecamatan", selected);
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select kecamatan" />
+            </SelectTrigger>
+            <SelectContent className="bg-white">
+              {isLoadingKecamatan ? (
+                <span className="spinner" />
+              ) : (
+                kecamatan?.map((kec: any) => (
+                  <SelectItem
+                    value={kec.name}
+                    key={kec.code}
+                    className="hover:bg-gray-200 cursor-pointer"
+                  >
+                    {kec.name}
+                  </SelectItem>
+                ))
+              )}
+            </SelectContent>
+          </Select>
+          {errors.kecamatan && <p className="text-red-500">{errors.kecamatan.message}</p>}
+        </div>
+      </div>
+
+      <div className="flex items-center gap-4">
+        <div className="w-1/2">
+          <Label>Kelurahan</Label>
+          <Select
+            onValueChange={(selected) => {
+              const selectedKelurahan = kelurahan.find(
+                (kel: any) => kel.name === selected
+              );
+              setSelectedKelurahan(selectedKelurahan?.postal_code);
+              setValue("kelurahan", selected);
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select kelurahan" />
+            </SelectTrigger>
+            <SelectContent className="bg-white">
+              {kelurahan?.map((kel: any) => (
                 <SelectItem
-                  value={district.name}
-                  key={district.code}
+                  value={kel.name}
+                  key={kel.code}
                   className="hover:bg-gray-200 cursor-pointer"
                 >
-                  {district.name}
+                  {kel.name}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
+          {errors.kelurahan && <p className="text-red-500">{errors.kelurahan.message}</p>}
         </div>
         <div className="w-1/2">
           <Label>Postal Code</Label>
-          <Input
-            id="postalCode"
-            {...register("postalCode")}
-            placeholder="Your zip code/postal code"
-          />
+          <Select onValueChange={(e) => setValue("postalCode", e)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select postal code" />
+            </SelectTrigger>
+            <SelectContent className="bg-white">
+              {selectedKelurahan && (
+                <SelectItem
+                  value={selectedKelurahan}
+                  className="hover:bg-gray-200 cursor-pointer"
+                >
+                  {selectedKelurahan}
+                </SelectItem>
+              )}
+            </SelectContent>
+          </Select>
+          {errors.postalCode && <p className="text-red-500">{errors.postalCode.message}</p>}
         </div>
       </div>
 
@@ -150,6 +262,7 @@ export default function BillingInfo() {
         <div className="w-1/2">
           <Label htmlFor="email">Email</Label>
           <Input placeholder="Your email" {...register("email")} />
+          {errors.email && <p className="text-red-500">{errors.email.message}</p>}
         </div>
         <div className="w-1/2">
           <Label htmlFor="phone">Phone</Label>
@@ -158,6 +271,7 @@ export default function BillingInfo() {
             placeholder="Your phone number"
             {...register("phone")}
           />
+          {errors.phone && <p className="text-red-500">{errors.phone.message}</p>}
         </div>
       </div>
     </form>

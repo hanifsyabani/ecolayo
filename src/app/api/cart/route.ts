@@ -167,7 +167,6 @@ export async function PATCH(req: Request) {
         cart: {
           userId,
         },
-
         id,
       },
     });

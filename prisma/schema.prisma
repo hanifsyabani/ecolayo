@@ -139,13 +139,26 @@ model CartItem {
 }
 
 model Checkout {
-  id       String     @id @default(uuid())
-  userId   String?    @unique
-  user     User?      @relation("UserToCheckout", fields: [userId], references: [id], onDelete: Cascade)
-  items    CartItem[]
-  subtotal Int
-  tax      Int
-  shipping Int
+  id            String     @id @default(uuid())
+  userId        String?    @unique
+  user          User?      @relation("UserToCheckout", fields: [userId], references: [id], onDelete: Cascade)
+  items         CartItem[]
+  subtotal      Int
+  tax           Int
+  shipping      Int?
+  firstName     String
+  lastName      String
+  companyName   String?
+  streetAddress String
+  province      String
+  kabupaten     String
+  kecamatan     String
+  kelurahan     String
+  postalCode    String
+  email         String
+  phone         String
+  orderNotes    String
+  paymentMethod String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
