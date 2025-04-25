@@ -17,6 +17,7 @@ import { useMutation } from "@tanstack/react-query";
 import { PostCheckout } from "@/service/shop/checkout";
 import toast from "react-hot-toast";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
 
 const strukItem = ["Subtotal", "Shipping", "Tax", "Total"];
 const paymentMethod = ["Direct Bank Transfer", "Cash on Delivery", "Qris"];
@@ -50,6 +51,7 @@ export default function CheckoutForm() {
   const shippingCost = subtotal >= 100000 ? 0 : 5000;
   const tax = subtotal * (12 / 100);
   const finalTotal = subtotal + shippingCost + tax;
+  const router = useRouter() 
 
   const {
     register,
@@ -64,7 +66,11 @@ export default function CheckoutForm() {
     mutationFn: (
       // & menggabungkan dua tipe data menjadi satu artinya data itu objek kemudian ditambah dengan properti items.
       data: FormFields & {
-        items: { id: string; productId: string; quantity: number }[];
+        items: {
+          // cartId : string
+          productId: string;
+          quantity: number;
+        }[];
         subtotal: number;
         shipping: number;
         tax: number;
@@ -73,13 +79,17 @@ export default function CheckoutForm() {
     onSuccess: () => {
       setIsLoading(false);
       toast.success("Order placed successfully");
+      router.push("/shop/dashboard/orders");
     },
     onError: (error: any) => {
       setIsLoading(false);
-      const message = error?.error || error?.message || "Error creating user";
-      toast.error(message);
+      const message = error?.error || error?.message || "";
+      console.log(message);
+      toast.error("Error checkout");
     },
   });
+
+  console.log(cart)
 
   async function onSubmit(data: FormFields) {
     setIsLoading(true);
@@ -87,7 +97,7 @@ export default function CheckoutForm() {
       ...data,
       items:
         cart?.items.map((item) => ({
-          id: item.id,
+          // cartId: item.cartId,
           quantity: item.quantity,
           productId: item.product.id,
         })) || [],

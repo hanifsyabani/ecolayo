@@ -28,7 +28,7 @@ model User {
   gender       String         @default("male")
   imageUrl     String?
   cart         Cart?          @relation("UserToCart")
-  Checkout     Checkout?      @relation("UserToCheckout")
+  Checkout     Checkout[]     @relation("UserToCheckout")
   LikedProduct LikedProduct[] @relation("UserToLikedProduct")
 
   address   String?
@@ -140,7 +140,7 @@ model CartItem {
 
 model Checkout {
   id            String     @id @default(uuid())
-  userId        String?    @unique
+  userId        String?
   user          User?      @relation("UserToCheckout", fields: [userId], references: [id], onDelete: Cascade)
   items         CartItem[]
   subtotal      Int

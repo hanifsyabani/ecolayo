@@ -41,6 +41,7 @@ export default function NavUser() {
             </Link>
 
             <CartTrigger />
+            <Link href={"/shop/dashboard"}>Profile</Link>
           </div>
         </div>
       </div>

@@ -109,7 +109,12 @@ export async function POST(req: Request) {
         phone,
         orderNotes,
         paymentMethod,
-        items,
+        items: {
+          create: items.map((item: any) => ({
+            quantity: item.quantity,
+            productId: item.productId,
+          }))
+        },
         subtotal,
         shipping,
         tax,
@@ -117,7 +122,8 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({
-      message: "Cart updated successfully",
+      message: "Order created successfully",
+      orderId: order.id
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

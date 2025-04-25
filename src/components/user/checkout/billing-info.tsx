@@ -73,7 +73,7 @@ export default function BillingInfo({register, setValue, errors}: BillingProps) 
   if (isLoadingProvinces) return <div className="spinner"></div>;
 
   return (
-    <form className="space-y-4">
+    <div className="space-y-4">
       <div className="flex items-center gap-4 ">
         <div className="w-1/2">
           <Label>First Name</Label>
@@ -274,6 +274,6 @@ export default function BillingInfo({register, setValue, errors}: BillingProps) 
           {errors.phone && <p className="text-red-500">{errors.phone.message}</p>}
         </div>
       </div>
-    </form>
+    </div>
   );
 }
