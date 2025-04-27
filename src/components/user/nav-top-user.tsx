@@ -11,14 +11,12 @@ export default function NavTopUser() {
     queryKey: ["dataStore"],
   });
 
-  if (isLoadingStore) return <div></div>
-
   return (
     <nav className="flex justify-between items-center px-4 py-1">
       <div className="flex items-center">
         <IoLocationSharp size={20} className="text-gray-500" />
         <p className="text-xs text-gray-500">
-          Store Location: {store?.address}
+          {isLoadingStore ? "Loading..." : `Store Location: ${store?.address}`}
         </p>
       </div>
 

@@ -159,6 +159,7 @@ model Checkout {
   phone         String
   orderNotes    String
   paymentMethod String
+  status        String     @default("On The Way")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -113,7 +113,7 @@ export async function POST(req: Request) {
           create: items.map((item: any) => ({
             quantity: item.quantity,
             productId: item.productId,
-          }))
+          })),
         },
         subtotal,
         shipping,
@@ -123,8 +123,28 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       message: "Order created successfully",
-      orderId: order.id
+      orderId: order.id,
     });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function GET(req: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    const userId = session?.user.id;
+
+    if (!userId)
+      return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
+
+    const orders = await db.checkout.findMany({
+      where: {
+        userId,
+      },
+    });
+
+    return NextResponse.json(orders);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

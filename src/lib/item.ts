@@ -1,5 +1,7 @@
 import { BoxIcon, HeadphonesIcon, ShoppingBag, Truck } from "lucide-react";
-import { FaBox, FaImage, FaList, FaUser } from "react-icons/fa";
+import { FaBox, FaCartArrowDown, FaHeart, FaHistory, FaImage, FaList, FaUser } from "react-icons/fa";
+import { IoIosSettings } from "react-icons/io";
+import { MdDashboard } from "react-icons/md";
 
 export const shopServiceItem = [
   {
@@ -106,44 +108,30 @@ export const detailProfileUser = [
   },
 ];
 
-export const provinces = [
-  "Aceh",
-  "Sumatera Utara",
-  "Sumatera Barat",
-  "Riau",
-  "Kepulauan Riau",
-  "Jambi",
-  "Bengkulu",
-  "Sumatera Selatan",
-  "Kepulauan Bangka Belitung",
-  "Lampung",
-  "Banten",
-  "DKI Jakarta",
-  "Jawa Barat",
-  "Jawa Tengah",
-  "DI Yogyakarta",
-  "Jawa Timur",
-  "Bali",
-  "Nusa Tenggara Barat",
-  "Nusa Tenggara Timur",
-  "Kalimantan Barat",
-  "Kalimantan Tengah",
-  "Kalimantan Selatan",
-  "Kalimantan Timur",
-  "Kalimantan Utara",
-  "Sulawesi Utara",
-  "Gorontalo",
-  "Sulawesi Tengah",
-  "Sulawesi Barat",
-  "Sulawesi Selatan",
-  "Sulawesi Tenggara",
-  "Maluku",
-  "Maluku Utara",
-  "Papua Barat",
-  "Papua",
-  "Papua Pegunungan",
-  "Papua Tengah",
-  "Papua Selatan",
-  "Papua Barat Daya",
-];
-
+export const dashboardUserItem = [
+  {
+    title : 'Dashboard',
+    link: '/shop/dashboard',
+    icon: MdDashboard,
+  },
+  {
+    title : 'Order History',
+    link: '/shop/dashboard/orders',
+    icon: FaHistory,
+  },
+  {
+    title : 'Wishlist',
+    link: '/shop/dashboard/wishlist',
+    icon: FaHeart,
+  },
+  {
+    title : 'Shopping Cart',
+    link: '/shop/dashboard/shopping-cart',
+    icon: FaCartArrowDown,
+  },
+  {
+    title : 'Setting',
+    link: '/shop/das  hboard/setting',
+    icon: IoIosSettings,
+  },
+]

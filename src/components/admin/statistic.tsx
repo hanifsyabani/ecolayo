@@ -29,10 +29,6 @@ export default function Statistics() {
     queryKey: ["dataUsers"],
   })
 
-  // console.log(banners.length);
-  // console.log(products.length);
-  // console.log(categories.length);
-
   const colorClasses = {
     totalUsers: "bg-blue-500",
     totalStores: "bg-green-500",

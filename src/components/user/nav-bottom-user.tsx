@@ -18,10 +18,10 @@ export default function NavBottomUser() {
   const [scrolled, setScrolled] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
 
-  const {data: categories, isLoading: isLoadingCategories} = useQuery({
+  const { data: categories, isLoading: isLoadingCategories } = useQuery({
     queryFn: () => GetCategories(),
-    queryKey:['dataCategories']
-  })
+    queryKey: ["dataCategories"],
+  });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -64,7 +64,6 @@ export default function NavBottomUser() {
     },
   ];
 
-  if(isLoadingCategories) return <div></div>
   return (
     <nav
       className={`bg-gray-800 z-10 mt-24 w-full flex items-center gap-8 transition-transform duration-300 fixed py-2 px-3 ${
@@ -72,22 +71,26 @@ export default function NavBottomUser() {
       } `}
     >
       <div>
-        <Select>
-          <SelectTrigger className="text-white border-none">
-            <SelectValue placeholder="All Categories" />
-          </SelectTrigger>
-          <SelectContent className="bg-white">
-            {categories.map((item:any) => (
-              <SelectItem
-                value={item.id}
-                key={item.id}
-                className="hover:bg-primary hover:text-white cursor-pointer"
-              >
-                {item.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {isLoadingCategories ? (
+          "Loading..."
+        ) : (
+          <Select>
+            <SelectTrigger className="text-white border-none">
+              <SelectValue placeholder="All Categories" />
+            </SelectTrigger>
+            <SelectContent className="bg-white">
+              {categories.map((item: any) => (
+                <SelectItem
+                  value={item.id}
+                  key={item.id}
+                  className="hover:bg-primary hover:text-white cursor-pointer"
+                >
+                  {item.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
       </div>
       {routeUser.map((route) => (
         <div key={route.label}>

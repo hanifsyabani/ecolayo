@@ -8,6 +8,7 @@ import { Heart } from "lucide-react";
 import NavBottomUser from "./nav-bottom-user";
 import CartTrigger from "./cart-trigger";
 import NavTopUser from "./nav-top-user";
+import { FaRegUserCircle } from "react-icons/fa";
 
 export default function NavUser() {
   return (
@@ -32,7 +33,7 @@ export default function NavUser() {
             />
             <Button className="text-white">Search</Button>
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex  gap-8">
             <Link href={`/shop/wishlist`}>
               <Heart
                 size={20}
@@ -41,7 +42,12 @@ export default function NavUser() {
             </Link>
 
             <CartTrigger />
-            <Link href={"/shop/dashboard"}>Profile</Link>
+            <Link href={"/shop/dashboard"}>
+              <FaRegUserCircle
+                size={20}
+                className="text-gray-800  hover:text-primary cursor-pointer"
+              />
+            </Link>
           </div>
         </div>
       </div>

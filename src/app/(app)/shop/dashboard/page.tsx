@@ -1,6 +1,9 @@
+import Profile from "@/components/user/dashboard/profile";
 
 export default function page() {
   return (
-    <div>page</div>
+    <section>
+      <Profile/>
+    </section>
   )
 }
