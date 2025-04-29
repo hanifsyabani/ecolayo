@@ -29,6 +29,7 @@ export async function POST(req: Request) {
       subtotal,
       shipping,
       tax,
+      finalTotal,
     } = await req.json();
 
     if (!firstName)
@@ -109,6 +110,7 @@ export async function POST(req: Request) {
         phone,
         orderNotes,
         paymentMethod,
+
         items: {
           create: items.map((item: any) => ({
             quantity: item.quantity,
@@ -116,6 +118,7 @@ export async function POST(req: Request) {
           })),
         },
         subtotal,
+        finalTotal,
         shipping,
         tax,
       },

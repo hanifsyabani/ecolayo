@@ -11,13 +11,13 @@ export default function UserDashboardLayout({
   return (
     <section className="py-10 px-6">
       <div className="flex gap-7">
-        <Card className="basis-1/4">
+        <Card className="basis-[20%]">
           <CardContent className="bg-white p-4">
             <h1 className="font-semibold">Navigation</h1>
             <NavigationSidebar/>
           </CardContent>
         </Card>
-        <div className="basis-3/4">{children}</div>
+        <div className="basis-[80%]">{children}</div>
       </div>
     </section>
   );

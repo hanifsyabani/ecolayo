@@ -15,7 +15,7 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 
 export default function ShoppingCart() {
-  const { cart, loading } = useSelector((state: RootState) => state.cart);
+  const { cart } = useSelector((state: RootState) => state.cart);
   const [isLoading, setIsLoading] = useState(false);
   const [cartUpdates, setCartUpdates] = useState<Record<string, number>>({});
 

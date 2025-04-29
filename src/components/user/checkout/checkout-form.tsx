@@ -72,6 +72,7 @@ export default function CheckoutForm() {
           quantity: number;
         }[];
         subtotal: number;
+        finalTotal: number;
         shipping: number;
         tax: number;
       }
@@ -89,21 +90,19 @@ export default function CheckoutForm() {
     },
   });
 
-  console.log(cart)
-
   async function onSubmit(data: FormFields) {
     setIsLoading(true);
     const checkoutData = {
       ...data,
       items:
         cart?.items.map((item) => ({
-          // cartId: item.cartId,
           quantity: item.quantity,
           productId: item.product.id,
         })) || [],
       shipping: shippingCost,
       tax,
-      subtotal: finalTotal,
+      subtotal : subtotal,
+      finalTotal: finalTotal,
     };
     placeOrder(checkoutData);
   }

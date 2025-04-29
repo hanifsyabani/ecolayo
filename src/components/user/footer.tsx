@@ -6,7 +6,7 @@ import { Separator } from "../ui/separator";
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900  px-10 py-4">
+    <footer className="bg-gray-900 px-10 py-4">
       <div className="flex justify-evenly gap-8">
         <div className="space-y-4">
           <Link href={`/`} className="flex items-center gap-2">

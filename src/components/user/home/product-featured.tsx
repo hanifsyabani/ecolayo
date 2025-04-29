@@ -12,12 +12,18 @@ export default function ProductFeatured() {
     queryKey: ["dataProducts"],
   });
 
-  const featuredProducts =
-    products && products.filter((product: any) => product.isFeatured);
+  const featuredProducts = products &&  products.filter(
+    (product: any) => product.isFeatured
+  );
 
   return (
     <div className="px-4 mt-20">
       <TitleHome title="Product Featured" link="/products/featured" />
+      {featuredProducts?.length === 0 && (
+        <h1 className="text-center flex justify-center items-center min-h-[100px] pt-32 ">
+          No products found
+        </h1>
+      )}
       <div className="flex items-center justify-center gap-6 flex-wrap">
         {isLoadingProducts
           ? Array.from({ length: 5 }).map((_, index) => (

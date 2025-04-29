@@ -5,15 +5,15 @@ import { CheckoutColumn, Columns } from "./column-order-history";
 import { DataTable } from "@/components/ui/data-table";
 import { format } from "date-fns";
 import { formatter } from "@/lib/utils";
-import { GetCheckout } from "@/service/shop/checkout";
+import { GetOrders } from "@/service/shop/checkout";
 
 export default function TableOrderHistory() {
-  const { data: checkout, isLoading: isLoadingCheckout } = useQuery({
-    queryFn: () => GetCheckout(),
+  const { data: orders, isLoading: isLoadingCheckout } = useQuery({
+    queryFn: () => GetOrders(),
     queryKey: ["dataCheckout"],
   });
 
-  const formattedOrder: CheckoutColumn[] = checkout?.map((checkout: any) => ({
+  const formattedOrder: CheckoutColumn[] = orders?.map((checkout: any) => ({
     id:checkout.id,
     date: format(checkout.createdAt, "dd MMMM yyyy"),
     total: formatter.format(checkout.subtotal),

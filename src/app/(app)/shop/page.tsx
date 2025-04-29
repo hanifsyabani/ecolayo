@@ -26,7 +26,7 @@ export default async function page() {
         ))}
       </div>
       <ProductCategories />
-      <ProductFeatured title="Popular Products" />
+      <ProductFeatured />
       <PromoteBanner />
       <NewestProduct />
       <ClientTestimoni />

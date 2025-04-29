@@ -16,7 +16,7 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { MoveLeft, Save, Trash } from "lucide-react";
+import { Save, Trash } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -28,7 +28,7 @@ import { GetStore, PatchStore } from "@/service/store";
 
 const schema = z.object({
   store_name: z.string().min(5),
-  logo: z.string().min(1),
+  logo: z.string().optional(),
   address: z.string().min(1),
   phone: z.string().min(1),
 });
@@ -60,7 +60,6 @@ export default function SettingForm() {
   const {
     data: store,
     isLoading: isLoadingStore,
-    refetch,
   } = useQuery({
     queryFn: () => GetStore(),
     queryKey: ["dataStore"],
@@ -69,7 +68,7 @@ export default function SettingForm() {
   useEffect(() => {
     if (store) {
       setValue("store_name", store.store_name);
-      setValue("logo", store.logo || "");
+      setValue("logo", store.logo );
       setValue("address", store.address);
       setValue("phone", store.phone);
     }
@@ -82,7 +81,7 @@ export default function SettingForm() {
     onSuccess: () => {
       setIsLoadingForm(false);
       toast.success("Store updated successfully");
-      refetch();
+      router.push('/admin')
     },
     onError(error: any) {
       setIsLoadingForm(false);
@@ -172,6 +171,12 @@ export default function SettingForm() {
                 onChange={(urls) => setValue("logo", urls[0] || "")}
                 onRemove={() => setValue("logo", "")}
               />
+
+              {/* <UploadImage
+                value={imageUrl ? [imageUrl] : []}
+                onChange={(urls) => setValue("imageUrl", urls[0] || "")}
+                onRemove={() => setValue("imageUrl", "")}
+              /> */}
 
               {errors.logo && (
                 <p className="text-red-500 text-sm">{errors.logo.message}</p>

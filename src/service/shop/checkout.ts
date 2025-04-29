@@ -14,7 +14,7 @@ export async function PostCheckout(data:any){
   }
 }
 
-export async function GetCheckout(){
+export async function GetOrders(){
   try {
     const response = await axios.get('/api/checkout', {
       withCredentials: true,

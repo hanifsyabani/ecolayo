@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { formatter } from "@/lib/utils";
-import { GetCheckout } from "@/service/shop/checkout";
+import {  GetOrders } from "@/service/shop/checkout";
 import { GetUserProfile } from "@/service/shop/user-profile";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -18,12 +18,12 @@ export default function Profile() {
   });
 
   const { data: orders, isLoading: isLoadingOrder } = useQuery({
-    queryFn: () => GetCheckout(),
+    queryFn: () => GetOrders(),
     queryKey: ["dataCheckout"],
   });
 
   const formattedOrder: CheckoutColumn[] = orders?.map((checkout: any) => ({
-    id: "#" + checkout.id,
+    id: checkout.id,
     date: format(checkout.createdAt, "dd MMMM yyyy"),
     total: formatter.format(checkout.subtotal),
     status: checkout.status,
@@ -34,7 +34,7 @@ export default function Profile() {
   return (
     <>
       <div className="flex justify-center items-center gap-8">
-        <Card className="w-1/2 p-4 h-52">
+        <Card className="w-1/2 p-4 h-60">
           <CardContent className="space-y-4 text-center">
             <div className="flex justify-center">
               {userProfile.imageUrl ? (
@@ -57,15 +57,14 @@ export default function Profile() {
             <h1 className="hover:underline text-primary">Edit Profile</h1>
           </CardContent>
         </Card>
-        <Card className="w-1/2 p-4 h-52">
+        <Card className="w-1/2 p-4 h-60">
           <CardContent className="space-y-4">
             <h1 className="font-semibold">Billing Address</h1>
-            <div>
-              <h1 className="font-medium">{userProfile.username}</h1>
-              <small>
+            <div className="space-y-2">
+              <h1>
                 {userProfile.firstName + " " + userProfile.lastName}
-              </small>
-              <small className="text-gray-500">{userProfile.address}</small>
+              </h1>
+              <p className="text-gray-500 text-sm">{userProfile.address}</p>
               <p>{userProfile.email}</p>
               <p>{userProfile.phone}</p>
             </div>

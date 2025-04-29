@@ -16,12 +16,6 @@ export async function PATCH(req: Request) {
         { error: "Store name must be provided" },
         { status: 500 }
       );
-
-    if (!logo)
-      return NextResponse.json(
-        { error: "logo must be provided" },
-        { status: 500 }
-      );
     if (!phone)
       return NextResponse.json(
         { error: "phone must be provided" },
