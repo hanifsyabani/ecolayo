@@ -131,7 +131,7 @@ export const dashboardUserItem = [
   },
   {
     title : 'Setting',
-    link: '/shop/das  hboard/setting',
+    link: '/shop/dashboard/settings',
     icon: IoIosSettings,
   },
 ]

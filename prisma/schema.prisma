@@ -166,6 +166,8 @@ model Checkout {
   updatedAt DateTime @updatedAt
 }
 
+
+
 model Payment {
   id     String @id @default(uuid())
   method String

@@ -9,6 +9,7 @@ import { format } from "date-fns";
 import Link from "next/link";
 import TrackingOrder from "./tracking-order";
 import TableOrderProduct from "./table-order-product";
+import Newsletter from "../../products/newsletter";
 
 export default function OrderDetail({ id }: { id: string }) {
   const { data: order, isLoading: isLoadingOrder } = useQuery({
@@ -144,6 +145,7 @@ export default function OrderDetail({ id }: { id: string }) {
 
       <TrackingOrder data={order} />
       <TableOrderProduct data={order}/>
+      <Newsletter isSosmed={false}/>
     </>
   );
 }

@@ -5,8 +5,6 @@ import { formatter } from "@/lib/utils";
 import { DataTable } from "@/components/ui/data-table";
 import { Checkout } from "@prisma/client";
 
-
-
 export default function TableOrderProduct({data}:any) {
 
   console.log(data)
@@ -26,7 +24,7 @@ export default function TableOrderProduct({data}:any) {
       <DataTable
         data={formattedOrderProduct}
         columns={Columns()}
-        searchKey="name"
+        searchKey=""
       />
     </div>
   );
