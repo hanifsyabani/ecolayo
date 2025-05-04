@@ -112,7 +112,7 @@ export default function CheckoutForm() {
       <div className="flex px-8 gap-10">
         <div className="w-[60%]">
           <div>
-            <h1 className="text-xl font-semibold mb-4">Billing Information</h1>
+            <h1 className="text-xl font-semibold mb-4">Shipping Information</h1>
             <BillingInfo
               register={register}
               setValue={setValue}

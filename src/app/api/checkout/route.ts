@@ -1,5 +1,6 @@
 import { authOptions } from "@/lib/auth";
 import db from "@/lib/db";
+import { create } from "domain";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -97,20 +98,9 @@ export async function POST(req: Request) {
     const order = await db.checkout.create({
       data: {
         userId,
-        firstName,
-        lastName,
-        companyName,
-        streetAddress,
-        province,
-        kabupaten,
-        kecamatan,
-        kelurahan,
-        postalCode,
-        email,
-        phone,
         orderNotes,
         paymentMethod,
-
+        shippingAddressId :"1",
         items: {
           create: items.map((item: any) => ({
             quantity: item.quantity,

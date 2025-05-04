@@ -48,8 +48,6 @@ export default function BillingInfo({register, setValue, errors}: BillingProps) 
   const [selectedKecamatan, setSelectedKecamatan] = useState("");
   const [selectedKelurahan, setSelectedKelurahan] = useState("");
 
-
-
   const { data: provinces, isLoading: isLoadingProvinces } = useQuery({
     queryFn: () => GetProvinces(),
     queryKey: ["dataProvinces"],
@@ -70,7 +68,7 @@ export default function BillingInfo({register, setValue, errors}: BillingProps) 
     enabled: !!selectedKecamatan,
   });
 
-  if (isLoadingProvinces) return <div className="spinner"></div>;
+  if (isLoadingProvinces || isLoadingKabupaten || isLoadingKecamatan || isLoadingKelurahan) return <div className="spinner"></div>;
 
   return (
     <div className="space-y-4">

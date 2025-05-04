@@ -3,7 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { formatter } from "@/lib/utils";
 import GetOrderById from "@/service/shop/checkout";
-import { GetUserProfile } from "@/service/shop/user-profile";
+import { GetUserProfile } from "@/service/shop/dashboard-user";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import Link from "next/link";

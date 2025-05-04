@@ -4,7 +4,10 @@ import UploadImage from "@/components/admin/banner/upload-image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { GetUserProfile, PatchUserProfile } from "@/service/shop/user-profile";
+import {
+  GetUserProfile,
+  PatchUserProfile,
+} from "@/service/shop/dashboard-user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";

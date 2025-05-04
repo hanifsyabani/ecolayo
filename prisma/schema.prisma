@@ -8,28 +8,29 @@ datasource db {
 }
 
 model Store {
-  id         String @id @default(uuid())
-  store_name String @default("EcoLayo")
-  logo       String? 
+  id         String  @id @default(uuid())
+  store_name String  @default("EcoLayo")
+  logo       String?
   address    String?
-  phone      String? 
+  phone      String?
 }
 
 model User {
-  id           String         @id @default(uuid())
-  username     String?
-  firstName    String?
-  lastName     String?
-  email        String         @unique
-  phone        String?
-  password     String
-  role         String         @default("user")
-  status       String         @default("active")
-  gender       String         @default("male")
-  imageUrl     String?
-  cart         Cart?          @relation("UserToCart")
-  Checkout     Checkout[]     @relation("UserToCheckout")
-  LikedProduct LikedProduct[] @relation("UserToLikedProduct")
+  id               String             @id @default(uuid())
+  username         String?
+  firstName        String?
+  lastName         String?
+  email            String             @unique
+  phone            String?
+  password         String
+  role             String             @default("user")
+  status           String             @default("active")
+  gender           String             @default("male")
+  imageUrl         String?
+  cart             Cart?              @relation("UserToCart")
+  Checkout         Checkout[]         @relation("UserToCheckout")
+  LikedProduct     LikedProduct[]     @relation("UserToLikedProduct")
+  ShipppingAddress ShipppingAddress[] @relation("UserToShippingAddress")
 
   address   String?
   lastLogin DateTime?
@@ -139,14 +140,29 @@ model CartItem {
 }
 
 model Checkout {
+  id                String           @id @default(uuid())
+  userId            String?
+  user              User?            @relation("UserToCheckout", fields: [userId], references: [id], onDelete: Cascade)
+  items             CartItem[]
+  subtotal          Int
+  finalTotal        Int
+  tax               Int
+  shipping          Int?
+  shippingAddressId String
+  shippingAddress   ShipppingAddress @relation(fields: [shippingAddressId], references: [id], onDelete: Cascade)
+
+  orderNotes    String
+  paymentMethod String
+  status        String @default("On The Way")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ShipppingAddress {
   id            String     @id @default(uuid())
-  userId        String?
-  user          User?      @relation("UserToCheckout", fields: [userId], references: [id], onDelete: Cascade)
-  items         CartItem[]
-  subtotal      Int
-  finalTotal    Int
-  tax           Int
-  shipping      Int?
+  userId        String @unique
+  user          User       @relation("UserToShippingAddress", fields: [userId], references: [id], onDelete: Cascade)
   firstName     String
   lastName      String
   companyName   String?
@@ -158,15 +174,8 @@ model Checkout {
   postalCode    String
   email         String
   phone         String
-  orderNotes    String
-  paymentMethod String
-  status        String     @default("On The Way")
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  Checkout      Checkout[]
 }
-
-
 
 model Payment {
   id     String @id @default(uuid())

@@ -11,7 +11,7 @@ export async function GET(
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
 
-    console.log("order id: ", params.orderid);
+    // console.log("order id: ", params.orderid);
 
     if (!userId)
       return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
