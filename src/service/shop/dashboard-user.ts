@@ -84,3 +84,17 @@ export async function GetShippingAddress() {
     throw error.response?.data || { error: "Something went wrong" }
   }
 }
+
+
+export async function UpdatePassword(data:any){
+  try {
+    await axios.patch('/api/user/change-password', data ,{
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+  } catch (error:any) {
+    throw error.response?.data || { error: "Something went wrong" }
+  }
+}

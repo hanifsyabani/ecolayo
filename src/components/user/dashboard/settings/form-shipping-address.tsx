@@ -49,26 +49,7 @@ export default function FormShippingAddress() {
   const [selectedKecamatan, setSelectedKecamatan] = useState("");
   const [selectedKelurahan, setSelectedKelurahan] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  const { data: provinces, isLoading: isLoadingProvinces } = useQuery({
-    queryFn: () => GetProvinces(),
-    queryKey: ["dataProvinces"],
-  });
-  const { data: kabupaten, isLoading: isLoadingKabupaten } = useQuery({
-    queryFn: () => GetKabupatenByProvince(selectedProvince),
-    queryKey: ["dataKabupaten", selectedProvince],
-    enabled: !!selectedProvince,
-  });
-  const { data: kecamatan, isLoading: isLoadingKecamatan } = useQuery({
-    queryFn: () => GetKecamatan(selectedKabupaten),
-    queryKey: ["dataKecamatan", selectedKabupaten],
-    enabled: !!selectedKabupaten,
-  });
-  const { data: kelurahan, isLoading: isLoadingKelurahan } = useQuery({
-    queryFn: () => GetKelurahan(selectedKecamatan),
-    queryKey: ["dataKelurahan", selectedKecamatan],
-    enabled: !!selectedKecamatan,
-  });
+  const [initialDataLoaded, setInitialDataLoaded] = useState(false);
 
   const {
     data: shipping,
@@ -77,6 +58,29 @@ export default function FormShippingAddress() {
   } = useQuery({
     queryFn: () => GetShippingAddress(),
     queryKey: ["dataShippingAddress"],
+  });
+
+  const { data: provinces, isLoading: isLoadingProvinces } = useQuery({
+    queryFn: () => GetProvinces(),
+    queryKey: ["dataProvinces"],
+  });
+  
+  const { data: kabupaten, isLoading: isLoadingKabupaten } = useQuery({
+    queryFn: () => GetKabupatenByProvince(selectedProvince),
+    queryKey: ["dataKabupaten", selectedProvince],
+    enabled: !!selectedProvince,
+  });
+  
+  const { data: kecamatan, isLoading: isLoadingKecamatan } = useQuery({
+    queryFn: () => GetKecamatan(selectedKabupaten),
+    queryKey: ["dataKecamatan", selectedKabupaten],
+    enabled: !!selectedKabupaten,
+  });
+  
+  const { data: kelurahan, isLoading: isLoadingKelurahan } = useQuery({
+    queryFn: () => GetKelurahan(selectedKecamatan),
+    queryKey: ["dataKelurahan", selectedKecamatan],
+    enabled: !!selectedKecamatan,
   });
 
   const {
@@ -97,7 +101,6 @@ export default function FormShippingAddress() {
       refetch();
     },
     onError: (error: any) => {
-      // console.log(error?.error)
       setIsLoading(false);
       const message = error?.message || "Error create shipping address";
       toast.error(message);
@@ -112,7 +115,6 @@ export default function FormShippingAddress() {
       refetch();
     },
     onError: (error: any) => {
-      // console.log(error?.error)
       setIsLoading(false);
       const message = error?.message || "Error update shipping address";
       toast.error(message);
@@ -121,21 +123,73 @@ export default function FormShippingAddress() {
 
   function onSubmit(data: FormFields) {
     setIsLoading(true);
-    // updateShipping(data);
-    postShipping(data);
+    if (shipping) {
+      updateShipping(data);
+    } else {
+      postShipping(data);
+    }
   }
 
+  const findPostalCode = (name: string) => {
+    if (!kelurahan) return "";
+    const kel = kelurahan.find((k: any) => k.name === name);
+    return kel?.postal_code || "";
+  };
+
   useEffect(() => {
-    if (shipping) {
-      setValue("firstName", shipping.firstName);
-      setValue("lastName", shipping.lastName);
-      setValue("companyName", shipping.companyName);
-      setValue("streetAddress", shipping.streetAddress);
-      setValue("postalCode", shipping.postalCode);
-      setValue("email", shipping.email);
-      setValue("phone", shipping.phone);
+    if (shipping && provinces && !initialDataLoaded) {
+      setValue("firstName", shipping.firstName || "");
+      setValue("lastName", shipping.lastName || "");
+      setValue("companyName", shipping.companyName || "");
+      setValue("streetAddress", shipping.streetAddress || "");
+      setValue("email", shipping.email || "");
+      setValue("phone", shipping.phone || "");
+      
+      if (shipping.province) {
+        setValue("province", shipping.province);
+        const province = provinces.find((province: any) => province.name === shipping.province);
+        setSelectedProvince(province?.code);
+      }
     }
-  }, [shipping, setValue]);
+  }, [shipping, provinces, setValue, initialDataLoaded]);
+
+  useEffect(() => {
+    if (shipping && kabupaten && selectedProvince) {
+      if (shipping.kabupaten) {
+        setValue("kabupaten", shipping.kabupaten);
+        const kabupatenCode = kabupaten.find((kabupaten: any) => kabupaten.name === shipping.kabupaten);
+        setSelectedKabupaten(kabupatenCode?.code);
+      }
+    }
+  }, [shipping, kabupaten, selectedProvince, setValue]);
+
+  useEffect(() => {
+    if (shipping && kecamatan && selectedKabupaten) {
+      if (shipping.kecamatan) {
+        setValue("kecamatan", shipping.kecamatan);
+        const kecamatanCode = kecamatan.find((kec :any) => kec.name === shipping.kecamatan);
+        setSelectedKecamatan(kecamatanCode?.code);
+      }
+    }
+  }, [shipping, kecamatan, selectedKabupaten, setValue]);
+
+  useEffect(() => {
+    if (shipping && kelurahan && selectedKecamatan) {
+      if (shipping.kelurahan) {
+        setValue("kelurahan", shipping.kelurahan);
+        const postalCode = findPostalCode(shipping.kelurahan);
+        setValue("postalCode", postalCode);
+        setSelectedKelurahan(postalCode);
+        setInitialDataLoaded(true);
+      }
+    }
+  }, [shipping, kelurahan, selectedKecamatan, setValue]);
+
+  useEffect(() => {
+    if (selectedKelurahan) {
+      setValue("postalCode", selectedKelurahan);
+    }
+  }, [selectedKelurahan, setValue]);
 
   if (isLoadingShipping) return <div className="spinner"></div>;
 
@@ -199,8 +253,16 @@ export default function FormShippingAddress() {
                 );
                 setSelectedProvince(selectedProvince?.code);
                 setValue("province", selected);
+                // Reset dependent fields
+                setSelectedKabupaten("");
+                setSelectedKecamatan("");
+                setSelectedKelurahan("");
+                setValue("kabupaten", "");
+                setValue("kecamatan", "");
+                setValue("kelurahan", "");
+                setValue("postalCode", "");
               }}
-              value={watch("province")}
+              defaultValue={shipping?.province || ""}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select a province" />
@@ -210,7 +272,7 @@ export default function FormShippingAddress() {
                   <SelectItem
                     value={province.name}
                     key={province.code}
-                    className="hover:bg-gray-200  cursor-pointer"
+                    className="hover:bg-gray-200 cursor-pointer"
                   >
                     {province.name}
                   </SelectItem>
@@ -225,13 +287,19 @@ export default function FormShippingAddress() {
             <Label>Kabupaten/Kota</Label>
             <Select
               onValueChange={(selected) => {
-                const selectedKabupaten = kabupaten.find(
+                const selectedKabupaten = kabupaten?.find(
                   (kab: any) => kab.name === selected
                 );
                 setSelectedKabupaten(selectedKabupaten?.code);
                 setValue("kabupaten", selected);
+                setSelectedKecamatan("");
+                setSelectedKelurahan("");
+                setValue("kecamatan", "");
+                setValue("kelurahan", "");
+                setValue("postalCode", "");
               }}
-              value={selectedKabupaten}
+              defaultValue={shipping?.kabupaten || ""}
+              disabled={!selectedProvince}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select kabupaten" />
@@ -260,13 +328,18 @@ export default function FormShippingAddress() {
             <Label>Kecamatan</Label>
             <Select
               onValueChange={(selected) => {
-                const selectedKecamatan = kecamatan.find(
+                const selectedKecamatan = kecamatan?.find(
                   (kec: any) => kec.name === selected
                 );
                 setSelectedKecamatan(selectedKecamatan?.code);
                 setValue("kecamatan", selected);
+                // Reset dependent fields
+                setSelectedKelurahan("");
+                setValue("kelurahan", "");
+                setValue("postalCode", "");
               }}
-              value={shipping?.kecamatan}
+              defaultValue={shipping?.kecamatan || ""}
+              disabled={!selectedKabupaten}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select kecamatan" />
@@ -298,27 +371,33 @@ export default function FormShippingAddress() {
             <Label>Kelurahan</Label>
             <Select
               onValueChange={(selected) => {
-                const selectedKelurahan = kelurahan.find(
+                const selectedKel = kelurahan?.find(
                   (kel: any) => kel.name === selected
                 );
-                setSelectedKelurahan(selectedKelurahan?.postal_code);
+                setSelectedKelurahan(selectedKel?.postal_code);
                 setValue("kelurahan", selected);
+                setValue("postalCode", selectedKel?.postal_code || "");
               }}
-              value={shipping?.kelurahan}
+              defaultValue={shipping?.kelurahan || ""}
+              disabled={!selectedKecamatan}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select kelurahan" />
               </SelectTrigger>
               <SelectContent className="bg-white">
-                {kelurahan?.map((kel: any) => (
-                  <SelectItem
-                    value={kel.name}
-                    key={kel.code}
-                    className="hover:bg-gray-200 cursor-pointer"
-                  >
-                    {kel.name}
-                  </SelectItem>
-                ))}
+                {isLoadingKelurahan ? (
+                  <span className="spinner" />
+                ) : (
+                  kelurahan?.map((kel: any) => (
+                    <SelectItem
+                      value={kel.name}
+                      key={kel.code}
+                      className="hover:bg-gray-200 cursor-pointer"
+                    >
+                      {kel.name}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
             {errors.kelurahan && (
@@ -331,6 +410,7 @@ export default function FormShippingAddress() {
               id="postalCode"
               {...register("postalCode")}
               readOnly
+              value={watch("postalCode") || ""}
             />
             {errors.postalCode && (
               <p className="text-red-500">{errors.postalCode.message}</p>
