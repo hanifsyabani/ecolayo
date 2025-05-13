@@ -8,11 +8,13 @@ datasource db {
 }
 
 model Store {
-  id         String  @id @default(uuid())
-  store_name String  @default("EcoLayo")
-  logo       String?
-  address    String?
-  phone      String?
+  id          String  @id @default(uuid())
+  store_name  String  @default("EcoLayo")
+  logo        String?
+  address     String?
+  phone       String?
+  city        String?
+  email_store String?
 }
 
 model User {
@@ -31,6 +33,7 @@ model User {
   Checkout         Checkout[]         @relation("UserToCheckout")
   LikedProduct     LikedProduct[]     @relation("UserToLikedProduct")
   ShipppingAddress ShipppingAddress[] @relation("UserToShippingAddress")
+  ContactMessage   ContactMessage[]   @relation("UserToContactMessage")
 
   address   String?
   lastLogin DateTime?
@@ -161,7 +164,7 @@ model Checkout {
 
 model ShipppingAddress {
   id            String     @id @default(uuid())
-  userId        String @unique
+  userId        String     @unique
   user          User       @relation("UserToShippingAddress", fields: [userId], references: [id], onDelete: Cascade)
   firstName     String
   lastName      String
@@ -180,6 +183,18 @@ model ShipppingAddress {
 model Payment {
   id     String @id @default(uuid())
   method String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ContactMessage {
+  id      String @id @default(uuid())
+  userId  String @unique
+  user    User   @relation("UserToContactMessage", fields: [userId], references: [id], onDelete: Cascade)
+  email   String
+  subject String
+  message String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

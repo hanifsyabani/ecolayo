@@ -1,4 +1,3 @@
-import AboutView from "@/components/user/about/about-view";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -27,7 +26,7 @@ export default function page() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <div className="mt-8">
+      <div >
         <ContactView />
       </div>
     </div>

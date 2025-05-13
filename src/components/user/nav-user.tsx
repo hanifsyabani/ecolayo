@@ -9,8 +9,17 @@ import NavBottomUser from "./nav-bottom-user";
 import CartTrigger from "./cart-trigger";
 import NavTopUser from "./nav-top-user";
 import { FaRegUserCircle } from "react-icons/fa";
+import { useQuery } from "@tanstack/react-query";
+import { GetStore } from "@/service/store";
 
 export default function NavUser() {
+
+  const {data: store, isLoading: isLoadingStore} = useQuery({
+    queryFn: () => GetStore(),
+    queryKey: ["dataStore"],
+  })
+
+  if(isLoadingStore) return <div className='spinner'/>
   return (
     <nav>
       <div className="fixed w-full bg-white z-40">
@@ -24,7 +33,7 @@ export default function NavUser() {
               alt="logo"
               className="w-10"
             />
-            <h1 className="text-xl font-bold">EcoLayo</h1>
+            <h1 className="text-xl font-bold">{store.store_name}</h1>
           </Link>
           <div className="flex items-center">
             <Input

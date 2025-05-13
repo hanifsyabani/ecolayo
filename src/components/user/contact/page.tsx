@@ -1,44 +1,76 @@
-'use client'
+"use client";
 
-import { useState } from 'react';
-import Head from 'next/head';
-import { MapPin, Mail, Phone } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
+import { MapPin, Mail, Phone } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { useMutation, useMutationState, useQuery } from "@tanstack/react-query";
+import { GetStore } from "@/service/store";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { PostContactMessage } from "@/service/shop/contact";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
+const schema = z.object({
+  email: z.string().email({ message: "Email is invalid" }),
+  subject: z.string().min(1),
+  message: z.string().min(1),
+});
+
+type FormFields = z.infer<typeof schema>;
 export default function ContactView() {
-  const [formData, setFormData] = useState({
-    email: '',
-    message: '',
-    subject: ''
+  const [isLoadingForm, setIsLoadingForm] = useState(false);
+
+  const { data: store, isLoading: isLoadingStore } = useQuery({
+    queryFn: () => GetStore(),
+    queryKey: ["dataStore"],
   });
 
- 
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormFields>({
+    resolver: zodResolver(schema),
+  });
 
- 
+  const { mutate: postmessage } = useMutation({
+    mutationFn: (data: FormFields) => PostContactMessage(data),
+    onSuccess: () => {
+      setIsLoadingForm(false);
+      reset()
+      toast.success("Message sent successfully");
+    },
+    onError: () => {
+      setIsLoadingForm(false);
+      toast.error("Error sending message");
+    },
+  });
 
+  function onSubmit(data: FormFields) {
+    setIsLoadingForm(true);
+    postmessage(data);
+  }
+
+  if (isLoadingStore) return <div className="spinner" />;
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Head>
-        <title>Hubungi Kami</title>
-        <meta name="description" content="Halaman kontak kami" />
-      </Head>
-
+    <>
       <div className="container mx-auto py-10 px-4">
         <div className="flex flex-col md:flex-row bg-white rounded-lg shadow-md overflow-hidden">
-          {/* Sidebar informasi kontak */}
           <div className="w-full md:w-1/3 bg-white p-8 flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-center">
                 <MapPin className="h-8 w-8 text-green-500" />
               </div>
-              
+
               <p className="text-center text-gray-700 mt-4">
-                276 API Dr, San Jose, South
+                {store.address}
                 <br />
-                Dakota 83475
+                {store.city}
               </p>
             </div>
 
@@ -47,9 +79,9 @@ export default function ContactView() {
                 <Mail className="h-8 w-8 text-green-500" />
               </div>
               <p className="text-center text-gray-700 mt-4">
-                info@yourmail.com
+                {store.email_store}
                 <br />
-                help@yourmail.com
+                helpeco@gmail.com
               </p>
             </div>
 
@@ -58,70 +90,87 @@ export default function ContactView() {
                 <Phone className="h-8 w-8 text-green-500" />
               </div>
               <p className="text-center text-gray-700 mt-4">
-                Telp (+84) 345-6789
-                <br />
-                (+84) 333-0987
+                Telp {store.phone}
               </p>
             </div>
           </div>
 
-          {/* Form kontak */}
           <div className="w-full md:w-2/3 p-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Just Say Hello!</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              Just Say Hello!
+            </h2>
             <p className="text-gray-600 mb-6">
-              Do you have anything you'd like to tell us or you want to get started with your
-              project? Let us know how we can help! Feel free to contact me.
+              Do you have anything you'd like to tell us or you want to get
+              started with your project? Let us know how we can help! Feel free
+              to contact me.
             </p>
 
-            <form  className="mt-4">
+            <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
               <div className="mb-4">
-                <Label htmlFor="email" className="block text-sm font-medium text-gray-600">
+                <Label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-600"
+                >
                   Your Email
-                </ Label>
+                </Label>
                 <Input
                   type="email"
                   id="email"
-                  name="email"
+                  {...register("email")}
                   placeholder="example@gmail.com"
-                  className="mt-1 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  required
                 />
+                {errors.email && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
 
               <div className="mb-4">
-                <Label htmlFor="subject" className="block text-sm font-medium text-gray-600">
+                <Label
+                  htmlFor="subject"
+                  className="block text-sm font-medium text-gray-600"
+                >
                   Subject
                 </Label>
                 <Input
                   type="text"
                   id="subject"
-                  name="subject"
+                  {...register("subject")}
                   placeholder="Subject"
-                  className="mt-1 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  required
                 />
+                {errors.subject && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.subject.message}
+                  </p>
+                )}
               </div>
 
               <div className="mb-4">
-                <Label htmlFor="message" className="block text-sm font-medium text-gray-600">
+                <Label
+                  htmlFor="message"
+                  className="block text-sm font-medium text-gray-600"
+                >
                   Message
                 </Label>
                 <Textarea
                   id="message"
-                  name="message"
-                  // onChange={handleChange}
-                  // rows="4"
                   placeholder="Hello"
-                  className="mt-1 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  required
+                  {...register("message")}
                 />
+                {errors.message && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.message.message}
+                  </p>
+                )}
               </div>
 
               <Button
                 type="submit"
                 className="px-6 py-3 text-white font-medium rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                disabled={isLoadingForm}
               >
-                Send Message
+                {isLoadingForm ? <span className="spinner"/> : "Send Message"}
               </Button>
             </form>
           </div>
@@ -140,6 +189,6 @@ export default function ContactView() {
           ></iframe>
         </div> */}
       </div>
-    </div>
+    </>
   );
 }
