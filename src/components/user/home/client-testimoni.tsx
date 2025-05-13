@@ -12,8 +12,7 @@ import { FaQuoteLeft, FaStar } from "react-icons/fa";
 
 export default function ClientTestimoni() {
   return (
-    <div className="mt-20 px-4 py-6 bg-gray-200">
-      <TitleHome title="Client Testimoni" link="/testimoni" />
+    <div className=" px-4 py-6 ">
       <Swiper
         slidesPerView={3}
         spaceBetween={30}

@@ -11,6 +11,7 @@ import {
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { GetCategories } from "@/service/categories";
+import Link from "next/link";
 
 export default function NavBottomUser() {
   const pathname = usePathname();
@@ -44,23 +45,23 @@ export default function NavBottomUser() {
   const routeUser = [
     {
       label: "Home",
-      href: `/admin/store/${params.storeid}/categories`,
-      active: pathname === `/admin/store/${params.storeid}/categories`,
+      href: `/shop`,
+      active: pathname === `/shop`,
     },
     {
       label: "Shop",
-      href: `/admin/store/${params.storeid}/products`,
-      active: pathname === `/admin/store/${params.storeid}/products`,
+      href: `/shop/all-products`,
+      active: pathname === `/shop/all-products`,
     },
     {
       label: "About Us",
-      href: `/admin/store/${params.storeid}/products`,
-      active: pathname === `/admin/store/${params.storeid}/products`,
+      href: `/shop/about`,
+      active: pathname === `/shop/about`,
     },
     {
       label: "Contact",
-      href: `/admin/store/${params.storeid}/products`,
-      active: pathname === `/admin/store/${params.storeid}/products`,
+      href: `/shop/contact`,
+      active: pathname === `/shop/contact`,
     },
   ];
 
@@ -72,7 +73,7 @@ export default function NavBottomUser() {
     >
       <div>
         {isLoadingCategories ? (
-          "Loading..."
+          <p className="spinner"/>
         ) : (
           <Select>
             <SelectTrigger className="text-white border-none">
@@ -93,11 +94,15 @@ export default function NavBottomUser() {
         )}
       </div>
       {routeUser.map((route) => (
-        <div key={route.label}>
-          <p className="text-white text-sm hover:text-primary cursor-pointer">
+        <Link href={route.href} key={route.label}>
+          <p
+            className={`text-sm hover:text-primary cursor-pointer ${
+              route.active ? "font-bold text-primary" : "text-white"
+            }`}
+          >
             {route.label}
           </p>
-        </div>
+        </Link>
       ))}
     </nav>
   );

@@ -95,12 +95,23 @@ export async function POST(req: Request) {
     if (!tax)
       return NextResponse.json({ error: "Tax is required" }, { status: 500 });
 
+    const shippingAddress = await db.shipppingAddress.findFirst({
+      where: {
+        userId,
+      },
+    });
+    if (!shippingAddress)
+      return NextResponse.json(
+        { error: "Shipping address not found" },
+        { status: 500 }
+      );
+
     const order = await db.checkout.create({
       data: {
         userId,
         orderNotes,
         paymentMethod,
-        shippingAddressId :"1",
+        shippingAddressId: shippingAddress.id,
         items: {
           create: items.map((item: any) => ({
             quantity: item.quantity,

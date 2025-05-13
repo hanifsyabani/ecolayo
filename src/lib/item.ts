@@ -120,18 +120,26 @@ export const dashboardUserItem = [
     icon: FaHistory,
   },
   {
-    title : 'Wishlist',
-    link: '/shop/dashboard/wishlist',
-    icon: FaHeart,
-  },
-  {
-    title : 'Shopping Cart',
-    link: '/shop/dashboard/shopping-cart',
-    icon: FaCartArrowDown,
-  },
-  {
     title : 'Setting',
     link: '/shop/dashboard/settings',
     icon: IoIosSettings,
+  },
+]
+
+export const ourTeam = [
+  {
+    name: "Hanif",
+    position: "CEO & Founder",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
+  },
+  {
+    name: "Maulana",
+    position: "Head of Farmer",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
+  },
+  {
+    name: "Salman",
+    position: "IT Engineer",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
   },
 ]

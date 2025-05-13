@@ -4,6 +4,7 @@ import NewestProduct from "@/components/user/home/newest-product";
 import ProductCategories from "@/components/user/home/product-categories";
 import ProductFeatured from "@/components/user/home/product-featured";
 import PromoteBanner from "@/components/user/home/promote-banner";
+import TitleHome from "@/components/user/home/title-home";
 import Newsletter from "@/components/user/products/newsletter";
 import { shopServiceItem } from "@/lib/item";
 
@@ -29,8 +30,11 @@ export default async function page() {
       <ProductFeatured />
       <PromoteBanner />
       <NewestProduct />
-      <ClientTestimoni />
-      <Newsletter isSosmed={false}/>
+      <div className="bg-gray-200">
+        <TitleHome title="Client Testimoni" link="/testimoni" />
+        <ClientTestimoni />
+      </div>
+      <Newsletter isSosmed={false} />
     </div>
   );
 }
