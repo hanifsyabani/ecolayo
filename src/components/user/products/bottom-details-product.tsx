@@ -5,7 +5,7 @@ import Descriptions from "./descriptions";
 import AdditionalInfo from "./additional-info";
 import Feedback from "./feedback";
 import { ProductProps } from "@/components/interface/product";
-import Newsletter from "./newsletter";
+import Newsletter from "../newsletter";
 import { Separator } from "@/components/ui/separator";
 import { useQuery } from "@tanstack/react-query";
 import { GetRelatedProductByCategory } from "@/service/shop/products";

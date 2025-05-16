@@ -1,7 +1,7 @@
 import Image from "next/image";
 import React from "react";
 import Link from "next/link";
-import Newsletter from "../products/newsletter";
+import Newsletter from "../newsletter";
 import ClientTestimoni from "../home/client-testimoni";
 import { ourTeam } from "@/lib/item";
 

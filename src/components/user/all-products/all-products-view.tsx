@@ -12,7 +12,7 @@ import { GetProducts } from "@/service/products";
 import { useQuery } from "@tanstack/react-query";
 import ProductCard from "../products/product-card";
 import { useState } from "react";
-import Newsletter from "../products/newsletter";
+import Newsletter from "../newsletter";
 
 const priceFilter = [
   {

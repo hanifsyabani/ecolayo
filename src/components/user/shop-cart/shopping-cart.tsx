@@ -4,7 +4,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { Columns, ShopCartColumn } from "./columns-shopping-cart";
 import Coupon from "./coupon";
 import CartTotal from "./cart-total";
-import Newsletter from "../products/newsletter";
+import Newsletter from "../newsletter";
 import { useAppDispatch } from "@/hooks/use-app-dispatch";
 import { useEffect, useState } from "react";
 import { fetchCartAsync, updateCartAsync } from "@/app/redux/cart-slice";

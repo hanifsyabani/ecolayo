@@ -190,7 +190,7 @@ model Payment {
 
 model ContactMessage {
   id      String @id @default(uuid())
-  userId  String @unique
+  userId  String 
   user    User   @relation("UserToContactMessage", fields: [userId], references: [id], onDelete: Cascade)
   email   String
   subject String

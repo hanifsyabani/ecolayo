@@ -6,7 +6,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { FaHome } from "react-icons/fa";
-import ContactView from "@/components/user/contact/page";
+import ContactView from "@/components/user/contact/contact-view";
 
 export default function page() {
   return (

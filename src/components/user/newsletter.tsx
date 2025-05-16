@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import Sosmed from "../sosmed";
+import Sosmed from "./sosmed";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface NewsletterProps {
@@ -20,14 +20,16 @@ export default function Newsletter({ isSosmed }: NewsletterProps) {
         </div>
 
         <div className="flex items-center justify-center w-1/2 gap-8">
-          <div className="flex items-center">
-            <Input
-              placeholder="Enter your email adress"
-              className="rounded-full w-80 bg-white"
-            />
-            <Button className="text-white rounded-full">Subscribe</Button>
+          <div className="space-y-2" >
+            <div className="flex items-center ">
+              <Input
+                placeholder="Enter your email adress"
+                className="rounded-full w-80 bg-white"
+              />
+              <Button className="text-white rounded-full">Subscribe</Button>
+            </div>
+            {isSosmed && <Sosmed />}
           </div>
-          {isSosmed && <Sosmed />}
         </div>
       </CardContent>
     </Card>

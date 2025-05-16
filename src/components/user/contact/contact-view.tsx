@@ -13,6 +13,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { PostContactMessage } from "@/service/shop/contact";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import MapLocationStore from "./map-location-store";
+import Newsletter from "../newsletter";
 
 const schema = z.object({
   email: z.string().email({ message: "Email is invalid" }),
@@ -42,7 +44,7 @@ export default function ContactView() {
     mutationFn: (data: FormFields) => PostContactMessage(data),
     onSuccess: () => {
       setIsLoadingForm(false);
-      reset()
+      reset();
       toast.success("Message sent successfully");
     },
     onError: () => {
@@ -170,24 +172,21 @@ export default function ContactView() {
                 className="px-6 py-3 text-white font-medium rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                 disabled={isLoadingForm}
               >
-                {isLoadingForm ? <span className="spinner"/> : "Send Message"}
+                {isLoadingForm ? <span className="spinner" /> : "Send Message"}
               </Button>
             </form>
           </div>
         </div>
 
-        {/* Map section */}
-        {/* <div className="mt-10 h-64 w-full rounded-lg overflow-hidden">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d387193.30596672786!2d-74.25987368715491!3d40.69767006766623!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2s!4v1652813390720!5m2!1sen!2s"
-            width="100%"
-            height="100%"
-            style={{ border: 0 }}
-            // allowFullScreen=""
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          ></iframe>
-        </div> */}
+        <div className="mt-10">
+          <div className="w-full h-96 rounded-lg overflow-hidden shadow">
+            <MapLocationStore />
+          </div>
+        </div>
+
+        <div className="mt-10">
+          <Newsletter isSosmed={true} />
+        </div>
       </div>
     </>
   );

@@ -9,7 +9,7 @@ import { format } from "date-fns";
 import Link from "next/link";
 import TrackingOrder from "./tracking-order";
 import TableOrderProduct from "./table-order-product";
-import Newsletter from "../../products/newsletter";
+import Newsletter from "../../newsletter";
 
 export default function OrderDetail({ id }: { id: string }) {
   const { data: order, isLoading: isLoadingOrder } = useQuery({
