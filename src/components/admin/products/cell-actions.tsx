@@ -15,7 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ProductColumn } from "./columns-products";
 import { useMutation } from "@tanstack/react-query";
-import { DeleteProduct } from "@/service/products";
+import { DeleteProduct } from "@/service/admin/products";
 import Link from "next/link";
 
 interface CellActionProps {

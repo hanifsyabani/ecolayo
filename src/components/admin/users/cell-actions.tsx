@@ -14,10 +14,10 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
-import { DeleteProduct } from "@/service/products";
+import { DeleteProduct } from "@/service/admin/products";
 import Link from "next/link";
 import { UserColumn } from "./column-users";
-import { DeleteUser } from "@/service/users";
+import { DeleteUser } from "@/service/admin/users";
 
 interface CellActionProps {
   data: UserColumn;

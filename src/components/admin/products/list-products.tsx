@@ -8,7 +8,7 @@ import Link from "next/link";
 import { Columns, ProductColumn } from "./columns-products";
 import { DataTable } from "@/components/ui/data-table";
 import { useQuery } from "@tanstack/react-query";
-import { GetProducts } from "@/service/products";
+import { GetProducts } from "@/service/admin/products";
 import { formatter } from "@/lib/utils";
 
 export default function ListProducts() {

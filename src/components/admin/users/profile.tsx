@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DeleteUser, GetUserById } from "@/service/users";
+import { DeleteUser, GetUserById } from "@/service/admin/users";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,6 +12,8 @@ import toast from "react-hot-toast";
 import DialogDeleteUser from "./dialog-delete-user";
 import { detailProfileUser } from "@/lib/item";
 import { Separator } from "@/components/ui/separator";
+import OrderByUser from "./order-by-user";
+import { FaPencilAlt, FaTrash } from "react-icons/fa";
 
 interface ProfileUserProps {
   id: string;
@@ -91,14 +93,19 @@ export default function ProfileUser({ id }: ProfileUserProps) {
         </div>
         <div className="flex items-center gap-4">
           <Link href={`/admin/users/${id}`}>
-            <Button className="text-white">Edit</Button>
+            <Button className="text-white">
+              <FaPencilAlt />
+            </Button>
           </Link>
           <Button
-            className="border border-red-600 hover:bg-red-600 hover:text-white"
+            className="border border-red-600 hover:bg-red-600 group hover:text-white"
             variant={"outline"}
             onClick={() => setIsOpen(true)}
           >
-            Delete
+            <FaTrash
+              size={20}
+              className="text-red-500 group-hover:text-white"
+            />
           </Button>
         </div>
       </div>
@@ -114,7 +121,7 @@ export default function ProfileUser({ id }: ProfileUserProps) {
         ))}
       </div>
 
-      <h1 className="font-semibold mt-10">Orders</h1>
+      <OrderByUser userid={id} />
 
       <DialogDeleteUser
         isOpen={isOpen}

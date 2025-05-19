@@ -2,10 +2,10 @@
 
 import { useQuery } from "@tanstack/react-query";
 import BarChart from "../chart/barchart";
-import { GetProducts } from "@/service/products";
+import { GetProducts } from "@/service/admin/products";
 import { Card, CardContent } from "../ui/card";
 import PieChart from "../chart/piechart";
-import { GetUsers } from "@/service/users";
+import { GetUsers } from "@/service/admin/users";
 
 export default function ChartDashboard() {
   const { data: products, isLoading: isLoadingProducts } = useQuery({

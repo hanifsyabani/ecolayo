@@ -4,7 +4,7 @@ import ProductCard from "../products/product-card";
 import TitleHome from "./title-home";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
-import { GetProducts } from "@/service/products";
+import { GetProducts } from "@/service/admin/products";
 
 export default function ProductFeatured() {
   const { data: products, isLoading: isLoadingProducts } = useQuery({

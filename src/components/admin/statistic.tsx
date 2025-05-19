@@ -1,13 +1,13 @@
 "use client";
 
 import { commonStats } from "@/lib/item";
-import { GetBanners } from "@/service/banners";
-import { GetCategories } from "@/service/categories";
-import { GetProducts } from "@/service/products";
+import { GetBanners } from "@/service/admin/banners";
+import { GetCategories } from "@/service/admin/categories";
+import { GetProducts } from "@/service/admin/products";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "../ui/card";
 import { ImStatsBars2 } from "react-icons/im";
-import { GetUsers } from "@/service/users";
+import { GetUsers } from "@/service/admin/users";
 
 
 export default function Statistics() {

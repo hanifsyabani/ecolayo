@@ -5,35 +5,18 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   req: Request,
-  { params }: { params: { orderid: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
     const userId = session?.user.id;
 
-    // console.log("order id: ", params.orderid);
-
     if (!userId)
       return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
-    const orders = await db.checkout.findFirst({
+    const orders = await db.checkout.findMany({
       where: {
-        id: params.orderid,
-      },
-      include: {
-        items: {
-          include: {
-            product: {
-              include: {
-                images: true,
-                tag: true,
-                category: true,
-              },
-            },
-          },
-        },
-        shippingAddress: true,
-        user: true,
+        userId: params.id,
       },
     });
 

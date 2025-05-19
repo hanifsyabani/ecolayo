@@ -7,8 +7,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { GetCategories } from "@/service/categories";
-import { GetProducts } from "@/service/products";
+import { GetCategories } from "@/service/admin/categories";
+import { GetProducts } from "@/service/admin/products";
 import { useQuery } from "@tanstack/react-query";
 import ProductCard from "../products/product-card";
 import { useState } from "react";

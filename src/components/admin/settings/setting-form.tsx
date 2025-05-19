@@ -24,7 +24,7 @@ import toast from "react-hot-toast";
 import { z } from "zod";
 import UploadImage from "../banner/upload-image";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { GetStore, PatchStore } from "@/service/store";
+import { GetStore, PatchStore } from "@/service/admin/store";
 
 const schema = z.object({
   store_name: z.string().min(5),

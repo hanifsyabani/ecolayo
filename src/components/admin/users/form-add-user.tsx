@@ -1,6 +1,6 @@
 "use client";
 
-import { PostUser } from "@/service/users";
+import { PostUser } from "@/service/admin/users";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";

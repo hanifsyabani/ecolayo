@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
-import { DeleteCategory } from "@/service/categories";
+import { DeleteCategory } from "@/service/admin/categories";
 
 interface CellActionProps {
   data: CategoryColumn;

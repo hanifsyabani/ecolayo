@@ -33,9 +33,13 @@ import UploadImage from "../banner/upload-image";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { DeleteProduct, GetProductById, PatchProduct } from "@/service/products";
+import {
+  DeleteProduct,
+  GetProductById,
+  PatchProduct,
+} from "@/service/admin/products";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { GetCategories } from "@/service/categories";
+import { GetCategories } from "@/service/admin/categories";
 
 interface ProductFormProps {
   id: string;

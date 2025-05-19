@@ -5,10 +5,10 @@ interface TrackingOrderProps {
 }
 
 const trackingStatus = [
-  { status: "Order Received", no: "01" },
-  { status: "Processing", no: "02" },
-  { status: "On The Way", no: "03" },
-  { status: "Delivered", no: "04" },
+  { status: "placed", no: "01" },
+  { status: "processing", no: "02" },
+  { status: "on-the-way", no: "03" },
+  { status: "delivered", no: "04" },
 ];
 
 export default function TrackingOrder({ data }: TrackingOrderProps) {

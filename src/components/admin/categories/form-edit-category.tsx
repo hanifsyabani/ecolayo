@@ -29,15 +29,15 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
-import { GetProductById } from "@/service/products";
+import { GetProductById } from "@/service/admin/products";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   DeleteCategory,
   GetCategories,
   GetCategoriesById,
   PatchCategory,
-} from "@/service/categories";
-import { GetBanners } from "@/service/banners";
+} from "@/service/admin/categories";
+import { GetBanners } from "@/service/admin/banners";
 import UploadImage from "../banner/upload-image";
 
 interface CategoryFormProps {

@@ -9,7 +9,7 @@ import { CategoryColumn, Columns } from "./columns-category";
 import { DataTable } from "@/components/ui/data-table";
 import { format } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
-import { GetCategories } from "@/service/categories";
+import { GetCategories } from "@/service/admin/categories";
 
 export default function ListCategories() {
 

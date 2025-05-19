@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 import TitleHome from "./title-home";
 import { useQuery } from "@tanstack/react-query";
-import { GetCategories } from "@/service/categories";
+import { GetCategories } from "@/service/admin/categories";
 
 interface CategoriesProps{
   id:string

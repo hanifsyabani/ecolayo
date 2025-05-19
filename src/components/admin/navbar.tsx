@@ -1,17 +1,7 @@
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { redirect } from "next/navigation";
-
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 
 export default async function Navbar() {
-  const session = await getServerSession(authOptions);
-  const userId = session?.user.id;
-
-  if (!userId) redirect("/login");
-
-
   return (
     <>
       <nav className="py-2 px-3 flex gap-32 items-center bg-white">

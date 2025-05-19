@@ -18,6 +18,8 @@ import { PostCheckout } from "@/service/shop/checkout";
 import toast from "react-hot-toast";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
+import { useAppDispatch } from "@/hooks/use-app-dispatch";
+import { deleteAllCartAsync, fetchCartAsync } from "@/app/redux/cart-slice";
 
 const strukItem = ["Subtotal", "Shipping", "Tax", "Total"];
 const paymentMethod = ["Direct Bank Transfer", "Cash on Delivery", "Qris"];
@@ -41,6 +43,7 @@ type FormFields = z.infer<typeof schema>;
 
 export default function CheckoutForm() {
   const { cart, loading } = useSelector((state: RootState) => state.cart);
+  const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const subtotal =
     cart?.items.reduce(
@@ -51,7 +54,7 @@ export default function CheckoutForm() {
   const shippingCost = subtotal >= 100000 ? 0 : 5000;
   const tax = subtotal * (12 / 100);
   const finalTotal = subtotal + shippingCost + tax;
-  const router = useRouter() 
+  const router = useRouter();
 
   const {
     register,
@@ -61,7 +64,6 @@ export default function CheckoutForm() {
   } = useForm<FormFields>({
     resolver: zodResolver(schema),
   });
-  
 
   const { mutate: placeOrder } = useMutation({
     mutationFn: (
@@ -78,10 +80,12 @@ export default function CheckoutForm() {
         tax: number;
       }
     ) => PostCheckout(data),
-    onSuccess: () => {
-      setIsLoading(false);
+    onSuccess: async () => {
       toast.success("Order placed successfully");
       router.push("/shop/dashboard/orders");
+      await dispatch(deleteAllCartAsync());
+      await dispatch(fetchCartAsync());
+      setIsLoading(false);
     },
     onError: (error: any) => {
       setIsLoading(false);
@@ -102,7 +106,7 @@ export default function CheckoutForm() {
         })) || [],
       shipping: shippingCost,
       tax,
-      subtotal : subtotal,
+      subtotal: subtotal,
       finalTotal: finalTotal,
     };
     placeOrder(checkoutData);

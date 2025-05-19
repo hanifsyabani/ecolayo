@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { DeleteUser, GetUserById, PatchUser } from "@/service/users";
+import { DeleteUser, GetUserById, PatchUser } from "@/service/admin/users";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";

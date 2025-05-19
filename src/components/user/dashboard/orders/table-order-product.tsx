@@ -3,11 +3,9 @@
 import { Columns, OrderProductColumn } from "./column-order-product";
 import { formatter } from "@/lib/utils";
 import { DataTable } from "@/components/ui/data-table";
-import { Checkout } from "@prisma/client";
 
 export default function TableOrderProduct({data}:any) {
 
-  console.log(data)
 
   const formattedOrderProduct: OrderProductColumn[] =
     data?.items.map((product: any) => ({

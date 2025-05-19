@@ -10,7 +10,7 @@ import CartTrigger from "./cart-trigger";
 import NavTopUser from "./nav-top-user";
 import { FaRegUserCircle } from "react-icons/fa";
 import { useQuery } from "@tanstack/react-query";
-import { GetStore } from "@/service/store";
+import { GetStore } from "@/service/admin/store";
 
 export default function NavUser() {
 

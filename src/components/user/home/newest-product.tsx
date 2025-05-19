@@ -3,7 +3,7 @@
 import TitleHome from "./title-home";
 import ProductCard from "../products/product-card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { GetProducts } from "@/service/products";
+import { GetProducts } from "@/service/admin/products";
 import { useQuery } from "@tanstack/react-query";
 
 export default function NewestProduct() {

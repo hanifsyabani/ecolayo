@@ -3,7 +3,7 @@
 import { IoLocationSharp } from "react-icons/io5";
 import ButtonLogout from "../button-logout";
 import { useQuery } from "@tanstack/react-query";
-import { GetStore } from "@/service/store";
+import { GetStore } from "@/service/admin/store";
 
 export default function NavTopUser() {
   const { data: store, isLoading: isLoadingStore } = useQuery({

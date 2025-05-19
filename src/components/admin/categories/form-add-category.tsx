@@ -13,8 +13,8 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { GetBanners, PostBanner } from "@/service/banners";
-import { GetCategories, PostCategory } from "@/service/categories";
+import { GetBanners, PostBanner } from "@/service/admin/banners";
+import { GetCategories, PostCategory } from "@/service/admin/categories";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { MoveLeft } from "lucide-react";

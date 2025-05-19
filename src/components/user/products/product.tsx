@@ -4,7 +4,7 @@ import React from "react";
 import HeadDetailProduct from "./head-detail-product";
 import BottomDetailsProduct from "./bottom-details-product";
 import { useQuery } from "@tanstack/react-query";
-import { GetProductById } from "@/service/products";
+import { GetProductById } from "@/service/admin/products";
 import Image from "next/image";
 
 interface ProductProps {

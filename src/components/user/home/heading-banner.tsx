@@ -5,7 +5,7 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "../../ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
-import { GetBanners } from "@/service/banners";
+import { GetBanners } from "@/service/admin/banners";
 
 interface Banner {
   imageUrl: string;

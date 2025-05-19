@@ -16,7 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { DeleteBanner } from "@/service/banners";
+import { DeleteBanner } from "@/service/admin/banners";
 import { useMutation } from "@tanstack/react-query";
 
 interface CellActionProps {

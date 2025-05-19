@@ -1,7 +1,7 @@
 "use client";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { GetBanners } from "@/service/banners";
+import { GetBanners } from "@/service/admin/banners";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 

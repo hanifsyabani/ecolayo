@@ -12,6 +12,7 @@ import {
   Logs,
   Settings,
   ShoppingBasket,
+  ShoppingCart,
   Users,
 } from "lucide-react";
 import Link from "next/link";
@@ -19,7 +20,7 @@ import Image from "next/image";
 import ButtonLogout from "../button-logout";
 import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { GetStore } from "@/service/store";
+import { GetStore } from "@/service/admin/store";
 
 export default function SidebarAdmin() {
   const pathname = usePathname();
@@ -38,19 +39,16 @@ export default function SidebarAdmin() {
       title: "Home",
       url: `/admin`,
       icon: Home,
-      // active: pathname === "/",
     },
     {
       title: "Products",
       url: `/admin/products`,
       icon: ShoppingBasket,
-      // active: pathname === `/admin/store/${params.storeid}/products`,
     },
     {
       title: "Banners",
       url: `/admin/banners`,
       icon: Fullscreen,
-      // active: pathname === `/admin/store/${params.storeid}/banners`,
     },
     {
       title: "Categories",
@@ -63,10 +61,14 @@ export default function SidebarAdmin() {
       icon: Users,
     },
     {
+      title: "Orders",
+      url: `/admin/orders`,
+      icon: ShoppingCart,
+    },
+    {
       title: "Settings",
       url: `/admin/settings`,
       icon: Settings,
-      // active: pathname === `/admin/store/${store_id}/settings`,
     },
   ];
 
@@ -91,10 +93,10 @@ export default function SidebarAdmin() {
         <SidebarGroup className="flex-1">
           <SidebarGroupContent className="space-y-4">
             {items.map((item) => {
-               const isActive =
-               item.url === "/admin"
-                 ? pathname === "/admin"
-                 : pathname.startsWith(item.url);
+              const isActive =
+                item.url === "/admin"
+                  ? pathname === "/admin"
+                  : pathname.startsWith(item.url);
               return (
                 <Link
                   href={item.url}

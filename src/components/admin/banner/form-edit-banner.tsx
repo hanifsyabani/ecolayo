@@ -31,7 +31,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { DeleteBanner, GetBannerById, PatchBanner } from "@/service/banners";
+import {
+  DeleteBanner,
+  GetBannerById,
+  PatchBanner,
+} from "@/service/admin/banners";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 interface BannerFormProps {

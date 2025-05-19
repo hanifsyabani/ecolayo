@@ -28,17 +28,17 @@ export default function OrderDetail({ id }: { id: string }) {
 
 
   const shippAddress =
-    order?.streetAddress +
+    order?.shippingAddress.streetAddress +
     ", " +
-    order?.province +
+    order?.shippingAddress.province +
     ", " +
-    order?.kabupaten +
+    order?.shippingAddress.kabupaten +
     ", " +
-    order?.kecamatan +
+    order?.shippingAddress.kecamatan +
     ", " +
-    order?.kelurahan +
+    order?.shippingAddress.kelurahan +
     ", " +
-    order?.postalCode;
+    order?.shippingAddress.postalCode;
 
   if (isLoadingOrder || isLoadingUser) return <div className="spinner" />;
 
@@ -84,7 +84,7 @@ export default function OrderDetail({ id }: { id: string }) {
             <CardContent className="text-sm">
               <h1 className="text-gray-500">Shipping Address</h1>
               <div className="space-y-2">
-                <h1>{order?.firstName + " " + order?.lastName}</h1>
+                <h1>{order?.shippingAddress.firstName + " " + order?.shippingAddress.lastName}</h1>
                 <p className="text-sm text-gray-500">{shippAddress}</p>
               </div>
               <div className="mt-8">
@@ -119,14 +119,14 @@ export default function OrderDetail({ id }: { id: string }) {
                 <h1 className="text-gray-500 text-sm">Tax</h1>
                 <small>{formatter.format(order?.tax)}</small>
               </div>
-              <div className="flex justify-between items-center">
+              {/* <div className="flex justify-between items-center">
                 <h1 className="text-gray-500 text-sm">Discount</h1>
                 <small>
                   {order?.discount === 0 || null
                     ? "-"
                     : formatter.format(order?.discount)}
                 </small>
-              </div>
+              </div> */}
               <div className="flex justify-between items-center">
                 <h1 className="text-gray-500 text-sm">Shipping</h1>
                 <small>{formatter.format(order?.shipping)}</small>

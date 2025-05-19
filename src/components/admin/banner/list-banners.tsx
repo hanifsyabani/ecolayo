@@ -8,7 +8,7 @@ import Link from "next/link";
 import {  BannerColumn, Columns } from "./columns-banner";
 import { DataTable } from "@/components/ui/data-table";
 import { useQuery } from "@tanstack/react-query";
-import { GetBanners } from "@/service/banners";
+import { GetBanners } from "@/service/admin/banners";
 import { format } from "date-fns";
 
 

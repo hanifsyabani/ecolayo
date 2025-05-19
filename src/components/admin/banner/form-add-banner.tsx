@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useMutation } from "@tanstack/react-query";
-import { PostBanner } from "@/service/banners";
+import { PostBanner } from "@/service/admin/banners";
 
 
 const schema = z.object({

@@ -10,7 +10,7 @@ import {
 } from "../ui/select";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { GetCategories } from "@/service/categories";
+import { GetCategories } from "@/service/admin/categories";
 import Link from "next/link";
 
 export default function NavBottomUser() {

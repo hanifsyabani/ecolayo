@@ -26,7 +26,7 @@ export default function RemoveFromCart({ itemid }: RemoveCartProps) {
   async function handleRemoveItem() {
     setIsLoading(true);
     try {
-      await dispatch(deleteCartAsync({itemid })).unwrap();
+      await dispatch(deleteCartAsync({ itemid })).unwrap();
       await dispatch(fetchCartAsync()).unwrap();
       toast.success("Item removed from cart");
     } catch (error) {

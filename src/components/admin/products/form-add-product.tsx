@@ -26,9 +26,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { GetCategories } from "@/service/categories";
+import { GetCategories } from "@/service/admin/categories";
 import Link from "next/link";
-import { PostProduct } from "@/service/products";
+import { PostProduct } from "@/service/admin/products";
 
 interface ProductFormProps {
   id: string;

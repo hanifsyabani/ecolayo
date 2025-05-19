@@ -66,3 +66,18 @@ export async function DeleteUser(id: string) {
     throw error.response?.data || { error: "Something went wrong" };
   }
 }
+
+
+export async function GetOrdersByUser(id : string){
+  try {
+    const response = await axios.get(`/api/user/${id}`, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error.response?.data || { error: "Something went wrong" };
+  }
+}
