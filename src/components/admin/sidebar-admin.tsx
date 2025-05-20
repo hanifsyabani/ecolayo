@@ -10,6 +10,7 @@ import {
   Fullscreen,
   Home,
   Logs,
+  MessageCircle,
   Settings,
   ShoppingBasket,
   ShoppingCart,
@@ -66,6 +67,11 @@ export default function SidebarAdmin() {
       icon: ShoppingCart,
     },
     {
+      title: "Feedback",
+      url: `/admin/feedback`,
+      icon: MessageCircle,
+    },
+    {
       title: "Settings",
       url: `/admin/settings`,
       icon: Settings,
@@ -91,7 +97,7 @@ export default function SidebarAdmin() {
         )}
 
         <SidebarGroup className="flex-1">
-          <SidebarGroupContent className="space-y-4">
+          <SidebarGroupContent className="space-y-2">
             {items.map((item) => {
               const isActive =
                 item.url === "/admin"

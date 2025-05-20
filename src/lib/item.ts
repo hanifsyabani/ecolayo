@@ -1,5 +1,13 @@
 import { BoxIcon, HeadphonesIcon, ShoppingBag, Truck } from "lucide-react";
-import { FaBox, FaCartArrowDown, FaHeart, FaHistory, FaImage, FaList, FaUser } from "react-icons/fa";
+import {
+  FaBox,
+  FaCartArrowDown,
+  FaHeart,
+  FaHistory,
+  FaImage,
+  FaList,
+  FaUser,
+} from "react-icons/fa";
 import { IoIosSettings } from "react-icons/io";
 import { MdDashboard } from "react-icons/md";
 
@@ -110,36 +118,66 @@ export const detailProfileUser = [
 
 export const dashboardUserItem = [
   {
-    title : 'Dashboard',
-    link: '/shop/dashboard',
+    title: "Dashboard",
+    link: "/shop/dashboard",
     icon: MdDashboard,
   },
   {
-    title : 'Order History',
-    link: '/shop/dashboard/orders',
+    title: "Order History",
+    link: "/shop/dashboard/orders",
     icon: FaHistory,
   },
   {
-    title : 'Setting',
-    link: '/shop/dashboard/settings',
+    title: "Setting",
+    link: "/shop/dashboard/settings",
     icon: IoIosSettings,
   },
-]
+];
 
 export const ourTeam = [
   {
     name: "Hanif",
     position: "CEO & Founder",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
+    image:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
   },
   {
     name: "Maulana",
     position: "Head of Farmer",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
+    image:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
   },
   {
     name: "Salman",
     position: "IT Engineer",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
+    image:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
   },
-]
+];
+
+export const statusOrder = [
+  {
+    label: "All",
+    value: "all",
+  },
+  {
+    label: "Placed",
+    value: "placed",
+  },
+  {
+    label: "Processing",
+    value: "processing",
+  },
+  {
+    label: "On the way",
+    value: "on-the-way",
+  },
+  {
+    label: "Delivered",
+    value: "delivered",
+  },
+  {
+    label: "Cancelled",
+    value: "cancelled",
+  },
+];

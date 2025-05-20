@@ -29,9 +29,20 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Columns, OrdersColumn } from "./column-all-orders";
+import { statusOrder } from "@/lib/item";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 export default function OrdersView() {
-  const { data: orders, isLoading: isLoadingOrders } = useQuery({
+  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [sortOrder, setSortOrder] = useState("latest");
+  const [isDownload, setIsDownload] = useState(false);
+
+  const {
+    data: orders,
+    isLoading: isLoadingOrders,
+    refetch,
+  } = useQuery({
     queryFn: () => GetAllOrders(),
     queryKey: ["dataOrders"],
   });
@@ -43,9 +54,43 @@ export default function OrdersView() {
     status: checkout.status,
   }));
 
-  const exportOrders = () => {
-    alert("Export functionality would download a CSV file in production");
-  };
+  const filteredOrder = formattedOrder
+    ?.filter((order: any) => {
+      if (selectedStatus !== "all" && order.status !== selectedStatus) {
+        // klo order bukan all dan dia bukan status yang dipilih maka tidak ditampilkan
+        return false;
+      }
+      return true;
+    })
+    ?.sort((a: any, b: any) => {
+      if (sortOrder === "latest")
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      if (sortOrder === "oldest")
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+      return 0;
+    });
+
+  function exportData() {
+    setIsDownload(true);
+    // Buat worksheet & workbook
+    const worksheet = XLSX.utils.json_to_sheet(formattedOrder);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const fileData = new Blob([excelBuffer], {
+      type: "application/octet-stream",
+    });
+    saveAs(fileData, "orders.xlsx");
+    setIsDownload(false);
+  }
 
   if (isLoadingOrders) return <div className="spinner"></div>;
   return (
@@ -68,35 +113,20 @@ export default function OrdersView() {
                   >
                     Status:
                   </Label>
-                  <Select>
+                  <Select onValueChange={(value) => setSelectedStatus(value)}>
                     <SelectTrigger>
                       <SelectValue placeholder="All" />
                     </SelectTrigger>
                     <SelectContent className="bg-white">
-                      <SelectItem
-                        value="all"
-                        className="hover:bg-gray-200 cursor-pointer "
-                      >
-                        All
-                      </SelectItem>
-                      <SelectItem
-                        value="processing"
-                        className="hover:bg-gray-200 cursor-pointer"
-                      >
-                        Processing
-                      </SelectItem>
-                      <SelectItem
-                        value="on-the-way"
-                        className="hover:bg-gray-200 cursor-pointer"
-                      >
-                        On The Way
-                      </SelectItem>
-                      <SelectItem
-                        value="delivered"
-                        className="hover:bg-gray-200 cursor-pointer"
-                      >
-                        Delivered
-                      </SelectItem>
+                      {statusOrder.map((status) => (
+                        <SelectItem
+                          key={status.label}
+                          value={status.value}
+                          className="hover:bg-gray-200 cursor-pointer "
+                        >
+                          {status.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -108,13 +138,13 @@ export default function OrdersView() {
                   >
                     Sort:
                   </Label>
-                  <Select>
+                  <Select onValueChange={(value) => setSortOrder(value)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Newest" />
                     </SelectTrigger>
                     <SelectContent className="bg-white">
                       <SelectItem
-                        value="newest"
+                        value="latest"
                         className="hover:bg-gray-200 cursor-pointer"
                       >
                         Newest
@@ -132,13 +162,20 @@ export default function OrdersView() {
 
               <div className="flex gap-4">
                 <Button variant={"outline"}>
-                  <RefreshCw className="h-4 w-4 mr-1" />
+                  <RefreshCw
+                    className="h-4 w-4 mr-1"
+                    onClick={() => refetch()}
+                  />
                   Refresh
                 </Button>
 
-                <Button onClick={exportOrders} className="text-white">
+                <Button
+                  onClick={exportData}
+                  className="text-white"
+                  disabled={isDownload}
+                >
                   <Download className="h-4 w-4 mr-1" />
-                  Export
+                  {isDownload ? <span className="spinner" /> : "Export"}
                 </Button>
               </div>
             </div>
@@ -148,7 +185,7 @@ export default function OrdersView() {
         <div className="bg-white rounded-lg shadow">
           <div className="p-4 sm:p-6">
             <DataTable
-              data={formattedOrder}
+              data={filteredOrder}
               columns={Columns()}
               searchKey="id"
             />
