@@ -1,24 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
-  Search,
-  Filter,
   RefreshCw,
   Download,
-  ChevronDown,
-  Eye,
-  Truck,
-  Check,
-  X,
-  Clock,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { GetAllOrders } from "@/service/admin/orders";
 import { DataTable } from "@/components/ui/data-table";
 
 import { format } from "date-fns";
-import { formatter } from "@/lib/utils";
+import { exportData, formatter } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -30,8 +22,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Columns, OrdersColumn } from "./column-all-orders";
 import { statusOrder } from "@/lib/item";
-import * as XLSX from "xlsx";
-import { saveAs } from "file-saver";
+
 
 export default function OrdersView() {
   const [selectedStatus, setSelectedStatus] = useState("all");
@@ -74,21 +65,9 @@ export default function OrdersView() {
       return 0;
     });
 
-  function exportData() {
+  function exportToExcel() {
     setIsDownload(true);
-    // Buat worksheet & workbook
-    const worksheet = XLSX.utils.json_to_sheet(formattedOrder);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
-
-    const excelBuffer = XLSX.write(workbook, {
-      bookType: "xlsx",
-      type: "array",
-    });
-    const fileData = new Blob([excelBuffer], {
-      type: "application/octet-stream",
-    });
-    saveAs(fileData, "orders.xlsx");
+    exportData(formattedOrder, "Orders");
     setIsDownload(false);
   }
 
@@ -170,7 +149,7 @@ export default function OrdersView() {
                 </Button>
 
                 <Button
-                  onClick={exportData}
+                  onClick={exportToExcel}
                   className="text-white"
                   disabled={isDownload}
                 >

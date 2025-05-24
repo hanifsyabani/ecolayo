@@ -53,7 +53,7 @@ export async function PATCH(req: Request, { params }: { params: { orderid: strin
     if (!userId)
       return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
-    const {status} = await req.json()
+    const {status, noteFromShop} = await req.json()
 
     // console.log("status: ", status);
 
@@ -64,7 +64,8 @@ export async function PATCH(req: Request, { params }: { params: { orderid: strin
         id: params.orderid,
       },
       data: {
-        status
+        status,
+        noteFromShop
       }
     })
     

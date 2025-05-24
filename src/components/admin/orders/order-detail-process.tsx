@@ -13,6 +13,7 @@ import {
   Phone,
   CreditCard,
   Calendar,
+  NotebookTabs,
 } from "lucide-react";
 import { format } from "date-fns";
 import { formatter } from "@/lib/utils";
@@ -27,6 +28,7 @@ import Image from "next/image";
 import OrderSummary from "./order-summary";
 import OrderActions from "./order-actions";
 import OrderTimeline from "./order-timeline";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function OrderDetailProcess({ orderId }: { orderId: string }) {
   const router = useRouter();
@@ -75,7 +77,7 @@ export default function OrderDetailProcess({ orderId }: { orderId: string }) {
     <>
       <div className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center">
+          <div className="flex items-center justify-between">
             <Button
               variant="ghost"
               onClick={() => router.push('/admin/orders')}
@@ -190,6 +192,14 @@ export default function OrderDetailProcess({ orderId }: { orderId: string }) {
                       </p>
                     </div>
                   </div>
+                </div>
+                <div>
+                  <h3 className="font-medium flex items-center mb-2">
+                    <NotebookTabs className="h-4 w-4 mr-2" />
+                    Notes from Customer
+                  </h3>
+
+                  <Textarea readOnly value={order?.orderNotes} className="border-2" />
                 </div>
               </CardContent>
             </Card>

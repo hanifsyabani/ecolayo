@@ -30,3 +30,51 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+
+export async function GET(req: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    const userId = session?.user.id;
+
+    if(!userId) return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
+
+    const feedback = await db.contactMessage.findMany({
+      include:{
+        user: true
+      }
+    })
+
+    return NextResponse.json(feedback);
+  } catch (error:any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: Request){
+  try {
+
+    const session = await getServerSession(authOptions);
+    const userId = session?.user.id;
+
+    if(!userId) return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
+
+    const { id} = await req.json();
+
+    if(!id) return NextResponse.json({ error: "Id must be provided" }, { status: 500 });
+
+    const feedback = await db.contactMessage.update({
+      where: {
+        id
+      },
+      data: {
+        status  : "resolved"
+      }
+    })
+    return NextResponse.json(feedback);
+    
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+

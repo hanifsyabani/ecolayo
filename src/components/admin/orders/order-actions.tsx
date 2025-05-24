@@ -34,17 +34,18 @@ const schema = z.object({
     "delivered",
     "cancelled",
   ]),
+  noteFromShop: z.string().optional(),
 });
-type Status = z.infer<typeof schema>;
+type FormField = z.infer<typeof schema>;
 
 export default function OrderActions({ order, refetch }: Order) {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
-  // const [notes, setNotes] = useState("");
   const [open, setOpen] = useState(false);
   const [actionType, setActionType] = useState("");
+  const [noteFromShop, setNoteFromShop] = useState("");
 
   const { mutate: updateStatus } = useMutation({
-    mutationFn: (data: Status) => PatchStatusOrder(order.id, data.status),
+    mutationFn: (data: FormField) => PatchStatusOrder(order.id, data.status, data.noteFromShop||""),
     onSuccess: () => {
       setIsLoadingForm(false);
       toast.success("Order status updated");
@@ -59,9 +60,9 @@ export default function OrderActions({ order, refetch }: Order) {
     },
   });
 
-  function handleUpdateStatus(status: Status["status"]) {
+  function handleUpdateStatus(status: FormField["status"]) {
     setIsLoadingForm(true);
-    updateStatus({ status });
+    updateStatus({status, noteFromShop});
   }
 
   function openDialog(type: string) {
@@ -179,8 +180,8 @@ export default function OrderActions({ order, refetch }: Order) {
                   className="w-full mt-2 p-2 border rounded-md"
                   rows={3}
                   placeholder={dialogContent.placeholder}
-                  // value={notes}
-                  // onChange={(e) => setNotes(e.target.value)}
+                  value={noteFromShop}
+                  onChange={(e) => setNoteFromShop(e.target.value)}
                 />
               </DialogDescription>
             </DialogHeader>

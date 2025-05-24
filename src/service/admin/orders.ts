@@ -15,11 +15,11 @@ export async function GetAllOrders() {
   }
 }
 
-export async function PatchStatusOrder(id: string, status: string) {
+export async function PatchStatusOrder(id: string, status: string, noteFromShop: string) {
   try {
      await axios.patch(
       `/api/checkout/${id}`,
-      { status },
+      { status, noteFromShop },
       {
         withCredentials: true,
         headers: {
