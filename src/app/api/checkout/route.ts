@@ -1,8 +1,8 @@
 import { authOptions } from "@/lib/auth";
 import db from "@/lib/db";
-import { create } from "domain";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
+
 
 export async function POST(req: Request) {
   try {
@@ -106,28 +106,53 @@ export async function POST(req: Request) {
         { status: 500 }
       );
 
-    const order = await db.checkout.create({
-      data: {
-        userId,
-        orderNotes,
-        paymentMethod,
-        shippingAddressId: shippingAddress.id,
-        items: {
-          create: items.map((item: any) => ({
-            quantity: item.quantity,
-            productId: item.productId,
-          })),
+    // transaction untuk memastikan atomicity
+    const result = await db.$transaction(async (prisma) => {
+      const order = await prisma.checkout.create({
+        data: {
+          userId,
+          orderNotes: orderNotes || "",
+          paymentMethod,
+          shippingAddressId: shippingAddress.id,
+          items: {
+            create: items.map((item: any) => ({
+              quantity: item.quantity,
+              productId: item.productId,
+            })),
+          },
+          subtotal,
+          finalTotal,
+          shipping: shipping || 0,
+          tax,
         },
-        subtotal,
-        finalTotal,
-        shipping,
-        tax,
-      },
+      });
+
+      // Update totalCheckout dan totalQuantitySold untuk setiap product
+      for (const item of items) {
+        await prisma.product.update({
+          where: {
+            id: item.productId,
+          },
+          data: {
+            totalCheckout: {
+              increment: 1, 
+            },
+            totalQuantitySold: {
+              increment: item.quantity, 
+            },
+            stock: {
+              decrement: item.quantity,
+            },
+          },
+        });
+      }
+
+      return order;
     });
 
     return NextResponse.json({
       message: "Order created successfully",
-      orderId: order.id,
+      orderId: result.id,
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

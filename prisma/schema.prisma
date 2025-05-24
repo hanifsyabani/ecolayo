@@ -65,21 +65,24 @@ model Category {
 }
 
 model Product {
-  id               String         @id @default(uuid())
-  categoryid       String
-  category         Category       @relation("CategoryToProduct", fields: [categoryid], references: [id], onDelete: Cascade)
-  name             String
-  price            Decimal
-  description      String?
-  shortDescription String?
-  tag              Tag[]          @relation("ProductToTag")
-  isFeatured       Boolean        @default(false)
-  isArchived       Boolean        @default(false)
-  stars            Float          @default(0.0)
-  stock            Int?           @default(0)
-  images           Images[]       @relation("ProductToImages")
-  cartItems        CartItem[]     @relation("ProductToCartItem")
-  LikedProduct     LikedProduct[] @relation("ProductToLikedProduct")
+  id                String         @id @default(uuid())
+  categoryid        String
+  category          Category       @relation("CategoryToProduct", fields: [categoryid], references: [id], onDelete: Cascade)
+  name              String
+  price             Decimal
+  description       String?
+  totalCheckout     Int            @default(0)
+  totalQuantitySold Int            @default(0)
+  shortDescription  String?
+  tag               Tag[]          @relation("ProductToTag")
+  isFeatured        Boolean        @default(false)
+  isArchived        Boolean        @default(false)
+  stars             Float          @default(0.0)
+  stock             Int?           @default(0)
+  images            Images[]       @relation("ProductToImages")
+  cartItems         CartItem[]     @relation("ProductToCartItem")
+  LikedProduct      LikedProduct[] @relation("ProductToLikedProduct")
+  CheckoutItem      CheckoutItem[] @relation("ProductToCheckoutItem")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -146,7 +149,7 @@ model Checkout {
   id                String           @id @default(uuid())
   userId            String?
   user              User?            @relation("UserToCheckout", fields: [userId], references: [id], onDelete: Cascade)
-  items             CartItem[]
+  items             CheckoutItem[]
   subtotal          Int
   finalTotal        Int
   tax               Int
@@ -159,8 +162,24 @@ model Checkout {
   paymentMethod String
   status        String  @default("placed")
 
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  CartItem  CartItem[]
+}
+
+model CheckoutItem {
+  id          String   @id @default(uuid())
+  checkoutId  String
+  checkout    Checkout @relation(fields: [checkoutId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product  @relation("ProductToCheckoutItem", fields: [productId], references: [id], onDelete: Cascade)
+  quantity     Int
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([checkoutId])
+  @@index([productId])
 }
 
 model ShipppingAddress {

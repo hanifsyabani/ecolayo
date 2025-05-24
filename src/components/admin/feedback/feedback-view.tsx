@@ -149,7 +149,7 @@ export default function FeedbackView() {
               </p>
             </div>
             <Button className="text-white" onClick={exportToExcel}>
-              <Download className="mr-2 h-4 w-4"  />
+              <Download className="mr-2 h-4 w-4" />
               Export Data
             </Button>
           </div>
@@ -201,18 +201,6 @@ export default function FeedbackView() {
                   className="hover:bg-gray-200 cursor-pointer"
                 >
                   Unread
-                </SelectItem>
-                <SelectItem
-                  value="read"
-                  className="hover:bg-gray-200 cursor-pointer"
-                >
-                  Read
-                </SelectItem>
-                <SelectItem
-                  value="in-progress"
-                  className="hover:bg-gray-200 cursor-pointer"
-                >
-                  In Progress
                 </SelectItem>
                 <SelectItem
                   value="resolved"

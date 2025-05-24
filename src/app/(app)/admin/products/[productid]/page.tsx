@@ -7,7 +7,6 @@ export default async function page({
   params: {  productid: string };
 }) {
 
-
   return (
     <Card className="px-3 py-8 ">
       <CardContent className="bg-white py-4 rounded-xl">

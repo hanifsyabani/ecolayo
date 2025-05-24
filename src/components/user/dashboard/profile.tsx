@@ -2,7 +2,6 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { formatter } from "@/lib/utils";
-import {  GetOrders } from "@/service/shop/checkout";
 import { GetUserProfile } from "@/service/shop/dashboard-user";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -10,6 +9,7 @@ import Image from "next/image";
 import { CheckoutColumn, Columns } from "./orders/column-order-history";
 import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
+import { GetAllOrdersOneUser } from "@/service/shop/checkout";
 
 export default function Profile() {
   const { data: userProfile, isLoading: isLoadingProfile } = useQuery({
@@ -18,7 +18,7 @@ export default function Profile() {
   });
 
   const { data: orders, isLoading: isLoadingOrder } = useQuery({
-    queryFn: () => GetOrders(),
+    queryFn: () => GetAllOrdersOneUser(),
     queryKey: ["dataCheckout"],
   });
 

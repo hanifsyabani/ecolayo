@@ -122,6 +122,11 @@ export async function GET(req: Request) {
         images: true,
         category: true,
         tag: true,
+        // CheckoutItem: {
+        //   include: {
+        //     checkout :true
+        //   }
+        // }
       },
       orderBy: {
         createdAt: "desc",

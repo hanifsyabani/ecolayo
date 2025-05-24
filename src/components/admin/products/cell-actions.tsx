@@ -27,13 +27,7 @@ export default function CellAction({data, refetchProducts}: CellActionProps) {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  function onCopy(id: string) {
-    navigator.clipboard.writeText(id);
-    toast.success("Product Successfully copied");
-  }
-
   const {mutate: deleteProduct } = useMutation({
-
     mutationFn: (id:string) => DeleteProduct(id),
     onSuccess: () => {
       setIsLoadingForm(false);
@@ -56,19 +50,13 @@ export default function CellAction({data, refetchProducts}: CellActionProps) {
   return (
     <>
       <div className="flex items-center gap-5">
-        <Button
-          className="bg-blue-500 w-7 h-7 text-white rounded-md cursor-pointer"
-          onClick={() => onCopy(data.id)}
-        >
-          <Copy size={10} />
-        </Button>
         <Link href={`/admin/products/${data.id}`}
-          className="bg-secondary w-7 h-7 flex justify-center items-center text-white rounded-md cursor-pointer"
+          className="bg-secondary hover:bg-primary w-7 h-7 flex justify-center items-center text-white rounded-md cursor-pointer"
         >
           <Edit size={15} />
         </Link>
         <Button
-          className="bg-red-500 w-7 h-7 text-white rounded-md cursor-pointer"
+          className="bg-red-500 hover:bg-red-800 w-7 h-7 text-white rounded-md cursor-pointer"
           onClick={() => setIsOpen(true)}
           disabled={isLoadingForm}
         >

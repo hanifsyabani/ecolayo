@@ -27,6 +27,11 @@ export async function GET(
         images: true,
         tag: true,
         category: true,
+        CheckoutItem: {
+          include: {
+            checkout :true
+          }
+        }
       },
     });
 
