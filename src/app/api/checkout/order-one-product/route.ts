@@ -11,8 +11,24 @@ export async function GET(req: Request) {
     if (!userId)
       return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
+    const { searchParams } = new URL(req.url);
+    const idProduct = searchParams.get("id");
+
+    if (!idProduct)
+      return NextResponse.json(
+        { error: "Product ID must be provided" },
+        { status: 500 }
+      );
+
     const orders = await db.checkout.findMany({
-      include:{
+      where: {
+        items: {
+          some: {
+            productId: idProduct,
+          },
+        },
+      },
+      include: {
         items: {
           include: {
             product: {
@@ -25,8 +41,8 @@ export async function GET(req: Request) {
           },
         },
         user: true
-      }
-    })
+      },
+    });
 
     return NextResponse.json(orders);
   } catch (error: any) {

@@ -3,17 +3,17 @@
 import React, { useState } from "react";
 import Descriptions from "./descriptions";
 import AdditionalInfo from "./additional-info";
-import Feedback from "./feedback";
 import { ProductProps } from "@/components/interface/product";
 import Newsletter from "../newsletter";
 import { Separator } from "@/components/ui/separator";
 import { useQuery } from "@tanstack/react-query";
 import { GetRelatedProductByCategory } from "@/service/shop/products";
 import ProductCard from "./product-card";
+import CustomerComment from "./customer-comment";
 
 export default function BottomDetailsProduct({ product }: ProductProps) {
   const [detailTab, setDetailTab] = useState("Descriptions");
-  const tabs = ["Descriptions", "Additional Information", "Customer Feedback "];
+  const tabs = ["Descriptions", "Additional Info", "Customer Comment"];
 
   const { data: relatedProducts, isLoading: isLoadingRelated } = useQuery({
     queryFn: () => GetRelatedProductByCategory(product?.categoryid!, product?.id!),
@@ -24,10 +24,10 @@ export default function BottomDetailsProduct({ product }: ProductProps) {
     switch (tab) {
       case "Descriptions":
         return <Descriptions product={product} />;
-      case "Additional":
+      case "Additional Info":
         return <AdditionalInfo />;
-      case "Feedback":
-        return <Feedback />;
+      case "Customer Comment":
+        return <CustomerComment />;
     }
   }
 

@@ -40,6 +40,7 @@ export default function OrdersView() {
 
   const formattedOrder: OrdersColumn[] = orders?.map((checkout: any) => ({
     id: checkout.id,
+    customer : checkout.user.username,
     date: format(checkout.createdAt, "dd MMMM yyyy"),
     total: formatter.format(checkout.subtotal),
     status: checkout.status,
@@ -64,6 +65,7 @@ export default function OrdersView() {
         );
       return 0;
     });
+
 
   function exportToExcel() {
     setIsDownload(true);

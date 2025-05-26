@@ -12,7 +12,7 @@ import TableOrderProduct from "./table-order-product";
 import Newsletter from "../../newsletter";
 
 export default function OrderDetail({ id }: { id: string }) {
-  const { data: order, isLoading: isLoadingOrder } = useQuery({
+  const { data: order, isLoading: isLoadingOrder, refetch } = useQuery({
     queryFn: () => GetOrderById(id),
     queryKey: ["dataOrder"],
   });
@@ -143,7 +143,7 @@ export default function OrderDetail({ id }: { id: string }) {
         </Card>
       </div>
 
-      <TrackingOrder data={order} />
+      <TrackingOrder data={order} refetch = {refetch} />
       <TableOrderProduct data={order}/>
       <Newsletter isSosmed={false}/>
     </>

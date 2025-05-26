@@ -18,6 +18,7 @@ export default function TableOrderHistory() {
     date: format(checkout.createdAt, "dd MMMM yyyy"),
     total: formatter.format(checkout.subtotal),
     status: checkout.status,
+    // customer :
   }));
 
   if (isLoadingCheckout) return <div className="spinner"></div>;

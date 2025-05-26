@@ -18,22 +18,23 @@ model Store {
 }
 
 model User {
-  id               String             @id @default(uuid())
+  id               String            @id @default(uuid())
   username         String?
   firstName        String?
   lastName         String?
-  email            String             @unique
+  email            String            @unique
   phone            String?
   password         String
-  role             String             @default("user")
-  status           String             @default("active")
-  gender           String             @default("male")
+  role             String            @default("user")
+  status           String            @default("active")
+  gender           String            @default("male")
   imageUrl         String?
-  cart             Cart?              @relation("UserToCart")
-  Checkout         Checkout[]         @relation("UserToCheckout")
-  LikedProduct     LikedProduct[]     @relation("UserToLikedProduct")
-  ShipppingAddress ShipppingAddress[] @relation("UserToShippingAddress")
-  ContactMessage   ContactMessage[]   @relation("UserToContactMessage")
+  cart             Cart?             @relation("UserToCart")
+  Checkout         Checkout[]        @relation("UserToCheckout")
+  LikedProduct     LikedProduct[]    @relation("UserToLikedProduct")
+  ShipppingAddress ShippingAddress[] @relation("UserToShippingAddress")
+  ContactMessage   ContactMessage[]  @relation("UserToContactMessage")
+  ProducrReview    ProductReview[]   @relation("UserToReview")
 
   address   String?
   lastLogin DateTime?
@@ -65,30 +66,53 @@ model Category {
 }
 
 model Product {
-  id                String         @id @default(uuid())
+  id                String          @id @default(uuid())
   categoryid        String
-  category          Category       @relation("CategoryToProduct", fields: [categoryid], references: [id], onDelete: Cascade)
+  category          Category        @relation("CategoryToProduct", fields: [categoryid], references: [id], onDelete: Cascade)
   name              String
   price             Decimal
   description       String?
-  totalCheckout     Int            @default(0)
-  totalQuantitySold Int            @default(0)
+  totalCheckout     Int             @default(0)
+  totalQuantitySold Int             @default(0)
   shortDescription  String?
-  tag               Tag[]          @relation("ProductToTag")
-  isFeatured        Boolean        @default(false)
-  isArchived        Boolean        @default(false)
-  stars             Float          @default(0.0)
-  stock             Int?           @default(0)
-  images            Images[]       @relation("ProductToImages")
-  cartItems         CartItem[]     @relation("ProductToCartItem")
-  LikedProduct      LikedProduct[] @relation("ProductToLikedProduct")
-  CheckoutItem      CheckoutItem[] @relation("ProductToCheckoutItem")
+  tag               Tag[]           @relation("ProductToTag")
+  isFeatured        Boolean         @default(false)
+  isArchived        Boolean         @default(false)
+  stars             Float           @default(0.0)
+  stock             Int?            @default(0)
+  images            Images[]        @relation("ProductToImages")
+  cartItems         CartItem[]      @relation("ProductToCartItem")
+  LikedProduct      LikedProduct[]  @relation("ProductToLikedProduct")
+  CheckoutItem      CheckoutItem[]  @relation("ProductToCheckoutItem")
+  ProductReview     ProductReview[] @relation("ProductToReview")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   isDeleted Boolean  @default(false)
 
   @@index([categoryid])
+}
+
+model ProductReview {
+  id              String  @id @default(uuid())
+  productId       String
+  product         Product @relation("ProductToReview", fields: [productId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User    @relation("UserToReview", fields: [userId], references: [id], onDelete: Cascade)
+  content         String
+  rating          Int     @default(0)
+  photoProof      String?
+  shopRating      Int
+  courierRating   Int
+  courierService  Int
+  displayUsername Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isDeleted Boolean  @default(false)
+
+  @@index([userId])
+  @@index([productId])
 }
 
 model LikedProduct {
@@ -98,7 +122,8 @@ model LikedProduct {
   product   Product @relation("ProductToLikedProduct", fields: [productId], references: [id], onDelete: Cascade)
   productId String
 
-  @@index([userId, productId])
+  @@index([userId])
+  @@index([productId])
 }
 
 model Tag {
@@ -126,6 +151,8 @@ model Cart {
   items     CartItem[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
+
+  @@index([userId])
 }
 
 model CartItem {
@@ -146,34 +173,34 @@ model CartItem {
 }
 
 model Checkout {
-  id                String           @id @default(uuid())
+  id                String          @id @default(uuid())
   userId            String?
-  user              User?            @relation("UserToCheckout", fields: [userId], references: [id], onDelete: Cascade)
+  user              User?           @relation("UserToCheckout", fields: [userId], references: [id], onDelete: Cascade)
   items             CheckoutItem[]
   subtotal          Int
   finalTotal        Int
   tax               Int
   shipping          Int?
   shippingAddressId String
-  shippingAddress   ShipppingAddress @relation(fields: [shippingAddressId], references: [id], onDelete: Cascade)
+  shippingAddress   ShippingAddress @relation(fields: [shippingAddressId], references: [id], onDelete: Cascade)
 
+  CartItem      CartItem[]
   orderNotes    String
   noteFromShop  String?
   paymentMethod String
-  status        String  @default("placed")
+  status        String     @default("placed")
 
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  CartItem  CartItem[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model CheckoutItem {
-  id          String   @id @default(uuid())
-  checkoutId  String
-  checkout    Checkout @relation(fields: [checkoutId], references: [id], onDelete: Cascade)
-  productId   String
-  product     Product  @relation("ProductToCheckoutItem", fields: [productId], references: [id], onDelete: Cascade)
-  quantity     Int
+  id         String   @id @default(uuid())
+  checkoutId String
+  checkout   Checkout @relation(fields: [checkoutId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product  @relation("ProductToCheckoutItem", fields: [productId], references: [id], onDelete: Cascade)
+  quantity   Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -182,7 +209,7 @@ model CheckoutItem {
   @@index([productId])
 }
 
-model ShipppingAddress {
+model ShippingAddress {
   id            String     @id @default(uuid())
   userId        String     @unique
   user          User       @relation("UserToShippingAddress", fields: [userId], references: [id], onDelete: Cascade)

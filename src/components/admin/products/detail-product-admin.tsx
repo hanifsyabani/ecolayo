@@ -3,162 +3,69 @@
 import React, { useState } from "react";
 import {
   Star,
-  Heart,
   ShoppingCart,
   Eye,
   Edit3,
   Trash2,
   Package,
-  TrendingUp,
   MessageSquare,
-  User,
-  Calendar,
   DollarSign,
   BarChart3,
-  Archive,
-  CheckCircle,
-  XCircle,
-  Clock,
-  Send,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useQuery } from "@tanstack/react-query";
-import { GetProductById } from "@/service/admin/products";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { DeleteProduct, GetProductById } from "@/service/admin/products";
 import Image from "next/image";
 import Link from "next/link";
 import { formatter } from "@/lib/utils";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { GetAllOrderOneProduct } from "@/service/admin/orders";
+import CheckoutHistory from "./checkout-history";
+import Comments from "./comments";
 
 export default function AdminProductDetail({ id }: any) {
-  const [newComment, setNewComment] = useState("");
-  const [commentRating, setCommentRating] = useState(5);
+  const [isDelete, setIsDelete] = useState(false);
+  const router = useRouter();
 
   const { data: product, isLoading: isLoadingProduct } = useQuery({
     queryFn: () => GetProductById(id),
     queryKey: ["dataProduct"],
   });
 
-  const checkoutHistory = [
-    {
-      id: "co-001",
-      date: "2024-03-20",
-      quantity: 2,
-      total: 25998000,
-      status: "completed",
-      customerName: "John Doe",
-    },
-    {
-      id: "co-002",
-      date: "2024-03-19",
-      quantity: 1,
-      total: 12999000,
-      status: "completed",
-      customerName: "Jane Smith",
-    },
-    {
-      id: "co-003",
-      date: "2024-03-18",
-      quantity: 3,
-      total: 38997000,
-      status: "pending",
-      customerName: "Bob Wilson",
-    },
-    {
-      id: "co-004",
-      date: "2024-03-17",
-      quantity: 1,
-      total: 12999000,
-      status: "cancelled",
-      customerName: "Alice Brown",
-    },
-  ];
+  const { data: ordersHistory, isLoading: isLoadingOrders } = useQuery({
+    queryFn: () => GetAllOrderOneProduct(id),
+    queryKey: ["dataHistoryOrder"],
+  });
 
-  const comments = [
-    {
-      id: "com-001",
-      user: {
-        firstName: "John",
-        lastName: "Doe",
-        imageUrl:
-          "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40",
-      },
-      rating: 5,
-      comment:
-        "Produk sangat bagus, kualitas premium dan sesuai deskripsi. Pengiriman cepat!",
-      date: "2024-03-20",
-      status: "approved",
+  const { mutate: deleteproduct } = useMutation({
+    mutationFn: (id: string) => DeleteProduct(id),
+    onSuccess: () => {
+      setIsDelete(false);
+      toast.success("Product deleted successfully");
+      router.push("/admin/products");
     },
-    {
-      id: "com-002",
-      user: {
-        firstName: "Jane",
-        lastName: "Smith",
-        imageUrl:
-          "https://images.unsplash.com/photo-1494790108755-2616b332c5a0?w=40",
-      },
-      rating: 4,
-      comment:
-        "Kamera memang bagus, tapi baterai agak cepat habis untuk penggunaan heavy.",
-      date: "2024-03-19",
-      status: "approved",
+    onError: () => {
+      setIsDelete(false);
+      toast.error("Error deleting product");
     },
-    {
-      id: "com-003",
-      user: {
-        firstName: "Bob",
-        lastName: "Wilson",
-        imageUrl:
-          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40",
-      },
-      rating: 5,
-      comment:
-        "Worth it banget! Performa gaming smooth, foto hasilnya amazing.",
-      date: "2024-03-18",
-      status: "pending",
+  });
+
+  function onDelete(id: string) {
+    setIsDelete(true);
+    deleteproduct(id);
+  }
+
+  const totalRevenue = product?.CheckoutItem?.reduce(
+    (total: any, item: any) => {
+      return total + (item?.checkout?.finalTotal || 0);
     },
-  ];
-
-  const getStatusVariant = (status: any) => {
-    switch (status) {
-      case "completed":
-      case "approved":
-        return "default";
-      case "pending":
-        return "secondary";
-      case "cancelled":
-        return "destructive";
-      default:
-        return "outline";
-    }
-  };
-
-  const handleCommentSubmit = () => {
-    if (newComment.trim()) {
-      // Add comment logic here
-      setNewComment("");
-      setCommentRating(5);
-    }
-  };
-
-  const totalRevenue = product?.CheckoutItem?.reduce((total:any, item:any) => {
-    return total + (item?.checkout?.finalTotal || 0);
-  }, 0);
-
-  // Format setelah perhitungan selesai
+    0
+  );
   const formattedTotalRevenue = formatter.format(totalRevenue || 0);
-
 
   //   const StarRating = ({ rating, interactive = false, onRatingChange }) => (
   //   <div className="flex items-center">
@@ -179,7 +86,8 @@ export default function AdminProductDetail({ id }: any) {
   //   </div>
   // );
 
-  if (isLoadingProduct) return <div className="spinner"></div>;
+  if (isLoadingProduct || isLoadingOrders)
+    return <div className="spinner"></div>;
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -203,7 +111,8 @@ export default function AdminProductDetail({ id }: any) {
                 </Link>
                 <Button
                   variant="destructive"
-                  className="flex items-center bg-red-500 text-white"
+                  className="flex items-center bg-red-500 hover:bg-red-800  text-white"
+                  onClick={() => onDelete(product?.id)}
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
                   Delete
@@ -277,32 +186,32 @@ export default function AdminProductDetail({ id }: any) {
           </Card>
         </div>
 
-        {/* Tabs */}
         <Card>
           <Tabs defaultValue="overview" className="w-full">
             <CardHeader>
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger
-                  value="overview"
-                  className="flex items-center gap-2"
-                >
-                  <Package className="w-4 h-4" />
-                  Overview
-                </TabsTrigger>
-                <TabsTrigger
-                  value="checkouts"
-                  className="flex items-center gap-2"
-                >
-                  <BarChart3 className="w-4 h-4" />
-                  Checkout History
-                </TabsTrigger>
-                <TabsTrigger
-                  value="comments"
-                  className="flex items-center gap-2"
-                >
-                  <MessageSquare className="w-4 h-4" />
-                  Comments & Reviews
-                </TabsTrigger>
+                {[
+                  { label: "Overview", value: "overview" },
+                  { label: "Checkouts History", value: "checkouts" },
+                  { label: "Comments", value: "comments" },
+                ].map((tab) => (
+                  <TabsTrigger
+                    key={tab.value}
+                    value={tab.value}
+                    className="flex items-center gap-2 data-[state=active]:bg-green-500 data-[state=active]:text-white data-[state=active]:border-green-500 hover:bg-green-50 hover:text-green-700 transition-colors"
+                  >
+                    {tab.label === "Overview" && (
+                      <Package className="w-4 h-4" />
+                    )}
+                    {tab.label === "Checkouts History" && (
+                      <BarChart3 className="w-4 h-4" />
+                    )}
+                    {tab.label === "Comments" && (
+                      <MessageSquare className="w-4 h-4" />
+                    )}
+                    {tab.label}
+                  </TabsTrigger>
+                ))}
               </TabsList>
             </CardHeader>
 
@@ -410,141 +319,18 @@ export default function AdminProductDetail({ id }: any) {
               <TabsContent value="checkouts" className="space-y-6">
                 <div className="flex justify-between items-center">
                   <h3 className="text-lg font-semibold">Checkout History</h3>
-                  <Badge variant="outline">
-                    Total: {checkoutHistory.length} checkouts
-                  </Badge>
+                  <Badge variant="outline">{ordersHistory.length} orders</Badge>
                 </div>
-
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Order ID</TableHead>
-                      <TableHead>Customer</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Quantity</TableHead>
-                      <TableHead>Total</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {checkoutHistory.map((checkout) => (
-                      <TableRow key={checkout.id}>
-                        <TableCell className="font-mono text-sm">
-                          {checkout.id}
-                        </TableCell>
-                        <TableCell>{checkout.customerName}</TableCell>
-                        <TableCell className="text-gray-600">
-                          {checkout.date}
-                        </TableCell>
-                        <TableCell>{checkout.quantity}</TableCell>
-                        <TableCell className="font-semibold text-green-600">
-                          {formatter.format(checkout.total)}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={getStatusVariant(checkout.status)}>
-                            {checkout.status}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                <CheckoutHistory data={ordersHistory} />
               </TabsContent>
 
               <TabsContent value="comments" className="space-y-6">
                 <div className="flex justify-between items-center">
                   <h3 className="text-lg font-semibold">Comments & Reviews</h3>
-                  <Badge variant="outline">{comments.length} reviews</Badge>
+                  <Badge variant="outline">{} reviews</Badge>
                 </div>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-base">
-                      Add Admin Response
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm text-gray-600">Rating:</span>
-                      {/* <StarRating 
-                        rating={commentRating} 
-                        interactive={true} 
-                        onRatingChange={setCommentRating} 
-                      /> */}
-                    </div>
-                    <Textarea
-                      rows={3}
-                      value={newComment}
-                      onChange={(e) => setNewComment(e.target.value)}
-                      placeholder="Write your response..."
-                    />
-                    <Button
-                      onClick={handleCommentSubmit}
-                      className="flex items-center"
-                    >
-                      <Send className="w-4 h-4 mr-2" />
-                      Post Response
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                {/* Comments List */}
-                <div className="space-y-4">
-                  {comments.map((comment) => (
-                    <Card key={comment.id}>
-                      <CardContent className="p-4">
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-center space-x-3">
-                            <Avatar>
-                              <AvatarImage src={comment.user.imageUrl} />
-                              <AvatarFallback>
-                                {comment.user.firstName[0]}
-                                {comment.user.lastName[0]}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <h5 className="font-semibold text-gray-900">
-                                {comment.user.firstName} {comment.user.lastName}
-                              </h5>
-                              <div className="flex items-center space-x-2">
-                                {/* <StarRating rating={comment.rating} /> */}
-                                <span className="text-sm text-gray-500">
-                                  {comment.date}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Badge variant={getStatusVariant(comment.status)}>
-                              {comment.status}
-                            </Badge>
-                            {comment.status === "pending" && (
-                              <div className="flex space-x-1">
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="p-1 h-auto text-green-600 hover:bg-green-100"
-                                >
-                                  <CheckCircle className="w-4 h-4" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="p-1 h-auto text-red-600 hover:bg-red-100"
-                                >
-                                  <XCircle className="w-4 h-4" />
-                                </Button>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        <p className="mt-3 text-gray-700 leading-relaxed">
-                          {comment.comment}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                <Comments />
               </TabsContent>
             </CardContent>
           </Tabs>

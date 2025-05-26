@@ -31,3 +31,18 @@ export async function PatchStatusOrder(id: string, status: string, noteFromShop:
     throw error.response?.data || { error: "Something went wrong" };
   }
 }
+
+
+export async function GetAllOrderOneProduct(id:string) {
+  try {
+    const response = await axios.get(`/api/checkout/order-one-product?id=${id}`, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    return response.data
+  } catch (error:any) {
+    throw error.response?.data || { error: "Something went wrong" };
+  }
+}

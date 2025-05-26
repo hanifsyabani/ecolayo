@@ -11,7 +11,7 @@ export async function GET() {
     if (!userId)
       return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
-    const shippingAddress = await db.shipppingAddress.findFirst({
+    const shippingAddress = await db.shippingAddress.findFirst({
       where: {
         userId: userId,
       },
@@ -57,7 +57,7 @@ export async function POST(req: Request) {
     if(!postalCode) return NextResponse.json({ error: "Postal code must be provided" }, { status: 500 });
     
 
-    const shippingAddress = await db.shipppingAddress.create({
+    const shippingAddress = await db.shippingAddress.create({
       data: {
         userId: userId,
         firstName,
@@ -79,8 +79,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-
-
 
 
 export async function PATCH(req: Request) {
@@ -117,7 +115,7 @@ export async function PATCH(req: Request) {
     if(!postalCode) return NextResponse.json({ error: "Postal code must be provided" }, { status: 500 });
     
 
-    const shippingAddress = await db.shipppingAddress.update({
+    const shippingAddress = await db.shippingAddress.update({
       where: {
         userId
       },

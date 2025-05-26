@@ -95,7 +95,7 @@ export async function POST(req: Request) {
     if (!tax)
       return NextResponse.json({ error: "Tax is required" }, { status: 500 });
 
-    const shippingAddress = await db.shipppingAddress.findFirst({
+    const shippingAddress = await db.shippingAddress.findFirst({
       where: {
         userId,
       },
