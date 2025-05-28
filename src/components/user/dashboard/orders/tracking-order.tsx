@@ -1,17 +1,15 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { PatchStatusOrder } from "@/service/admin/orders";
-import { Checkout } from "@prisma/client";
+import { Order } from "@prisma/client";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import DialogPenilaian from "./dialog-penilaian";
+import DialogProductReview from "./dialog-product-review";
+import DialogCompletedOrder from "./dialog-completed-order";
 
 interface TrackingOrderProps {
-  data: Checkout;
+  data: Order;
   refetch: () => void;
 }
 
@@ -25,6 +23,7 @@ const trackingStatus = [
 
 export default function TrackingOrder({ data, refetch }: TrackingOrderProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isOpenDialog, setIsOpenDialog] = useState(false);
   const currentStepIndex = trackingStatus.findIndex(
     (step) => step.status === data.status
   );
@@ -42,10 +41,12 @@ export default function TrackingOrder({ data, refetch }: TrackingOrderProps) {
     onSuccess: () => {
       setIsLoading(false);
       toast.success("Thank you for confirmation");
+      setIsOpenDialog(false);
       refetch();
     },
     onError: () => {
       setIsLoading(false);
+      setIsOpenDialog(false);
       toast.error("Error occurred");
     },
   });
@@ -106,18 +107,17 @@ export default function TrackingOrder({ data, refetch }: TrackingOrderProps) {
       </div>
       {data.status === "delivered" && (
         <div className="flex justify-center my-4">
-          <Button
-            disabled={data.status !== "delivered" || isLoading}
-            onClick={() => onSubmit(data.id, "completed", "")}
-            className="text-white"
-          >
-            {isLoading ? <span className="spinner" /> : "Confirm Delivery"}
-          </Button>
+          <DialogCompletedOrder
+            data={data}
+            onSubmit={onSubmit}
+            isLoading={isLoading}
+            isOpenDialog={isOpenDialog}
+            setIsOpenDialog={setIsOpenDialog}
+          />
         </div>
       )}
-      {data.status === "completed" && (
-        <DialogPenilaian/>
-      )}
+
+      {data.status === "completed" && <DialogProductReview orderData={data} />}
     </>
   );
 }

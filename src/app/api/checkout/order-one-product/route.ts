@@ -20,7 +20,7 @@ export async function GET(req: Request) {
         { status: 500 }
       );
 
-    const orders = await db.checkout.findMany({
+    const orders = await db.order.findMany({
       where: {
         items: {
           some: {

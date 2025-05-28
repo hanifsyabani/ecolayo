@@ -30,7 +30,7 @@ model User {
   gender           String            @default("male")
   imageUrl         String?
   cart             Cart?             @relation("UserToCart")
-  Checkout         Checkout[]        @relation("UserToCheckout")
+  Order            Order[]           @relation("UserToCheckout")
   LikedProduct     LikedProduct[]    @relation("UserToLikedProduct")
   ShipppingAddress ShippingAddress[] @relation("UserToShippingAddress")
   ContactMessage   ContactMessage[]  @relation("UserToContactMessage")
@@ -83,7 +83,7 @@ model Product {
   images            Images[]        @relation("ProductToImages")
   cartItems         CartItem[]      @relation("ProductToCartItem")
   LikedProduct      LikedProduct[]  @relation("ProductToLikedProduct")
-  CheckoutItem      CheckoutItem[]  @relation("ProductToCheckoutItem")
+  OrderItem         OrderItem[]     @relation("ProductToCheckoutItem")
   ProductReview     ProductReview[] @relation("ProductToReview")
 
   createdAt DateTime @default(now())
@@ -100,12 +100,14 @@ model ProductReview {
   userId          String
   user            User    @relation("UserToReview", fields: [userId], references: [id], onDelete: Cascade)
   content         String
-  rating          Int     @default(0)
   photoProof      String?
-  shopRating      Int
-  courierRating   Int
-  courierService  Int
+  ratingProduct   Int     @default(0)
+  shopRating      Int     @default(0)
+  courierRating   Int     @default(0)
+  courierService  Int     @default(0)
   displayUsername Boolean @default(true)
+  orderId         String
+  Order           Order   @relation(fields: [orderId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -163,56 +165,56 @@ model CartItem {
   product   Product @relation("ProductToCartItem", fields: [productId], references: [id], onDelete: Cascade)
   quantity  Int     @default(1)
 
-  Checkout   Checkout? @relation(fields: [checkoutId], references: [id])
+  Order      Order?   @relation(fields: [checkoutId], references: [id])
   checkoutId String?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@unique([cartId, productId])
   @@index([productId])
 }
 
-model Checkout {
+model Order {
   id                String          @id @default(uuid())
   userId            String?
   user              User?           @relation("UserToCheckout", fields: [userId], references: [id], onDelete: Cascade)
-  items             CheckoutItem[]
+  items             OrderItem[]
   subtotal          Int
   finalTotal        Int
   tax               Int
   shipping          Int?
   shippingAddressId String
   shippingAddress   ShippingAddress @relation(fields: [shippingAddressId], references: [id], onDelete: Cascade)
-
-  CartItem      CartItem[]
-  orderNotes    String
-  noteFromShop  String?
-  paymentMethod String
-  status        String     @default("placed")
+  CartItem          CartItem[]
+  orderNotes        String
+  noteFromShop      String?
+  paymentMethod     String
+  status            String          @default("placed")
+  ProductReview     ProductReview[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model CheckoutItem {
-  id         String   @id @default(uuid())
-  checkoutId String
-  checkout   Checkout @relation(fields: [checkoutId], references: [id], onDelete: Cascade)
-  productId  String
-  product    Product  @relation("ProductToCheckoutItem", fields: [productId], references: [id], onDelete: Cascade)
-  quantity   Int
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation("ProductToCheckoutItem", fields: [productId], references: [id], onDelete: Cascade)
+  quantity  Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([checkoutId])
+  @@index([orderId])
   @@index([productId])
 }
 
 model ShippingAddress {
-  id            String     @id @default(uuid())
-  userId        String     @unique
-  user          User       @relation("UserToShippingAddress", fields: [userId], references: [id], onDelete: Cascade)
+  id            String  @id @default(uuid())
+  userId        String  @unique
+  user          User    @relation("UserToShippingAddress", fields: [userId], references: [id], onDelete: Cascade)
   firstName     String
   lastName      String
   companyName   String?
@@ -224,12 +226,13 @@ model ShippingAddress {
   postalCode    String
   email         String
   phone         String
-  Checkout      Checkout[]
+  Order         Order[]
 }
 
 model Payment {
   id     String @id @default(uuid())
   method String
+  status String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

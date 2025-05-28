@@ -16,7 +16,7 @@ export async function GET(
     if (!userId)
       return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
-    const orders = await db.checkout.findFirst({
+    const orders = await db.order.findFirst({
       where: {
         id: params.orderid,
       },
@@ -59,7 +59,7 @@ export async function PATCH(req: Request, { params }: { params: { orderid: strin
 
     if(!status) return NextResponse.json({ error: "Status must be provided" }, { status: 500 });
 
-    const order = await db.checkout.update({
+    const order = await db.order.update({
       where: {
         id: params.orderid,
       },

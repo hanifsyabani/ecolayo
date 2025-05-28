@@ -108,7 +108,7 @@ export async function POST(req: Request) {
 
     // transaction untuk memastikan atomicity
     const result = await db.$transaction(async (prisma) => {
-      const order = await prisma.checkout.create({
+      const order = await prisma.order.create({
         data: {
           userId,
           orderNotes: orderNotes || "",
@@ -167,7 +167,7 @@ export async function GET(req: Request) {
     if (!userId)
       return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
-    const orders = await db.checkout.findMany({
+    const orders = await db.order.findMany({
       where: {
         userId,
       },

@@ -11,7 +11,7 @@ export async function GET(req: Request) {
     if (!userId)
       return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
-    const orders = await db.checkout.findMany({
+    const orders = await db.order.findMany({
       include:{
         items: {
           include: {
