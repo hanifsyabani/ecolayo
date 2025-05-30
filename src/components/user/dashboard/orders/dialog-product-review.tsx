@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Star, Camera, Upload } from "lucide-react";
 import { useState } from "react";
@@ -18,24 +17,16 @@ import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { PostProductReview } from "@/service/shop/product-review";
+import {
+  PostProductReview,
+} from "@/service/shop/product-review";
 import { zodResolver } from "@hookform/resolvers/zod";
 import UploadImage from "@/components/admin/banner/upload-image";
 
 interface DialogPenilaianProps {
   orderData?: any;
-}
-
-interface ReviewData {
-  productId: string;
-  userId: string;
-  content: string;
-  rating: number;
-  photoProof?: string;
-  shopRating: number;
-  courierRating: number;
-  courierService: number;
-  displayUsername: boolean;
+  reviewDataLength?: any;
+  refetchReview: () => void;
 }
 
 const schema = z.object({
@@ -51,6 +42,8 @@ type FormFields = z.infer<typeof schema>;
 
 export default function DialogProductReview({
   orderData,
+  reviewDataLength,
+  refetchReview
 }: DialogPenilaianProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -66,19 +59,20 @@ export default function DialogProductReview({
     resolver: zodResolver(schema),
   });
 
-  const productId = orderData?.items[0]?.productId
+  const productId = orderData?.items[0]?.productId;
 
   const { mutate: submitReview } = useMutation({
     mutationFn: (data: FormFields) =>
       PostProductReview(data, productId, orderData.id),
     onSuccess: () => {
       setIsLoading(false);
-      toast.success("Review sent successfully!");
+      toast.success("Review sent successfully!, Thanks for your feedback!");
       setIsOpen(false);
+      refetchReview();
     },
     onError: () => {
       setIsLoading(false);
-      toast.error("Review failed to send!");
+      toast.error("Review failed to send!, Please try again!");
     },
   });
 
@@ -94,7 +88,7 @@ export default function DialogProductReview({
       <div className="space-y-2">
         <Label className="text-sm font-medium">{label}</Label>
         <div className="flex gap-1">
-          {[1, 2, 3, 4, 5].map((star:any) => (
+          {[1, 2, 3, 4, 5].map((star: any) => (
             <Star
               key={star}
               className={`w-6 h-6 cursor-pointer transition-colors ${
@@ -115,12 +109,15 @@ export default function DialogProductReview({
     submitReview(data);
   }
 
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <div className="flex justify-center my-10">
-          <Button className="text-white">Berikan Penilaian</Button>
-        </div>
+        {reviewDataLength === 0 && (
+          <div className="flex justify-center my-10">
+            <Button className="text-white">Berikan Penilaian</Button>
+          </div>
+        )}
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white">
         <DialogHeader>
@@ -181,7 +178,9 @@ export default function DialogProductReview({
           <div className="flex items-center space-x-2">
             <Checkbox
               id="display-username"
-              onCheckedChange={(checked) => setValue("displayUsername", Boolean(checked))}
+              onCheckedChange={(checked) =>
+                setValue("displayUsername", Boolean(checked))
+              }
               checked={watch("displayUsername")}
             />
             <Label

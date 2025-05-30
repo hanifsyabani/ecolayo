@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { dashboardUserItem } from "@/lib/item";
 import NavigationSidebar from "@/components/user/dashboard/navigation-sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 export default function UserDashboardLayout({
   children,
@@ -9,16 +10,9 @@ export default function UserDashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <section className="py-10 px-6">
-      <div className="flex gap-7">
-        <Card className="basis-[20%]">
-          <CardContent className="bg-white p-4">
-            <h1 className="font-semibold">Navigation</h1>
-            <NavigationSidebar/>
-          </CardContent>
-        </Card>
-        <div className="basis-[80%]">{children}</div>
-      </div>
-    </section>
+    <SidebarProvider admin={true}>
+      <NavigationSidebar />
+      <div className="w-full mt-10 p-4">{children}</div>
+    </SidebarProvider>
   );
 }

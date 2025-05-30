@@ -29,7 +29,6 @@ export default function SidebarAdmin() {
   const {
     data: store,
     isLoading: isLoadingStore,
-    refetch,
   } = useQuery({
     queryFn: () => GetStore(),
     queryKey: ["dataStoreSidebar"],

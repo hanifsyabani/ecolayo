@@ -86,3 +86,33 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+
+export async function GET(req: Request){
+  try {
+    const session = await getServerSession(authOptions);
+    const userId = session?.user.id;
+
+    if(!userId) return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
+
+    const review = await db.productReview.findMany({
+      where:{
+        userId
+      },
+      include:{
+        product: {
+          include:{
+            images: true,
+            tag: true,
+            category: true
+          }
+        },
+        user: true
+      }
+    })
+
+    return NextResponse.json(review);
+  } catch (error:any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

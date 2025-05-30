@@ -9,8 +9,10 @@ import DialogProductReview from "./dialog-product-review";
 import DialogCompletedOrder from "./dialog-completed-order";
 
 interface TrackingOrderProps {
-  data: Order;
-  refetch: () => void;
+  orderData: Order;
+  refetchOrder: () => void;
+  refetchReview: () => void;
+  reviewDataLength: any;
 }
 
 const trackingStatus = [
@@ -21,11 +23,16 @@ const trackingStatus = [
   { status: "completed", no: "05" },
 ];
 
-export default function TrackingOrder({ data, refetch }: TrackingOrderProps) {
+export default function TrackingOrder({
+  orderData,
+  refetchOrder,
+  refetchReview,
+  reviewDataLength,
+}: TrackingOrderProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpenDialog, setIsOpenDialog] = useState(false);
   const currentStepIndex = trackingStatus.findIndex(
-    (step) => step.status === data.status
+    (step) => step.status === orderData.status
   );
 
   const { mutate: updateStatus } = useMutation({
@@ -40,9 +47,9 @@ export default function TrackingOrder({ data, refetch }: TrackingOrderProps) {
     }) => PatchStatusOrder(id, status, noteFromShop || ""),
     onSuccess: () => {
       setIsLoading(false);
-      toast.success("Thank you for confirmation");
+      toast.success("Order completed. Thank you for confirming!");
       setIsOpenDialog(false);
-      refetch();
+      refetchOrder();
     },
     onError: () => {
       setIsLoading(false);
@@ -105,10 +112,10 @@ export default function TrackingOrder({ data, refetch }: TrackingOrderProps) {
           );
         })}
       </div>
-      {data.status === "delivered" && (
+      {orderData.status === "delivered" && (
         <div className="flex justify-center my-4">
           <DialogCompletedOrder
-            data={data}
+            data={orderData}
             onSubmit={onSubmit}
             isLoading={isLoading}
             isOpenDialog={isOpenDialog}
@@ -117,7 +124,13 @@ export default function TrackingOrder({ data, refetch }: TrackingOrderProps) {
         </div>
       )}
 
-      {data.status === "completed" && <DialogProductReview orderData={data} />}
+      {orderData.status === "completed" && (
+        <DialogProductReview
+          orderData={orderData}
+          reviewDataLength={reviewDataLength}
+          refetchReview={refetchReview}
+        />
+      )}
     </>
   );
 }

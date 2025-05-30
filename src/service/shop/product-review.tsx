@@ -12,3 +12,18 @@ export async function PostProductReview(data: any, productId: string, orderId :s
     throw error.response?.data || { error: "Something went wrong" }
   }
 }
+
+export async function GetReviewByUserId(){
+  try {
+    const response = await axios.get('/api/user/product-review', {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
+
+    return response.data
+  } catch (error:any) {
+    throw error.response?.data || { error: "Something went wrong" };
+  }
+}

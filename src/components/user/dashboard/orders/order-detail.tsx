@@ -10,9 +10,15 @@ import Link from "next/link";
 import TrackingOrder from "./tracking-order";
 import TableOrderProduct from "./table-order-product";
 import Newsletter from "../../newsletter";
+import { GetReviewByUserId } from "@/service/shop/product-review";
+import ReviewCard from "../../products/review-card";
 
 export default function OrderDetail({ id }: { id: string }) {
-  const { data: order, isLoading: isLoadingOrder, refetch } = useQuery({
+  const {
+    data: order,
+    isLoading: isLoadingOrder,
+    refetch: refetchOrder,
+  } = useQuery({
     queryFn: () => GetOrderById(id),
     queryKey: ["dataOrder"],
   });
@@ -22,10 +28,19 @@ export default function OrderDetail({ id }: { id: string }) {
     queryKey: ["dataUser"],
   });
 
-  const fullName = user?.firstName && user?.lastName
-  ? user.firstName + " " + user.lastName
-  : "-";
+  const {
+    data: review,
+    isLoading: isLoadingReview,
+    refetch: refetchReview,
+  } = useQuery({
+    queryFn: () => GetReviewByUserId(),
+    queryKey: ["dataReview"],
+  });
 
+  const fullName =
+    user?.firstName && user?.lastName
+      ? user.firstName + " " + user.lastName
+      : "-";
 
   const shippAddress =
     order?.shippingAddress.streetAddress +
@@ -40,13 +55,17 @@ export default function OrderDetail({ id }: { id: string }) {
     ", " +
     order?.shippingAddress.postalCode;
 
-  if (isLoadingOrder || isLoadingUser) return <div className="spinner" />;
+  if (isLoadingOrder || isLoadingUser || isLoadingReview)
+    return <div className="spinner" />;
 
   return (
     <>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h1 className="text-lg">Order Detail</h1>&bull;
+          <div className="flex items-center gap-3 ">
+            <div className="w-1 h-4 bg-gray-500"/>
+            <h1 className="text-xl font-semibold">Order Detail</h1>&bull;
+          </div>
           <p className="text-gray-500 text-sm">
             {format(order?.createdAt, "dd MMMM yyyy")}
           </p>
@@ -84,7 +103,11 @@ export default function OrderDetail({ id }: { id: string }) {
             <CardContent className="text-sm">
               <h1 className="text-gray-500">Shipping Address</h1>
               <div className="space-y-2">
-                <h1>{order?.shippingAddress.firstName + " " + order?.shippingAddress.lastName}</h1>
+                <h1>
+                  {order?.shippingAddress.firstName +
+                    " " +
+                    order?.shippingAddress.lastName}
+                </h1>
                 <p className="text-sm text-gray-500">{shippAddress}</p>
               </div>
               <div className="mt-8">
@@ -143,9 +166,23 @@ export default function OrderDetail({ id }: { id: string }) {
         </Card>
       </div>
 
-      <TrackingOrder data={order} refetch = {refetch} />
-      <TableOrderProduct data={order}/>
-      <Newsletter isSosmed={false}/>
+      <TrackingOrder
+        orderData={order}
+        refetchOrder={refetchOrder}
+        refetchReview={refetchReview}
+        reviewDataLength={review.length}
+      />
+      <div className="mt-20 mb-10">
+        <div className="flex items-center gap-3">
+          <div className="w-1 h-4 bg-gray-500" />
+          <h1 className="font-semibold text-xl">Your Review</h1>
+        </div>
+        {review.map((item: any) => (
+          <ReviewCard reviewData={item} key={item.id} />
+        ))}
+      </div>
+      <TableOrderProduct data={order} />
+      <Newsletter isSosmed={false} />
     </>
   );
 }
