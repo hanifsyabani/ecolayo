@@ -15,6 +15,7 @@ import {
 import { useState } from "react";
 import StarRating from "../star-rating";
 import { format } from "date-fns";
+import Image from "next/image";
 
 interface ReviewProps {
   reviewData?: any;
@@ -26,8 +27,8 @@ export default function ReviewCard({ reviewData }: ReviewProps) {
   const [isLiked, setIsLiked] = useState(false);
 
   const displayName = reviewData.displayUsername
-    ? `${reviewData.user?.firstName} ${reviewData.user.lastName}`
-    : `${reviewData.user?.firstName.charAt(0)}***`;
+    ? `${reviewData.user?.username}`
+    : `${reviewData.user?.username.charAt(0)}***`;
 
   const shouldTruncate = reviewData?.content?.length > 200;
   const displayContent =
@@ -51,9 +52,13 @@ export default function ReviewCard({ reviewData }: ReviewProps) {
       <CardContent className="p-6">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-              <User size={20} className="text-white" />
-            </div>
+            <Image
+              src={reviewData?.user?.imageUrl}
+              alt="Profile Picture"
+              width={40}
+              height={40}
+              className="w-10 h-10 rounded-full"
+            />
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-semibold text-gray-800">{displayName}</h3>
@@ -92,10 +97,11 @@ export default function ReviewCard({ reviewData }: ReviewProps) {
           </div>
         </div>
 
-        {/* Product Info */}
         <div className="flex items-center gap-3 mb-4 p-3 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl border border-gray-100">
-          <img
-            src={reviewData?.product?.image}
+          <Image
+            src={reviewData?.product?.images[0]?.url}
+            width={100}
+            height={100}
             alt={reviewData?.product?.name}
             className="w-16 h-16 rounded-xl object-cover shadow-md"
           />
@@ -113,7 +119,6 @@ export default function ReviewCard({ reviewData }: ReviewProps) {
           </div>
         </div>
 
-        {/* Review Content */}
         <div className="mb-4">
           <p className="text-gray-700 leading-relaxed text-base">
             {displayContent}

@@ -63,7 +63,7 @@ export default function OrderDetail({ id }: { id: string }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-3 ">
-            <div className="w-1 h-4 bg-gray-500"/>
+            <div className="w-1 h-4 bg-gray-500" />
             <h1 className="text-xl font-semibold">Order Detail</h1>&bull;
           </div>
           <p className="text-gray-500 text-sm">
@@ -166,12 +166,15 @@ export default function OrderDetail({ id }: { id: string }) {
         </Card>
       </div>
 
-      <TrackingOrder
-        orderData={order}
-        refetchOrder={refetchOrder}
-        refetchReview={refetchReview}
-        reviewDataLength={review.length}
-      />
+      <div className="my-10">
+        <h1 className="text-center font-semibold text-xl">Tracking Your Order</h1>
+        <TrackingOrder
+          orderData={order}
+          refetchOrder={refetchOrder}
+          refetchReview={refetchReview}
+          reviewDataLength={review.length}
+        />
+      </div>
       <div className="mt-20 mb-10">
         <div className="flex items-center gap-3">
           <div className="w-1 h-4 bg-gray-500" />
