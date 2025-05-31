@@ -176,7 +176,7 @@ export default function OrderDetail({ id }: { id: string }) {
         />
       </div>
       <div className="mt-20 mb-10">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 mb-10">
           <div className="w-1 h-4 bg-gray-500" />
           <h1 className="font-semibold text-xl">Your Review</h1>
         </div>

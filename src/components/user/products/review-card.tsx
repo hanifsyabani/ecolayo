@@ -10,7 +10,6 @@ import {
   Star,
   ThumbsUp,
   Truck,
-  User,
 } from "lucide-react";
 import { useState } from "react";
 import StarRating from "../star-rating";
@@ -70,7 +69,7 @@ export default function ReviewCard({ reviewData }: ReviewProps) {
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <Calendar size={14} />
-                <span>{reviewData?.createdAt}</span>
+                <span>{ format(reviewData.createdAt, "dd MMMM yyyy")}</span>
                 <span>•</span>
                 <span className="text-blue-600 hover:underline cursor-pointer">
                   {reviewData?.product?.name}
@@ -141,8 +140,10 @@ export default function ReviewCard({ reviewData }: ReviewProps) {
                 Customer Photo
               </span>
             </div>
-            <img
+            <Image
               src={reviewData?.photoProof}
+              width={200}
+              height={200}
               alt="Review photo"
               className="w-40 h-40 rounded-xl object-cover cursor-pointer hover:opacity-90 transition-opacity shadow-md border border-gray-200"
             />
@@ -200,7 +201,6 @@ export default function ReviewCard({ reviewData }: ReviewProps) {
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex items-center justify-between pt-3 border-t border-gray-100">
           <button
             onClick={handleLike}

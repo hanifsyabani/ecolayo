@@ -16,7 +16,8 @@ export default function BottomDetailsProduct({ product }: ProductProps) {
   const tabs = ["Descriptions", "Additional Info", "Customer Comment"];
 
   const { data: relatedProducts, isLoading: isLoadingRelated } = useQuery({
-    queryFn: () => GetRelatedProductByCategory(product?.categoryid!, product?.id!),
+    queryFn: () =>
+      GetRelatedProductByCategory(product?.categoryid!, product?.id!),
     queryKey: ["dataRelatedProduct"],
   });
 
@@ -27,7 +28,7 @@ export default function BottomDetailsProduct({ product }: ProductProps) {
       case "Additional Info":
         return <AdditionalInfo />;
       case "Customer Comment":
-        return <CustomerComment />;
+        return <CustomerComment productId={product?.id || ""} />;
     }
   }
 

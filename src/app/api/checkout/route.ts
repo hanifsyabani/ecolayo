@@ -171,6 +171,17 @@ export async function GET(req: Request) {
       where: {
         userId,
       },
+      include:{
+        items:{
+          include:{
+            product: {
+              include:{
+                images: true,
+              }
+            }
+          }
+        }
+      }
     });
 
     return NextResponse.json(orders);

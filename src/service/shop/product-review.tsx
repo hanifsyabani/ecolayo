@@ -27,3 +27,19 @@ export async function GetReviewByUserId(){
     throw error.response?.data || { error: "Something went wrong" };
   }
 }
+
+
+export async function GetAllReviewOneProduct(productId: string) {
+  try {
+    const response = await axios.get(`/api/store/products/review-user?productId=${productId}`, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
+
+    return response.data
+  } catch (error:any) {
+    throw error.response?.data || { error: "Something went wrong" };
+  }
+}

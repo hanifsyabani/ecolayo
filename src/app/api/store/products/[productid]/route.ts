@@ -27,9 +27,9 @@ export async function GET(
         images: true,
         tag: true,
         category: true,
-        CheckoutItem: {
+        OrderItem: {
           include: {
-            checkout :true
+            order :true
           }
         }
       },

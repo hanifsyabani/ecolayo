@@ -1,68 +1,43 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
 import { Star } from "lucide-react";
-import { ProductReview } from "@prisma/client";
 import StarRating from "../star-rating";
 import ReviewCard from "./review-card";
 
 interface ReviewProps {
-  reviewData: ProductReview;
+  reviewData: any;
 }
 
-const mockReviews = [
-  {
-    id: "1",
-    content:
-      "Produk sangat bagus, kualitas premium dan sesuai ekspektasi. Packaging rapi dan aman. Pengiriman cepat, kurir ramah dan profesional. Sangat puas dengan layanan toko ini!",
-    photoProof:
-      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=300&fit=crop",
-    ratingProduct: 5,
-    shopRating: 5,
-    courierRating: 4,
-    courierService: 5,
-    displayUsername: true,
-    createdAt: "2024-05-28T10:30:00Z",
-    user: {
-      firstName: "John",
-      lastName: "Doe",
-    },
-    product: {
-      name: "Premium Wireless Headphones",
-      image:
-        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=100&h=100&fit=crop",
-    },
-    orderId: "ORD-2024-001",
-  },
-];
-
 export default function AllReviews({ reviewData }: ReviewProps) {
-  // Calculate statistics
-  const totalReviews = mockReviews.length;
+  const totalReviews = reviewData?.length;
   const averageRating =
-    mockReviews.reduce((acc, review) => acc + review.ratingProduct, 0) /
-    totalReviews;
-  const reviewsWithPhotos = mockReviews.filter(
-    (review) => review.photoProof
+    reviewData?.reduce(
+      (acc: any, review: any) => acc + review.ratingProduct,
+      0
+    ) / totalReviews;
+
+  const reviewsWithPhotos = reviewData?.filter(
+    (review: any) => review.photoProof
   ).length;
+
   const ratingDistribution = [5, 4, 3, 2, 1].map((rating) => ({
     rating,
-    count: mockReviews.filter((review) => review.ratingProduct === rating)
+    count: reviewData?.filter((review: any) => review.ratingProduct === rating)
       .length,
     percentage:
-      (mockReviews.filter((review) => review.ratingProduct === rating).length /
+      (reviewData?.filter((review: any) => review.ratingProduct === rating)
+        .length /
         totalReviews) *
       100,
   }));
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-xl font-bold text-gray-800 mb-2">
-              Your Reviews
+              Reviews Product
             </h1>
             <p className="text-gray-600">
               What our customers are saying about their purchases
@@ -98,7 +73,7 @@ export default function AllReviews({ reviewData }: ReviewProps) {
           <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-6 rounded-xl text-white">
             <div className="text-2xl font-bold">
               {Math.round(
-                (mockReviews.filter((r) => r.ratingProduct >= 4).length /
+                (reviewData?.filter((r: any) => r.ratingProduct >= 4).length /
                   totalReviews) *
                   100
               )}
@@ -108,7 +83,6 @@ export default function AllReviews({ reviewData }: ReviewProps) {
           </div>
         </div>
 
-        {/* Rating Distribution */}
         <div className="bg-white p-6 rounded-xl border border-gray-200 mb-6">
           <h3 className="text-lg font-semibold mb-4">Rating Distribution</h3>
           <div className="space-y-2">
@@ -131,14 +105,13 @@ export default function AllReviews({ reviewData }: ReviewProps) {
         </div>
       </div>
 
-      {/* Reviews List */}
       <div className="space-y-4">
-        <>
-          <div className="text-sm text-gray-600 mb-4">
-            Showing 12 of {totalReviews} reviews
-          </div>
-          <ReviewCard />
-        </>
+        <div className="text-sm text-gray-600 mb-4">
+          Showing 12 of {totalReviews} reviews
+        </div>
+        {reviewData.map((review: any) => (
+          <ReviewCard reviewData={review} key={review.id} />
+        ))}
       </div>
     </div>
   );

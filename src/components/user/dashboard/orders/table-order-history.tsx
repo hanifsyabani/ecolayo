@@ -10,11 +10,13 @@ import { GetAllOrdersOneUser } from "@/service/shop/checkout";
 export default function TableOrderHistory() {
   const { data: orders, isLoading: isLoadingCheckout } = useQuery({
     queryFn: () => GetAllOrdersOneUser(),
-    queryKey: ["dataCheckout"],
+    queryKey: ["dataHistoryOrders"],
   });
 
   const formattedOrder: CheckoutColumn[] = orders?.map((checkout: any) => ({
     id:checkout.id,
+    product: checkout.items[0].product.name,
+    images: checkout.items[0].product.images[0].url,
     date: format(checkout.createdAt, "dd MMMM yyyy"),
     total: formatter.format(checkout.subtotal),
     status: checkout.status,
