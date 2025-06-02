@@ -15,15 +15,27 @@ import { useState } from "react";
 import StarRating from "../star-rating";
 import { format } from "date-fns";
 import Image from "next/image";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  DeleteLikeReview,
+  GetUserLikedReview,
+  PostLikeReview,
+} from "@/service/shop/product-review";
+import toast from "react-hot-toast";
 
 interface ReviewProps {
   reviewData?: any;
+  refetch: () => void;
+  isHideLike: boolean;
 }
 
-export default function ReviewCard({ reviewData }: ReviewProps) {
+export default function ReviewCard({
+  reviewData,
+  refetch,
+  isHideLike,
+}: ReviewProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [likes, setLikes] = useState(Math.floor(Math.random() * 20) + 1);
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const displayName = reviewData.displayUsername
     ? `${reviewData.user?.username}`
@@ -35,9 +47,50 @@ export default function ReviewCard({ reviewData }: ReviewProps) {
       ? reviewData.content.substring(0, 200) + "..."
       : reviewData.content;
 
+  const {
+    data: userLikedReview,
+    isLoading: isLoadingLiked,
+    refetch: refetchUserLikedReview,
+  } = useQuery({
+    queryFn: () => GetUserLikedReview(reviewData.id),
+    queryKey: ["userlikedReview"],
+  });
+
+  const { mutate: likedReview } = useMutation({
+    mutationFn: () => PostLikeReview(reviewData.id),
+    onSuccess: () => {
+      setIsLoading(false);
+      toast.success("Liked Review");
+      refetch();
+      refetchUserLikedReview();
+    },
+    onError: () => {
+      setIsLoading(false);
+      toast.error("Failed to like review");
+    },
+  });
+
+  const { mutate: unlikedReview } = useMutation({
+    mutationFn: () => DeleteLikeReview(reviewData.id),
+    onSuccess: () => {
+      setIsLoading(false);
+      toast.success("Unliked Review");
+      refetch();
+      refetchUserLikedReview();
+    },
+    onError: () => {
+      setIsLoading(false);
+      toast.error("Failed to unlike review");
+    },
+  });
+
   const handleLike = () => {
-    setIsLiked(!isLiked);
-    setLikes((prev) => (isLiked ? prev - 1 : prev + 1));
+    setIsLoading(true);
+    if (userLikedReview?.length > 0) {
+      unlikedReview();
+      return;
+    }
+    likedReview();
   };
 
   const getRatingColor = (rating: any) => {
@@ -45,6 +98,8 @@ export default function ReviewCard({ reviewData }: ReviewProps) {
     if (rating >= 3.5) return "text-yellow-600";
     return "text-red-600";
   };
+
+  if (isLoadingLiked) return <div className="spinner"></div>;
 
   return (
     <Card className="mb-4 hover:shadow-lg transition-all duration-300 border-l-4 border-l-primary">
@@ -69,7 +124,7 @@ export default function ReviewCard({ reviewData }: ReviewProps) {
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <Calendar size={14} />
-                <span>{ format(reviewData.createdAt, "dd MMMM yyyy")}</span>
+                <span>{format(reviewData.createdAt, "dd MMMM yyyy")}</span>
                 <span>•</span>
                 <span className="text-blue-600 hover:underline cursor-pointer">
                   {reviewData?.product?.name}
@@ -201,24 +256,29 @@ export default function ReviewCard({ reviewData }: ReviewProps) {
           </div>
         </div>
 
-        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-          <button
-            onClick={handleLike}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
-              isLiked
-                ? "bg-blue-100 text-blue-700"
-                : "hover:bg-gray-100 text-gray-600"
-            }`}
-          >
-            <ThumbsUp size={16} className={isLiked ? "fill-current" : ""} />
-            <span className="text-sm font-medium">{likes} Helpful</span>
-          </button>
-          <div className="flex items-center gap-2 text-xs text-gray-500">
-            <span>Order #{reviewData?.orderId}</span>
-            <span>•</span>
-            <span>Verified Purchase</span>
+        {!isHideLike && (
+          <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+            <button
+              onClick={handleLike}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                userLikedReview?.length
+                  ? "bg-blue-100 text-blue-700"
+                  : "hover:bg-gray-100 text-gray-600"
+              }`}
+            >
+              <ThumbsUp
+                size={16}
+                className={userLikedReview?.length ? "fill-current" : ""}
+              />
+              <span className="text-sm font-medium">
+                {reviewData?.LikedProductReview?.length} Helpful
+              </span>
+            </button>
+            <div className="flex items-center gap-2 text-xs text-gray-500">
+              <span>Verified Purchase</span>
+            </div>
           </div>
-        </div>
+        )}
       </CardContent>
     </Card>
   );

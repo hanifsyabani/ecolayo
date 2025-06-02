@@ -34,7 +34,8 @@ model User {
   LikedProduct     LikedProduct[]    @relation("UserToLikedProduct")
   ShipppingAddress ShippingAddress[] @relation("UserToShippingAddress")
   ContactMessage   ContactMessage[]  @relation("UserToContactMessage")
-  ProducrReview    ProductReview[]   @relation("UserToReview")
+  ProductReview    ProductReview[]   @relation("UserToReview")
+  LikedReview      LikedReview[]     @relation("UserToLikedReview")
 
   address   String?
   lastLogin DateTime?
@@ -94,20 +95,22 @@ model Product {
 }
 
 model ProductReview {
-  id              String  @id @default(uuid())
-  productId       String
-  product         Product @relation("ProductToReview", fields: [productId], references: [id], onDelete: Cascade)
-  userId          String
-  user            User    @relation("UserToReview", fields: [userId], references: [id], onDelete: Cascade)
-  content         String
-  photoProof      String?
-  ratingProduct   Int     @default(0)
-  shopRating      Int     @default(0)
-  courierRating   Int     @default(0)
-  courierService  Int     @default(0)
-  displayUsername Boolean @default(true)
-  orderId         String
-  Order           Order   @relation(fields: [orderId], references: [id])
+  id                 String        @id @default(uuid())
+  productId          String
+  product            Product       @relation("ProductToReview", fields: [productId], references: [id], onDelete: Cascade)
+  userId             String
+  user               User          @relation("UserToReview", fields: [userId], references: [id], onDelete: Cascade)
+  content            String
+  photoProof         String?
+  ratingProduct      Int           @default(0)
+  shopRating         Int           @default(0)
+  courierRating      Int           @default(0)
+  courierService     Int           @default(0)
+  displayUsername    Boolean       @default(true)
+  orderId            String
+  Order              Order         @relation(fields: [orderId], references: [id])
+  // like               Int           @default(0)
+  LikedProductReview LikedReview[] @relation("ProductReviewToLikedReview")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -115,6 +118,14 @@ model ProductReview {
 
   @@index([userId])
   @@index([productId])
+}
+
+model LikedReview {
+  id            String        @id @default(uuid())
+  userId        String
+  user          User          @relation("UserToLikedReview", fields: [userId], references: [id], onDelete: Cascade)
+  reviewId      String
+  ProductReview ProductReview @relation("ProductReviewToLikedReview", fields: [reviewId], references: [id], onDelete: Cascade)
 }
 
 model LikedProduct {

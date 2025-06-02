@@ -30,6 +30,7 @@ export async function GET(
         id: {
           not: productid,
         },
+        isDeleted:false
       },
       include: {
         images: true,

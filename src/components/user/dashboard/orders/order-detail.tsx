@@ -70,7 +70,7 @@ export default function OrderDetail({ id }: { id: string }) {
             {format(order?.createdAt, "dd MMMM yyyy")}
           </p>
           &bull;
-          <p className="text-gray-500 text-sm">{order?.items.length} Product</p>
+          <p className="text-gray-500 text-sm">{order?.items?.length} Product</p>
         </div>
         <Link
           href={`/shop/dashboard/orders`}
@@ -172,7 +172,7 @@ export default function OrderDetail({ id }: { id: string }) {
           orderData={order}
           refetchOrder={refetchOrder}
           refetchReview={refetchReview}
-          reviewDataLength={review.length}
+          reviewDataLength={review?.length}
         />
       </div>
       <div className="mt-20 mb-10">
@@ -181,7 +181,7 @@ export default function OrderDetail({ id }: { id: string }) {
           <h1 className="font-semibold text-xl">Your Review</h1>
         </div>
         {review.map((item: any) => (
-          <ReviewCard reviewData={item} key={item.id} />
+          <ReviewCard reviewData={item} key={item.id}  refetch={refetchReview} isHideLike={true} />
         ))}
       </div>
       <TableOrderProduct data={order} />

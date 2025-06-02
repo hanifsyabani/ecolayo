@@ -25,6 +25,8 @@ export default function Profile() {
   const formattedOrder: CheckoutColumn[] = orders?.map((checkout: any) => ({
     id: checkout.id,
     date: format(checkout.createdAt, "dd MMMM yyyy"),
+    images : checkout.items[0].product.images[0].url,
+    product: checkout.items[0].product.name,
     total: formatter.format(checkout.subtotal),
     status: checkout.status,
   }));
