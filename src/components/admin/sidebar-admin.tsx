@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import ButtonLogout from "../button-logout";
+import ButtonLogout from "../button-signout";
 import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { GetStore } from "@/service/admin/store";

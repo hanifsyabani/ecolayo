@@ -8,9 +8,6 @@ export async function GET(
   { params }: { params: { categoryid: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    const userId = session?.user.id;
-    if (!userId) throw new Error("Unauthenticated");
 
     if (!params.categoryid) throw new Error("Category ID must be provided");
 

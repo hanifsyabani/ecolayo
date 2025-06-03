@@ -13,7 +13,6 @@ export async function POST(req: Request) {
 
     const { name, imageUrl } = await req.json();
 
-   
     if (!name)
       return NextResponse.json(
         { error: "Name must be provided" },
@@ -28,7 +27,7 @@ export async function POST(req: Request) {
     const category = await db.category.create({
       data: {
         name,
-        imageUrl
+        imageUrl,
       },
     });
 
@@ -40,16 +39,10 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    const userId = session?.user.id;
-
-    // console.log("user id", userId);
-    if (!userId) return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
-
     const category = await db.category.findMany({
       where: {
-        isDeleted:false
-      }
+        isDeleted: false,
+      },
     });
 
     return NextResponse.json(category);

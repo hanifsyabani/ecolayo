@@ -48,10 +48,6 @@ export async function PATCH(req: Request) {
 
 export async function GET(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    const userId = session?.user.id;
-    if (!userId) throw new Error("Unauthenticated");
-
     const store = await db.store.findMany();
 
     return NextResponse.json(store);

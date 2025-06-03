@@ -15,7 +15,6 @@ import Link from "next/link";
 
 export default function NavBottomUser() {
   const pathname = usePathname();
-  const params = useParams();
   const [scrolled, setScrolled] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
 

@@ -8,18 +8,18 @@ export default withAuth(
 
     // Proteksi akses ke halaman admin
     if (pathname.startsWith("/admin") && userRole !== "admin") {
-      return NextResponse.redirect(new URL("/", req.url));
+      return NextResponse.redirect(new URL("/login", req.url));
     }
 
     return NextResponse.next();
   },
   {
     callbacks: {
-      authorized: ({ token }) => !!token, 
+      authorized: () => true, 
     },
   }
 );
 
 export const config = {
-  matcher: ["/user/:path*", "/admin/:path*"],
+  matcher: ["/admin/:path*"],
 };

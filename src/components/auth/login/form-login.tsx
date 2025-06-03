@@ -86,6 +86,9 @@ export default function FormLogin() {
       >
         {isLoadingForm ? <span className="spinner"></span> : "Login"}
       </Button>
+      <Link href={"/shop"} className="flex justify-center text-white">
+        <Button>Go To Shop</Button>
+      </Link>
       <p className="text-center text-sm">
         Dont have an account?{" "}
         <Link href={"/register"} className="text-blue-500">

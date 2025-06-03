@@ -9,7 +9,7 @@ interface TitleHomeProps {
 
 export default function TitleHome({ title, link }: TitleHomeProps) {
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex justify-between items-center px-4">
       <div className="flex items-center gap-3">
         <div className="w-1 h-5 bg-primary"></div>
         <h1 className="text-xl font-semibold">{title}</h1>

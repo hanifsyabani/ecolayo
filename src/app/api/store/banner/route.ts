@@ -44,10 +44,6 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    const userId = session?.user.id;
-
-    if (!userId) return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
 
     const banner = await db.banner.findMany({
       where: {

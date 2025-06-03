@@ -1,6 +1,4 @@
-import { authOptions } from "@/lib/auth";
 import db from "@/lib/db";
-import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -8,14 +6,7 @@ export async function GET(
   { params }: { params: { categoryid: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    const userId = session?.user.id;
-    if (!userId)
-      return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
-
-   
-
-    const {searchParams} = new URL(req.url); 
+    const { searchParams } = new URL(req.url);
     const productid = searchParams.get("productid");
 
     if (!params.categoryid || !productid)
@@ -30,7 +21,7 @@ export async function GET(
         id: {
           not: productid,
         },
-        isDeleted:false
+        isDeleted: false,
       },
       include: {
         images: true,

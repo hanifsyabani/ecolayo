@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { useMutation, useMutationState, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { GetStore } from "@/service/admin/store";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -15,6 +15,8 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import MapLocationStore from "./map-location-store";
 import Newsletter from "../newsletter";
+import { useSession } from "next-auth/react";
+import ButtonSignin from "@/components/button-signin";
 
 const schema = z.object({
   email: z.string().email({ message: "Email is invalid" }),
@@ -25,6 +27,8 @@ const schema = z.object({
 type FormFields = z.infer<typeof schema>;
 export default function ContactView() {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
+
+  const { data: session } = useSession();
 
   const { data: store, isLoading: isLoadingStore } = useQuery({
     queryFn: () => GetStore(),
@@ -99,12 +103,11 @@ export default function ContactView() {
 
           <div className="w-full md:w-2/3 p-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-2">
-              Just Say Hello!
+              Share Your Experience!
             </h2>
             <p className="text-gray-600 mb-6">
-              Do you have anything you'd like to tell us or you want to get
-              started with your project? Let us know how we can help! Feel free
-              to contact me.
+              We'd love to hear your thoughts about our store. Share your
+              experience or feedback to help us serve you better!
             </p>
 
             <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
@@ -153,9 +156,10 @@ export default function ContactView() {
                   htmlFor="message"
                   className="block text-sm font-medium text-gray-600"
                 >
-                  Message
+                  Your Testimoni
                 </Label>
                 <Textarea
+                  rows={8}
                   id="message"
                   placeholder="Hello"
                   {...register("message")}
@@ -167,13 +171,21 @@ export default function ContactView() {
                 )}
               </div>
 
-              <Button
-                type="submit"
-                className="px-6 py-3 text-white font-medium rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-                disabled={isLoadingForm}
-              >
-                {isLoadingForm ? <span className="spinner" /> : "Send Message"}
-              </Button>
+              {session ? (
+                <Button
+                  type="submit"
+                  className="px-6 py-3 text-white font-medium rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                  disabled={isLoadingForm}
+                >
+                  {isLoadingForm ? (
+                    <span className="spinner" />
+                  ) : (
+                    "Send Message"
+                  )}
+                </Button>
+              ) : (
+                <ButtonSignin />
+              )}
             </form>
           </div>
         </div>

@@ -1,15 +1,20 @@
 "use client";
 
 import { IoLocationSharp } from "react-icons/io5";
-import ButtonLogout from "../button-logout";
 import { useQuery } from "@tanstack/react-query";
 import { GetStore } from "@/service/admin/store";
+import { useSession } from "next-auth/react";
+import ButtonSignout from "../button-signout";
+import ButtonSignin from "../button-signin";
 
 export default function NavTopUser() {
+  const { data: session, status } = useSession();
+
   const { data: store, isLoading: isLoadingStore } = useQuery({
     queryFn: () => GetStore(),
     queryKey: ["dataStore"],
   });
+
 
   return (
     <nav className="flex justify-between items-center px-4 py-1">
@@ -20,9 +25,13 @@ export default function NavTopUser() {
         </p>
       </div>
 
-      <div>
-        <ButtonLogout />
-      </div>
+      {status === "authenticated" ? (
+        <div>
+          <ButtonSignout />
+        </div>
+      ) : (
+        <ButtonSignin />
+      )}
     </nav>
   );
 }

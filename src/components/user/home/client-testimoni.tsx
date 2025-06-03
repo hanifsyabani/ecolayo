@@ -6,13 +6,15 @@ import "swiper/css";
 import "swiper/css/pagination";
 
 import { Pagination } from "swiper/modules";
-import TitleHome from "./title-home";
 import { Autoplay } from "swiper/modules";
 import { FaQuoteLeft, FaStar } from "react-icons/fa";
 
 export default function ClientTestimoni() {
   return (
-    <div className=" px-4 py-6 ">
+    <div className=" px-4 py-6 mt-10 bg-gray-200 ">
+      <div className="text-center text-2xl">
+        <h1 className="font-semibold">Customer Testimoni</h1>
+      </div>
       <Swiper
         slidesPerView={3}
         spaceBetween={30}

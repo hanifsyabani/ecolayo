@@ -11,15 +11,19 @@ import NavTopUser from "./nav-top-user";
 import { FaRegUserCircle } from "react-icons/fa";
 import { useQuery } from "@tanstack/react-query";
 import { GetStore } from "@/service/admin/store";
+import { useSession } from "next-auth/react";
 
 export default function NavUser() {
+  const { data: session, status } = useSession();
 
-  const {data: store, isLoading: isLoadingStore} = useQuery({
+  const { data: store, isLoading: isLoadingStore } = useQuery({
     queryFn: () => GetStore(),
     queryKey: ["dataStore"],
-  })
+  });
 
-  if(isLoadingStore) return <div className='spinner'/>
+
+  if (isLoadingStore || status === "loading")
+    return <div className="spinner" />;
   return (
     <nav>
       <div className="fixed w-full bg-white z-40">
@@ -33,7 +37,7 @@ export default function NavUser() {
               alt="logo"
               className="w-10"
             />
-            <h1 className="text-xl font-bold">{store.store_name}</h1>
+            <h1 className="text-xl font-bold">{store?.store_name}</h1>
           </Link>
           <div className="flex items-center">
             <Input
@@ -42,22 +46,24 @@ export default function NavUser() {
             />
             <Button className="text-white">Search</Button>
           </div>
-          <div className="flex  gap-8">
-            <Link href={`/shop/wishlist`}>
-              <Heart
-                size={20}
-                className="text-gray-800  hover:text-primary cursor-pointer"
-              />
-            </Link>
+          {session && (
+            <div className="flex  gap-8">
+              <Link href={`/shop/wishlist`}>
+                <Heart
+                  size={20}
+                  className="text-gray-800  hover:text-primary cursor-pointer"
+                />
+              </Link>
 
-            <CartTrigger />
-            <Link href={"/shop/dashboard"}>
-              <FaRegUserCircle
-                size={20}
-                className="text-gray-800  hover:text-primary cursor-pointer"
-              />
-            </Link>
-          </div>
+              <CartTrigger />
+              <Link href={"/shop/dashboard"}>
+                <FaRegUserCircle
+                  size={20}
+                  className="text-gray-800  hover:text-primary cursor-pointer"
+                />
+              </Link>
+            </div>
+          )}
         </div>
       </div>
 

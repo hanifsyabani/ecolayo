@@ -103,20 +103,9 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    const userId = session?.user.id;
-
-    // untuk filter
-    // const { searchParams } = new URL(req.url);
-    // const categoryid = searchParams.get("categoryid") || undefined;
-    // const isFeatured = searchParams.get("isFeatured");
-
-    if (!userId)
-      return NextResponse.json({ error: "Unauthenticated" }, { status: 500 });
-
     const product = await db.product.findMany({
       where: {
-        isDeleted:false
+        isDeleted: false,
       },
       include: {
         images: true,

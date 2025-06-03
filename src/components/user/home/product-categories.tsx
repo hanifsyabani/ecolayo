@@ -6,19 +6,17 @@ import TitleHome from "./title-home";
 import { useQuery } from "@tanstack/react-query";
 import { GetCategories } from "@/service/admin/categories";
 
-interface CategoriesProps{
-  id:string
-  name:string,
-  imageUrl :string
+interface CategoriesProps {
+  id: string;
+  name: string;
+  imageUrl: string;
 }
 
 export default function ProductCategories() {
-
-  const {data: categories, isLoading:isLoadingCategories} = useQuery({
+  const { data: categories, isLoading: isLoadingCategories } = useQuery({
     queryFn: () => GetCategories(),
     queryKey: ["dataCategories"],
-  })
-
+  });
 
   return (
     <div className="px-4 pb-8 overflow-hidden">
@@ -30,12 +28,12 @@ export default function ProductCategories() {
             ? Array.from({ length: 6 }).map((_, index) => (
                 <Skeleton key={index} className="w-52 h-20 rounded-xl" />
               ))
-            : categories.map((item: CategoriesProps) => (
+            : categories?.map((item: CategoriesProps) => (
                 <div
                   key={item.id}
                   className="w-52 h-20 flex flex-col items-center"
                 >
-                  <Image  
+                  <Image
                     src={item?.imageUrl}
                     width={100}
                     height={100}
