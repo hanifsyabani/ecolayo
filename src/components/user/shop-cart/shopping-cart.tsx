@@ -92,13 +92,15 @@ export default function ShoppingCart() {
 
   return (
     <>
-      <div className="flex px-8 py-10 justify-center gap-6">
-        <div className="w-[70%]">
+      <div className="lg:flex px-8 py-10 justify-center gap-6">
+        <div className="lg:w-[70%]">
           <div>
-            <DataTable
-              columns={Columns(handleQuantityChange)}
-              data={shopCartData}
-            />
+            <div className="overflow-hidden">
+              <DataTable
+                columns={Columns(handleQuantityChange)}
+                data={shopCartData}
+              />
+            </div>
             <div className="flex justify-between items-center">
               <Link href={"/shop"}>
                 <Button className="bg-gray-300 text-xs">Return to Shop</Button>
@@ -115,7 +117,7 @@ export default function ShoppingCart() {
 
           <Coupon />
         </div>
-        <div className="w-[30%]">
+        <div className="lg:w-[30%]">
           <CartTotal subtotal={totalPrice} />
         </div>
       </div>

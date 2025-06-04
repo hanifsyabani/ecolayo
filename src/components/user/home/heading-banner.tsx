@@ -36,9 +36,9 @@ export default function HeadingBanner() {
     : null;
 
   return (
-    <div className="flex justify-center p-10 items-center gap-4">
+    <div className="lg:flex justify-center p-10 items-center gap-4">
       <div
-        className="bg-cover rounded-xl aspect-[1.8/1] w-[65%] "
+        className="bg-cover rounded-xl aspect-[1.8/1] lg:w-[65%] "
         style={{
           backgroundImage: `url(${mainBanner?.imageUrl})`,
           backgroundPosition: "center",
@@ -48,15 +48,15 @@ export default function HeadingBanner() {
           <Skeleton className="w-full h-full rounded-xl" />
         ) : (
           <div className="w-full h-full flex items-center pt-32 pl-10 ">
-            <Button className="bg-white text-primary rounded-full text-sm mt-10 hover:bg-gray-300">
+            <Button className="bg-white hidden lg:block text-primary rounded-full text-sm lg:mt-10 hover:bg-gray-300">
               Shop Now <ArrowRight />
             </Button>
           </div>
         )}
       </div>
-      <div className="w-[35%] space-y-4">
+      <div className="lg:w-[35%] space-y-4 lg:block flex gap-2">
         <div
-          className="bg-cover rounded-xl aspect-[2/1]"
+          className="bg-cover rounded-xl lg:aspect-[2/1] w-1/2"
           style={{
             backgroundImage: `url(${bannerSecond?.imageUrl})`,
           }}
@@ -68,7 +68,7 @@ export default function HeadingBanner() {
               <div className="pt-20">
                 <Link
                   href={"/"}
-                  className="text-primary flex items-center gap-2 font-bold"
+                  className="text-primary hidden lg:flex items-center gap-2 font-bold"
                 >
                   <p>Shop Now </p>
                   <ArrowRight />
@@ -78,7 +78,7 @@ export default function HeadingBanner() {
           )}
         </div>
         <div
-          className="bg-cover rounded-xl aspect-[2/1] "
+          className="bg-cover rounded-xl lg:aspect-[2/1] w-1/2"
           style={{
             backgroundImage: `url(${bannerThird?.imageUrl})`,
             backgroundPosition: "center",
@@ -91,7 +91,7 @@ export default function HeadingBanner() {
               <div className="text-center pt-20 text-white space-y-4">
                 <Link
                   href={"/"}
-                  className="text-primary hover:text-white flex items-center justify-center gap-2 font-bold"
+                  className="text-primary hover:text-white lg:flex items-center justify-center hidden  gap-2 font-bold"
                 >
                   <p>Shop Now </p>
                   <ArrowRight />

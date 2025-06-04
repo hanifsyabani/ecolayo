@@ -1,13 +1,12 @@
 import { footerLinks } from "@/lib/item";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 import { Separator } from "../ui/separator";
 
 export default function Footer() {
   return (
     <footer className="bg-gray-900 px-10 py-4">
-      <div className="flex justify-evenly gap-8">
+      <div className="lg:flex flex-row justify-evenly gap-8">
         <div className="space-y-4">
           <Link href={`/`} className="flex items-center gap-2">
             <Image
@@ -28,7 +27,7 @@ export default function Footer() {
           </p>
         </div>
 
-        <div className="flex justify-center gap-x-20">
+        <div className="lg:flex flex-row justify-center gap-x-20 space-y-4">
           {footerLinks.map((item) => (
             <div className="space-y-4" key={item.title}>
               <h5 className="text-white font-semibold">{item.title}</h5>

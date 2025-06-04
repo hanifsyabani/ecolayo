@@ -8,7 +8,7 @@ import { ourTeam } from "@/lib/item";
 export default function AboutView() {
   return (
     <>
-      <section className="py-16 bg-gray-100">
+      <section className="py-16 bg-gray-100 px-6 lg:px-2">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl font-bold mb-4">

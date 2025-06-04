@@ -20,8 +20,8 @@ export default function Product({ id }: ProductProps) {
   if (isLoadingProduct) return <div className="spinner"></div>;
   return (
     <>
-      <div className="flex justify-center gap-4 px-4">
-        <div className="w-1/2 h-full flex justify-center items-center">
+      <div className="lg:flex justify-center gap-4 px-4">
+        <div className="lg:w-1/2 h-full flex justify-center items-center">
           {product?.images &&
           product?.images.length > 0 &&
           product?.images[0]?.url ? (

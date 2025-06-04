@@ -19,7 +19,7 @@ export const Columns = (refetch: () => void): ColumnDef<WishlistColumn>[] => [
     accessorKey: "name",
     header: "Product",
     cell: ({ row }) => (
-      <div className="flex items-center gap-2">
+      <div className="lg:flex block items-center gap-2">
         <Image
           src={row.original.images}
           width={80}

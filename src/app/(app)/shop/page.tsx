@@ -11,19 +11,21 @@ export default async function page() {
   return (
     <div className="pb-20">
       <HeadingBanner />
-      <div className="flex justify-evenly items-center gap-4 mt-10 mb-16">
-        {shopServiceItem.map((item) => (
-          <div
-            key={item.title}
-            className="flex justify-center items-center gap-4 hover:shadow-lg cursor-pointer p-4"
-          >
-            <item.icon className="text-primary" />
-            <div>
-              <h1 className="text-sm font-semibold">{item.title}</h1>
-              <p className="text-sm text-gray-500">{item.description}</p>
+      <div className="flex flex-wrap justify-evenly items-center gap-4 mt-10 mb-16">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {shopServiceItem.map((item) => (
+            <div
+              key={item.title}
+              className="flex justify-center items-center gap-4 hover:shadow-lg cursor-pointer p-4"
+            >
+              <item.icon className="text-primary" />
+              <div>
+                <h1 className="text-sm font-semibold">{item.title}</h1>
+                <p className="text-sm text-gray-500">{item.description}</p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
       <ProductCategories />
       <ProductFeatured />

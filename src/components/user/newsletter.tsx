@@ -9,9 +9,9 @@ interface NewsletterProps {
 
 export default function Newsletter({ isSosmed }: NewsletterProps) {
   return (
-    <Card className="flex items-center justify-center my-10 w-[90%] mx-auto  ">
-      <CardContent className="flex py-4">
-        <div className="w-1/2">
+    <Card className="lg:flex items-center justify-center my-10 lg:w-[90%] mx-auto  ">
+      <CardContent className="lg:flex py-4">
+        <div className="lg:w-1/2">
           <h1 className="text-xl font-semibold">Subscribe our Newsletter</h1>
           <p className="text-sm text-gray-500 mt-2">
             Stay updated with our latest news, articles, and exclusive offers.

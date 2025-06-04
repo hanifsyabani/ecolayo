@@ -12,9 +12,8 @@ export default function ProductFeatured() {
     queryKey: ["dataProducts"],
   });
 
-  const featuredProducts = products &&  products.filter(
-    (product: any) => product.isFeatured
-  );
+  const featuredProducts =
+    products && products.filter((product: any) => product.isFeatured);
 
   return (
     <div className="px-4 mt-20">
@@ -25,13 +24,15 @@ export default function ProductFeatured() {
         </h1>
       )}
       <div className="flex items-center justify-center gap-6 flex-wrap">
-        {isLoadingProducts
-          ? Array.from({ length: 5 }).map((_, index) => (
-              <Skeleton key={index} className="w-52 h-44 rounded-xl" />
-            ))
-          : featuredProducts.map((product: any) => (
-              <ProductCard product={product} key={product?.id} />
-            ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {isLoadingProducts
+            ? Array.from({ length: 5 }).map((_, index) => (
+                <Skeleton key={index} className="w-52 h-44 rounded-xl" />
+              ))
+            : featuredProducts.map((product: any) => (
+                <ProductCard product={product} key={product?.id} />
+              ))}
+        </div>
       </div>
     </div>
   );

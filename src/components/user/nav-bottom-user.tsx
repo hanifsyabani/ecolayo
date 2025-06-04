@@ -66,13 +66,13 @@ export default function NavBottomUser() {
 
   return (
     <nav
-      className={`bg-gray-800 z-10 mt-24 w-full flex items-center gap-8 transition-transform duration-300 fixed py-2 px-3 ${
+      className={`bg-gray-800 z-10 mt-24 w-full flex justify-center lg:justify-start items-center gap-8 transition-transform duration-300 fixed py-4 lg:py-2 px-3 ${
         scrolled ? "-translate-y-full" : "translate-y-0"
       } `}
     >
-      <div>
+      <div className="hidden lg:block">
         {isLoadingCategories ? (
-          <p className="spinner"/>
+          <p className="spinner" />
         ) : (
           <Select>
             <SelectTrigger className="text-white border-none">

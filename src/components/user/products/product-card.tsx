@@ -65,7 +65,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <>
-      <div className="w-52 mt-4 rounded-xl hover:shadow-xl border-b-2 border-b-white cursor-pointer hover:border-b-primary p-3">
+      <div className="lg:w-52  mt-4 rounded-xl hover:shadow-xl border-b-2 border-b-white cursor-pointer hover:border-b-primary p-3">
         <div className="w-full relative h-44 group bg-gray-100 flex items-center justify-center">
           {product?.images && 
            product.images.length > 0 && 

@@ -81,8 +81,8 @@ export default function AllProductsView() {
 
   return (
     <div className="mt-8">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-4">
+      <div className="lg:flex  justify-between items-center">
+        <div className="lg:flex grid grid-cols-2 items-center gap-4">
           <Select onValueChange={(value) => setSelectedCategory(value)}>
             <SelectTrigger>
               <SelectValue placeholder="Select Category" />
@@ -204,7 +204,7 @@ export default function AllProductsView() {
         </h1>
       </div>
 
-      <div className="grid grid-cols-4 gap-4 mt-8">
+      <div className="grid lg:grid-cols-4 grid-cols-2 gap-4 mt-8">
         {filteredProducts.map((product: any) => (
           <ProductCard key={product.id} product={product} />
         ))}

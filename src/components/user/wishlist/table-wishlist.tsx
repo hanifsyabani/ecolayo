@@ -37,7 +37,10 @@ export default function TableWishlist() {
 
   return (
     <div className="px-8 mt-10">
+      <div className="overflow-hidden">
+
       <DataTable data={formattedProduct} columns={Columns(refetch)} />
+      </div>
       <div className="pb-10">
         <Sosmed />
       </div>

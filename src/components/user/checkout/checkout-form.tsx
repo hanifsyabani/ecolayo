@@ -114,8 +114,8 @@ export default function CheckoutForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex px-8 gap-10">
-        <div className="w-[60%]">
+      <div className="lg:flex px-8 gap-10">
+        <div className="lg:w-[60%]">
           <div>
             <h1 className="text-xl font-semibold mb-4">Shipping Information</h1>
             <BillingInfo
@@ -141,7 +141,7 @@ export default function CheckoutForm() {
             </div>
           </div>
         </div>
-        <div className="w-[40%]">
+        <div className="lg:w-[40%]">
           <Card>
             <CardContent className="bg-white p-4">
               <h1 className="text-xl font-semibold mb-4">Order Summary</h1>

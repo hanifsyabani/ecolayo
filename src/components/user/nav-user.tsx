@@ -39,7 +39,7 @@ export default function NavUser() {
             />
             <h1 className="text-xl font-bold">{store?.store_name}</h1>
           </Link>
-          <div className="flex items-center">
+          <div className=" hidden lg:flex items-center">
             <Input
               placeholder="Search here..."
               className="border border-primary w-[300px]"

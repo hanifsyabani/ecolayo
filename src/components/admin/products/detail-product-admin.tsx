@@ -18,7 +18,6 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { DeleteProduct, GetProductById } from "@/service/admin/products";
-import Image from "next/image";
 import Link from "next/link";
 import { formatter } from "@/lib/utils";
 import toast from "react-hot-toast";
@@ -26,6 +25,8 @@ import { useRouter } from "next/navigation";
 import { GetAllOrderOneProduct } from "@/service/admin/orders";
 import CheckoutHistory from "./checkout-history";
 import Comments from "./comments";
+import { GetAllReviewOneProduct } from "@/service/shop/product-review";
+import Overview from "./overview";
 
 export default function AdminProductDetail({ id }: any) {
   const [isDelete, setIsDelete] = useState(false);
@@ -39,6 +40,11 @@ export default function AdminProductDetail({ id }: any) {
   const { data: ordersHistory, isLoading: isLoadingOrders } = useQuery({
     queryFn: () => GetAllOrderOneProduct(id),
     queryKey: ["dataHistoryOrder"],
+  });
+
+  const { data: review, isLoading: isLoadingReview } = useQuery({
+    queryFn: () => GetAllReviewOneProduct(id),
+    queryKey: ["dataReviews"],
   });
 
   const { mutate: deleteproduct } = useMutation({
@@ -67,26 +73,7 @@ export default function AdminProductDetail({ id }: any) {
   );
   const formattedTotalRevenue = formatter.format(totalRevenue || 0);
 
-  //   const StarRating = ({ rating, interactive = false, onRatingChange }) => (
-  //   <div className="flex items-center">
-  //     {[1, 2, 3, 4, 5].map((star) => (
-  //       <button
-  //         key={star}
-  //         onClick={interactive ? () => onRatingChange(star) : undefined}
-  //         className={`${interactive ? 'cursor-pointer hover:scale-110' : 'cursor-default'} transition-transform`}
-  //         disabled={!interactive}
-  //       >
-  //         <Star
-  //           className={`w-4 h-4 ${
-  //             star <= Math.floor(rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'
-  //           }`}
-  //         />
-  //       </button>
-  //     ))}
-  //   </div>
-  // );
-
-  if (isLoadingProduct || isLoadingOrders)
+  if (isLoadingProduct || isLoadingOrders || isLoadingReview)
     return <div className="spinner"></div>;
 
   return (
@@ -171,19 +158,6 @@ export default function AdminProductDetail({ id }: any) {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-3 bg-purple-100 rounded-full">
-                  <Eye className="w-6 h-6 text-purple-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm text-gray-600">View Count</p>
-                  <p className="text-2xl font-bold text-gray-900">{/* {} */}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         <Card>
@@ -198,7 +172,7 @@ export default function AdminProductDetail({ id }: any) {
                   <TabsTrigger
                     key={tab.value}
                     value={tab.value}
-                    className="flex items-center gap-2 data-[state=active]:bg-green-500 data-[state=active]:text-white data-[state=active]:border-green-500 hover:bg-green-50 hover:text-green-700 transition-colors"
+                    className="flex items-center gap-2 data-[state=active]:bg-secondary data-[state=active]:text-white data-[state=active]:border-green-500 hover:bg-green-50 hover:text-green-700 transition-colors"
                   >
                     {tab.label === "Overview" && (
                       <Package className="w-4 h-4" />
@@ -217,103 +191,7 @@ export default function AdminProductDetail({ id }: any) {
 
             <CardContent>
               <TabsContent value="overview" className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <div>
-                    <h3 className="text-lg font-semibold mb-4">
-                      Product Images
-                    </h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      {product?.images?.map((image: any, index: number) => (
-                        <div key={image.id} className="relative group">
-                          <Image
-                            src={image.url}
-                            width={200}
-                            height={200}
-                            alt={`Product ${index + 1}`}
-                            className="w-full h-48 object-cover rounded-lg shadow-sm group-hover:shadow-md transition-shadow"
-                          />
-                          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 rounded-lg transition-all flex items-center justify-center">
-                            <Eye className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="text-lg font-semibold mb-4">
-                      Product Details
-                    </h3>
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-center py-3 border-b border-gray-100">
-                        <span className="text-gray-600">Price</span>
-                        <span className="font-semibold text-lg text-green-600">
-                          {formatter.format(product?.price)}
-                        </span>
-                      </div>
-
-                      <div className="flex justify-between items-center py-3 border-b border-gray-100">
-                        <span className="text-gray-600">Stock</span>
-                        <Badge
-                          variant={
-                            product?.stock > 10 ? "default" : "destructive"
-                          }
-                        >
-                          {product?.stock} units
-                        </Badge>
-                      </div>
-
-                      <div className="flex justify-between items-center py-3 border-b border-gray-100">
-                        <span className="text-gray-600">Category</span>
-                        <Badge variant="outline">
-                          {product?.category.name}
-                        </Badge>
-                      </div>
-
-                      <div className="flex justify-between items-center py-3 border-b border-gray-100">
-                        <span className="text-gray-600">Rating</span>
-                        <div className="flex items-center space-x-2">
-                          {/* <StarRating rating={product.stars} /> */}
-                          <span className="font-semibold">
-                            {product?.stars}/5
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex justify-between items-center py-3 border-b border-gray-100">
-                        <span className="text-gray-600">Status</span>
-                        <div className="flex space-x-2">
-                          {product?.isFeatured && <Badge>Featured</Badge>}
-                          <Badge
-                            variant={
-                              product?.isArchived ? "destructive" : "default"
-                            }
-                          >
-                            {product?.isArchived ? "Archived" : "Active"}
-                          </Badge>
-                        </div>
-                      </div>
-
-                      <div className="py-3">
-                        <span className="text-gray-600 block mb-2">Tags</span>
-                        <div className="flex flex-wrap gap-2">
-                          {product?.tags?.map((tag: any, index: number) => (
-                            <Badge key={index} variant="secondary">
-                              {tag.name}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-6">
-                      <h4 className="font-semibold mb-2">Description</h4>
-                      <p className="text-gray-600 leading-relaxed">
-                        {product?.description}
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                <Overview product={product} />
               </TabsContent>
 
               <TabsContent value="checkouts" className="space-y-6">
@@ -327,10 +205,10 @@ export default function AdminProductDetail({ id }: any) {
               <TabsContent value="comments" className="space-y-6">
                 <div className="flex justify-between items-center">
                   <h3 className="text-lg font-semibold">Comments & Reviews</h3>
-                  <Badge variant="outline">{} reviews</Badge>
+                  <Badge variant="outline">{review?.length} reviews</Badge>
                 </div>
 
-                <Comments />
+                <Comments dataReview={review} />
               </TabsContent>
             </CardContent>
           </Tabs>

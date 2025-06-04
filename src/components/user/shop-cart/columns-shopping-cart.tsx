@@ -24,7 +24,7 @@ export const Columns = (
       id: "name",
       header: "Product",
       cell: ({ row }) => (
-        <div className="flex items-center gap-2">
+        <div className="lg:flex block items-center gap-2">
           <Image
             src={row.original.images[0].url}
             width={80}

@@ -75,7 +75,7 @@ export function SidebarCart() {
         className="bg-white z-30 max-h-full overflow-x-hidden"
         side="right"
       >
-        <SidebarContent className="pt-24 pb-4 w-full overflow-x-hidden">
+        <SidebarContent className="pt-24 pb-4 w-full overflow-x-hidden bg-white">
           <SidebarGroup className="flex-1 flex flex-col overflow-x-hidden">
             <SidebarGroupLabel className="text-xl">
               Shopping Cart ({itemCount})

@@ -100,7 +100,8 @@ export default function Action({ product, refetch }: ActionProps) {
           onClick={handleAddToCart}
           disabled={isLoading || !product.stock}
         >
-          <ShoppingCart /> Add to Cart
+          <ShoppingCart />
+          <h1 className="lg:block hidden">Add to Cart</h1>
         </Button>
         <Button
           className="text-white bg-gray-500 hover:bg-gray-900"
