@@ -56,7 +56,7 @@ export default function HeadingBanner() {
       </div>
       <div className="lg:w-[35%] space-y-4 lg:block flex gap-2">
         <div
-          className="bg-cover rounded-xl lg:aspect-[2/1] w-1/2"
+          className="bg-cover rounded-xl lg:aspect-[2/1] w-1/2 lg:w-full"
           style={{
             backgroundImage: `url(${bannerSecond?.imageUrl})`,
           }}
@@ -78,7 +78,7 @@ export default function HeadingBanner() {
           )}
         </div>
         <div
-          className="bg-cover rounded-xl lg:aspect-[2/1] w-1/2"
+          className="bg-cover rounded-xl lg:aspect-[2/1] w-1/2 lg:w-full"
           style={{
             backgroundImage: `url(${bannerThird?.imageUrl})`,
             backgroundPosition: "center",

@@ -25,7 +25,7 @@ export default function Profile() {
   const formattedOrder: CheckoutColumn[] = orders?.map((checkout: any) => ({
     id: checkout.id,
     date: format(checkout.createdAt, "dd MMMM yyyy"),
-    images : checkout.items[0].product.images[0].url,
+    images: checkout.items[0].product.images[0].url,
     product: checkout.items[0].product.name,
     total: formatter.format(checkout.subtotal),
     status: checkout.status,
@@ -35,8 +35,8 @@ export default function Profile() {
     return <div className="spinner"></div>;
   return (
     <>
-      <div className="flex justify-center items-center gap-8">
-        <Card className="w-1/2 p-4 h-60">
+      <div className="lg:flex justify-center items-center gap-8">
+        <Card className="lg:w-1/2 p-4 h-60">
           <CardContent className="space-y-4 text-center">
             <div className="flex justify-center">
               {userProfile.imageUrl ? (
@@ -59,18 +59,18 @@ export default function Profile() {
             <h1 className="hover:underline text-primary">Edit Profile</h1>
           </CardContent>
         </Card>
-        <Card className="w-1/2 p-4 h-60">
+        <Card className="lg:w-1/2 p-4 h-60">
           <CardContent className="space-y-4">
             <h1 className="font-semibold">Billing Address</h1>
             <div className="space-y-2">
-              <h1>
-                {userProfile.firstName + " " + userProfile.lastName}
-              </h1>
+              <h1>{userProfile.firstName + " " + userProfile.lastName}</h1>
               <p className="text-gray-500 text-sm">{userProfile.address}</p>
               <p>{userProfile.email}</p>
               <p>{userProfile.phone}</p>
             </div>
-            <h1 className="hover:underline text-primary cursor-pointer">Edit Address</h1>
+            <h1 className="hover:underline text-primary cursor-pointer">
+              Edit Address
+            </h1>
           </CardContent>
         </Card>
       </div>
@@ -85,8 +85,13 @@ export default function Profile() {
             View All
           </Link>
         </div>
-
-        <DataTable data={formattedOrder} columns={Columns()} searchKey="date"  />
+        <div className="overflow-hidden">
+          <DataTable
+            data={formattedOrder}
+            columns={Columns()}
+            searchKey="date"
+          />
+        </div>
       </div>
     </>
   );

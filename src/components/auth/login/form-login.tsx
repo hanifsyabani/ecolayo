@@ -42,6 +42,7 @@ export default function FormLogin() {
 
       if (res?.error) {
         toast.error("Email or password is incorrect");
+        router.push("/login");
       }
 
       router.push("/");

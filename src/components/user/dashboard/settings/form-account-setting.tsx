@@ -82,8 +82,8 @@ export default function FormAccountSetting() {
 
   return (
     <form className=" mt-4" onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex items-center gap-5">
-        <div className="space-y-3 w-1/2">
+      <div className="lg:flex items-center gap-5">
+        <div className="space-y-3 lg:w-1/2">
           <div>
             <Label>First Name</Label>
             <Input {...register("firstName")} name="firstName" />
@@ -113,7 +113,7 @@ export default function FormAccountSetting() {
             )}
           </div>
         </div>
-        <div className="w-1/2">
+        <div className="lg:w-1/2">
           <Label htmlFor="imageUrl">Image</Label>
           <UploadImage
             value={imageUrl ? [imageUrl] : []}

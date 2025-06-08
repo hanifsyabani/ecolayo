@@ -60,7 +60,7 @@ export default function OrderDetail({ id }: { id: string }) {
 
   return (
     <>
-      <div className="flex items-center justify-between">
+      <div className="lg:flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-3 ">
             <div className="w-1 h-4 bg-gray-500" />
@@ -74,15 +74,15 @@ export default function OrderDetail({ id }: { id: string }) {
         </div>
         <Link
           href={`/shop/dashboard/orders`}
-          className="text-primary hover:underline"
+          className="text-primary hover:underline hidden lg:block"
         >
           Back to List
         </Link>
       </div>
 
-      <div className="flex items-center gap-4 mt-8 ">
-        <div className="w-[60%] flex items-center">
-          <Card className="w-1/2 p-4 h-80">
+      <div className="lg:flex items-center gap-4 mt-8 ">
+        <div className="lg:w-[60%] lg:flex items-center">
+          <Card className="lg:w-1/2 p-4 h-80">
             <CardContent className="text-sm">
               <h1 className="text-gray-500">Billing Address</h1>
               <div className="space-y-2">
@@ -99,7 +99,7 @@ export default function OrderDetail({ id }: { id: string }) {
               </div>
             </CardContent>
           </Card>
-          <Card className="w-1/2 p-4 h-80 ">
+          <Card className="lg:w-1/2 p-4 h-80 ">
             <CardContent className="text-sm">
               <h1 className="text-gray-500">Shipping Address</h1>
               <div className="space-y-2">
@@ -121,7 +121,7 @@ export default function OrderDetail({ id }: { id: string }) {
             </CardContent>
           </Card>
         </div>
-        <Card className="w-[40%] py-1 h-80">
+        <Card className="lg:w-[40%] py-1 lg:h-80">
           <CardContent>
             <div className="flex justify-center items-center ">
               <div>

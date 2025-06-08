@@ -16,10 +16,10 @@ export default async function page() {
           {shopServiceItem.map((item) => (
             <div
               key={item.title}
-              className="flex justify-center items-center gap-4 hover:shadow-lg cursor-pointer p-4"
+              className="flex flex-col lg:flex-row text-center lg:text-left justify-center  items-center gap-4 hover:shadow-lg cursor-pointer p-4"
             >
               <item.icon className="text-primary" />
-              <div>
+              <div className="space-y-2 lg:space-y-0">
                 <h1 className="text-sm font-semibold">{item.title}</h1>
                 <p className="text-sm text-gray-500">{item.description}</p>
               </div>

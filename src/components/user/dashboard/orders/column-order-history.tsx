@@ -17,13 +17,13 @@ export const Columns = (): ColumnDef<CheckoutColumn>[] => [
   {
     accessorKey: "id",
     header: "Order ID",
-    cell: ({ row }) => <p>#{row.original.id}</p>,
+    cell: ({ row }) => <p>#{row.original.id.split("", 5)}</p>,
   },
   {
     id: "product",
     header: "Product",
     cell: ({ row }) => (
-      <div className="flex items-center gap-2">
+      <div className="lg:flex block items-center gap-2">
         <Image
           src={row.original.images}
           width={50}

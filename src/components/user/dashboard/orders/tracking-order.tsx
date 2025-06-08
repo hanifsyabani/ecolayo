@@ -65,7 +65,7 @@ export default function TrackingOrder({
 
   return (
     <>
-      <div className="my-10 flex justify-evenly items-center relative">
+      <div className="my-10 lg:flex justify-evenly items-center space-y-4 lg:space-y-0 relative">
         {trackingStatus.map((item, index) => {
           const isCompleted = index <= currentStepIndex;
           return (
@@ -75,7 +75,7 @@ export default function TrackingOrder({
             >
               {index !== 0 && (
                 <div
-                  className={`absolute top-7 right-full w-24 h-1 ${
+                  className={`absolute  flex lg:top-7 -top-4 lg:right-full lg:w-24 lg:h-1 h-3 w-1 ${
                     isCompleted ? "bg-primary" : "bg-gray-300"
                   }`}
                 />

@@ -27,10 +27,10 @@ export default function Footer() {
           </p>
         </div>
 
-        <div className="lg:flex flex-row justify-center gap-x-20 space-y-4">
+        <div className="lg:flex flex-row justify-center gap-x-20  space-y-4">
           {footerLinks.map((item) => (
             <div className="space-y-4" key={item.title}>
-              <h5 className="text-white font-semibold">{item.title}</h5>
+              <h5 className="text-white font-semibold mt-5 sm:mt-0">{item.title}</h5>
               <ul className="space-y-2 ">
                 {item.links.map((link) => (
                   <li key={link}>

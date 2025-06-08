@@ -196,8 +196,8 @@ export default function FormShippingAddress() {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="space-y-4 mt-4">
-        <div className="flex items-center gap-4 ">
-          <div className="w-1/2">
+        <div className="lg:flex items-center gap-4 space-y-4 lg:space-y-0 ">
+          <div className="lg:w-1/2">
             <Label>First Name</Label>
             <Input
               id="firstName"
@@ -208,7 +208,7 @@ export default function FormShippingAddress() {
               <p className="text-red-500">{errors.firstName.message}</p>
             )}
           </div>
-          <div className="w-1/2">
+          <div className="lg:w-1/2">
             <Label>Last Name</Label>
             <Input
               id="lastName"
@@ -219,7 +219,7 @@ export default function FormShippingAddress() {
               <p className="text-red-500">{errors.lastName.message}</p>
             )}
           </div>
-          <div className="w-1/2">
+          <div className="lg:w-1/2">
             <Label>Company Name (optional)</Label>
             <Input
               id="companyName"
@@ -243,8 +243,8 @@ export default function FormShippingAddress() {
             <p className="text-red-500">{errors.streetAddress.message}</p>
           )}
         </div>
-        <div className="flex items-center gap-4">
-          <div className="w-1/2">
+        <div className="lg:flex items-center gap-4 space-y-4 lg:space-y-0">
+          <div className="lg:w-1/2">
             <Label>Province</Label>
             <Select
               onValueChange={(selected) => {
@@ -253,7 +253,6 @@ export default function FormShippingAddress() {
                 );
                 setSelectedProvince(selectedProvince?.code);
                 setValue("province", selected);
-                // Reset dependent fields
                 setSelectedKabupaten("");
                 setSelectedKecamatan("");
                 setSelectedKelurahan("");
@@ -283,7 +282,7 @@ export default function FormShippingAddress() {
               <p className="text-red-500">{errors.province.message}</p>
             )}
           </div>
-          <div className="w-1/2">
+          <div className="lg:w-1/2">
             <Label>Kabupaten/Kota</Label>
             <Select
               onValueChange={(selected) => {
@@ -324,7 +323,7 @@ export default function FormShippingAddress() {
               <p className="text-red-500">{errors.kabupaten.message}</p>
             )}
           </div>
-          <div className="w-1/2">
+          <div className="lg:w-1/2">
             <Label>Kecamatan</Label>
             <Select
               onValueChange={(selected) => {
@@ -366,8 +365,8 @@ export default function FormShippingAddress() {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="w-1/2">
+        <div className="lg:flex items-center gap-4">
+          <div className="lg:w-1/2">
             <Label>Kelurahan</Label>
             <Select
               onValueChange={(selected) => {
@@ -404,7 +403,7 @@ export default function FormShippingAddress() {
               <p className="text-red-500">{errors.kelurahan.message}</p>
             )}
           </div>
-          <div className="w-1/2">
+          <div className="lg:w-1/2">
             <Label>Postal Code</Label>
             <Input
               id="postalCode"
@@ -418,15 +417,15 @@ export default function FormShippingAddress() {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="w-1/2">
+        <div className="lg:flex items-center gap-4">
+          <div className="lg:w-1/2">
             <Label htmlFor="email">Email</Label>
             <Input placeholder="Your email" {...register("email")} />
             {errors.email && (
               <p className="text-red-500">{errors.email.message}</p>
             )}
           </div>
-          <div className="w-1/2">
+          <div className="lg:w-1/2">
             <Label htmlFor="phone">Phone</Label>
             <Input
               id="phone"

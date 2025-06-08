@@ -1,8 +1,9 @@
-import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { dashboardUserItem } from "@/lib/item";
 import NavigationSidebar from "@/components/user/dashboard/navigation-sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { List } from "lucide-react";
+import SidebarMobile from "@/components/user/dashboard/sidebar-mobile";
 
 export default function UserDashboardLayout({
   children,
@@ -12,7 +13,8 @@ export default function UserDashboardLayout({
   return (
     <SidebarProvider admin={true}>
       <NavigationSidebar />
-      <div className="w-full mt-10 p-4">{children}</div>
+      <SidebarMobile/>
+      <div className="w-full lg:mt-10 mt-16 p-4">{children}</div>
     </SidebarProvider>
   );
 }

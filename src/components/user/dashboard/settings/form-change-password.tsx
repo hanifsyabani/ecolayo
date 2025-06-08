@@ -64,7 +64,7 @@ export default function FormChangePassword() {
             </span>
           )}
         </div>
-        <div className="flex gap-4 items-center ">
+        <div className="lg:flex gap-4 items-center ">
           <div>
             <Label>New Password</Label>
             <Input
